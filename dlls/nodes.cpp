@@ -459,7 +459,7 @@ int CGraph::HullIndex( const CBaseEntity *pEntity )
 	return NODE_HUMAN_HULL;
 }
 
-int CGraph::NodeType( const CBaseEntity *pEntity )
+nodeInfo_t CGraph::NodeType( const CBaseEntity *pEntity )
 {
 	if( pEntity->pev->movetype == MOVETYPE_FLY )
 	{
@@ -522,13 +522,13 @@ int CGraph::NextNodeInRoute( int iCurrentNode, int iDest, int iHull, int iCap )
 {
 	int iNext = iCurrentNode;
 	int nCount = iDest + 1;
-	signed char *pRoute = m_pRouteInfo + m_pNodes[iCurrentNode].m_pNextBestNode[iHull][iCap];
+	routeInfo_t *pRoute = m_pRouteInfo + m_pNodes[iCurrentNode].m_pNextBestNode[iHull][iCap];
 
 	// Until we decode the next best node
 	//
 	while( nCount > 0 )
 	{
-		signed char ch = *pRoute++;
+		routeInfo_t ch = *pRoute++;
 		//ALERT( at_aiconsole, "C(%d)", ch );
 		if( ch < 0 )
 		{
@@ -871,7 +871,7 @@ int CGraph::FindNearestNode( const Vector &vecOrigin,  CBaseEntity *pEntity )
 	return FindNearestNode( vecOrigin, NodeType( pEntity ) );
 }
 
-int CGraph::FindNearestNode( const Vector &vecOrigin, int afNodeTypes )
+int CGraph::FindNearestNode( const Vector &vecOrigin, nodeInfo_t afNodeTypes )
 {
 	int i;
 	TraceResult tr;
@@ -1550,13 +1550,13 @@ void CNodeEnt::KeyValue( KeyValueData *pkvd )
 {
 	if( FStrEq( pkvd->szKeyName, "hinttype" ) )
 	{
-		m_sHintType = (short)atoi( pkvd->szValue );
+		m_sHintType = (hintType_t)atoi( pkvd->szValue );
 		pkvd->fHandled = TRUE;
 	}
 
 	if( FStrEq( pkvd->szKeyName, "activity" ) )
 	{
-		m_sHintActivity = (short)atoi( pkvd->szValue );
+		m_sHintActivity = (hintActivity_t)atoi( pkvd->szValue );
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -2367,7 +2367,7 @@ void CQueuePriority::Heap_SiftUp( void )
 int CGraph::FLoadGraph( const char *szMapName )
 {
 	char szFilename[MAX_PATH];
-	int iVersion;
+	int32_t iVersion;
 	int length;
 	byte *aMemFile;
 	byte *pMemFile;
@@ -2391,11 +2391,11 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 	// Read the graph version number
 	//
-	length -= sizeof(int);
+	length -= sizeof(int32_t);
 	if( length < 0 )
 		goto ShortFile;
-	iVersion = *(int *) pMemFile;
-	pMemFile += sizeof(int);
+	iVersion = *(int32_t *) pMemFile;
+	pMemFile += sizeof(int32_t);
 
 	if( iVersion == GRAPH_VERSION || iVersion == GRAPH_VERSION_RETAIL )
 	{
@@ -2499,7 +2499,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 		// Malloc for the routing info.
 		//
 		m_fRoutingComplete = FALSE;
-		m_pRouteInfo = (signed char *)calloc( sizeof(signed char), m_nRouteInfo );
+		m_pRouteInfo = (routeInfo_t *)calloc( sizeof(routeInfo_t), m_nRouteInfo );
 		if( !m_pRouteInfo )
 		{
 			ALERT( at_aiconsole, "***ERROR**\nCouldn't malloc %d route bytes!\n", m_nRouteInfo );
@@ -2513,16 +2513,16 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 		// Read in the route information.
 		//
-		length -= sizeof(char) * m_nRouteInfo;
+		length -= sizeof(routeInfo_t) * m_nRouteInfo;
 		if( length < 0 )
 			goto ShortFile;
-		memcpy( m_pRouteInfo, pMemFile, sizeof(char) * m_nRouteInfo );
-		pMemFile += sizeof(char) * m_nRouteInfo;
+		memcpy( m_pRouteInfo, pMemFile, sizeof(routeInfo_t) * m_nRouteInfo );
+		pMemFile += sizeof(routeInfo_t) * m_nRouteInfo;
 		m_fRoutingComplete = TRUE;
 
 		// malloc for the hash links
 		//
-		m_pHashLinks = (short *)calloc( sizeof(short), m_nHashLinks );
+		m_pHashLinks = (hashLinks_t *)calloc( sizeof(hashLinks_t), m_nHashLinks );
 		if( !m_pHashLinks )
 		{
 			ALERT( at_aiconsole, "***ERROR**\nCouldn't malloc %d hash link bytes!\n", m_nHashLinks );
@@ -2531,11 +2531,11 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 		// Read in the hash link information
 		//
-		length -= sizeof(short) * m_nHashLinks;
+		length -= sizeof(hashLinks_t) * m_nHashLinks;
 		if( length < 0 )
 			goto ShortFile;
-		memcpy( m_pHashLinks, pMemFile, sizeof(short) * m_nHashLinks );
-		pMemFile += sizeof(short) * m_nHashLinks;
+		memcpy( m_pHashLinks, pMemFile, sizeof(hashLinks_t) * m_nHashLinks );
+		pMemFile += sizeof(hashLinks_t) * m_nHashLinks;
 
 		// Set the graph present flag, clear the pointers set flag
 		//
@@ -2571,7 +2571,7 @@ NoMemory:
 //=========================================================
 int CGraph::FSaveGraph( const char *szMapName )
 {
-	int iVersion = GRAPH_VERSION;
+	int32_t iVersion = GRAPH_VERSION;
 	char szFilename[MAX_PATH];
 	FILE *file;
 
@@ -2606,7 +2606,7 @@ int CGraph::FSaveGraph( const char *szMapName )
 	else
 	{
 		// write the version
-		fwrite( &iVersion, sizeof(int), 1, file );
+		fwrite( &iVersion, sizeof(int32_t), 1, file );
 
 		// write the CGraph class
 		fwrite( this, sizeof(CGraph), 1, file );
@@ -2623,12 +2623,12 @@ int CGraph::FSaveGraph( const char *szMapName )
 		//
 		if( m_pRouteInfo && m_nRouteInfo )
 		{
-			fwrite( m_pRouteInfo, sizeof(signed char), m_nRouteInfo, file );
+			fwrite( m_pRouteInfo, sizeof(routeInfo_t), m_nRouteInfo, file );
 		}
 
 		if( m_pHashLinks && m_nHashLinks )
 		{
-			fwrite( m_pHashLinks, sizeof(short), m_nHashLinks, file );
+			fwrite( m_pHashLinks, sizeof(hashLinks_t), m_nHashLinks, file );
 		}
 		fclose( file );
 		return TRUE;
@@ -2945,10 +2945,10 @@ void CGraph::BuildLinkLookups( void )
 	m_nHashLinks = 3 * m_cLinks / 2 + 3;
 
 	HashChoosePrimes( m_nHashLinks );
-	m_pHashLinks = (short *)calloc( sizeof(short), m_nHashLinks );
+	m_pHashLinks = (hashLinks_t *)calloc( sizeof(hashLinks_t), m_nHashLinks );
 	if( !m_pHashLinks )
 	{
-		ALERT( at_aiconsole, "Couldn't allocated Link Lookup Table.\n" );
+		ALERT( at_aiconsole, "Couldn't allocate Link Lookup Table.\n" );
 		return;
 	}
 	for( i = 0; i < m_nHashLinks; i++ )
@@ -3133,7 +3133,7 @@ void CGraph::ComputeStaticRoutingTables( void )
 
 	int *pMyPath = new int[m_cNodes];
 	unsigned short *BestNextNodes = new unsigned short[m_cNodes];
-	signed char *pRoute = new signed char[m_cNodes*2];
+	routeInfo_t *pRoute = new routeInfo_t[m_cNodes*2];
 
 	if( Routes && pMyPath && BestNextNodes && pRoute )
 	{
@@ -3225,7 +3225,7 @@ void CGraph::ComputeStaticRoutingTables( void )
 					int cSequence = 0;
 					int cRepeats = 0;
 					int CompressedSize = 0;
-					signed char *p = pRoute;
+					routeInfo_t *p = pRoute;
 					for( int i = 0; i < m_cNodes; i++ )
 					{
 						BOOL CanRepeat = ( ( BestNextNodes[i] == iLastNode ) && cRepeats < 127 );
@@ -3388,7 +3388,7 @@ void CGraph::ComputeStaticRoutingTables( void )
 						}
 						else
 						{
-							signed char *Tmp = (signed char *)calloc( sizeof(signed char), ( m_nRouteInfo + nRoute ) );
+							routeInfo_t *Tmp = (routeInfo_t *)calloc( sizeof(routeInfo_t), ( m_nRouteInfo + nRoute ) );
 							memcpy( Tmp, m_pRouteInfo, m_nRouteInfo );
 							free( m_pRouteInfo );
 							m_pRouteInfo = Tmp;
@@ -3401,7 +3401,7 @@ void CGraph::ComputeStaticRoutingTables( void )
 					else
 					{
 						m_nRouteInfo = nRoute;
-						m_pRouteInfo = (signed char *)calloc( sizeof(signed char), nRoute );
+						m_pRouteInfo = (routeInfo_t *)calloc( sizeof(routeInfo_t), nRoute );
 						memcpy( m_pRouteInfo, pRoute, nRoute );
 						m_pNodes[iFrom].m_pNextBestNode[iHull][iCap] = 0;
 						nTotalCompressedSize += CompressedSize;

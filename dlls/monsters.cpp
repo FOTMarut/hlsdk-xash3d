@@ -2735,7 +2735,7 @@ BOOL CBaseMonster::FGetNodeRoute( Vector vecDest )
 		ALERT( at_aiconsole, "No Path from %d to %d!\n", iSrcNode, iDestNode );
 		return FALSE;
 #else
-		BOOL bRoutingSave = WorldGraph.m_fRoutingComplete;
+		BOOL_p bRoutingSave = WorldGraph.m_fRoutingComplete;
 		WorldGraph.m_fRoutingComplete = FALSE;
 		iResult = WorldGraph.FindShortestPath( iPath, iSrcNode, iDestNode, iNodeHull, m_afCapability );
 		WorldGraph.m_fRoutingComplete = bRoutingSave;
