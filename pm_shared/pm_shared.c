@@ -27,6 +27,10 @@
 #include <stdlib.h> // atoi
 #include <ctype.h>  // isspace
 
+#ifndef _WIN32
+#include <strings.h>
+#endif
+
 int g_bhopcap = 1;
 
 #ifdef CLIENT_DLL

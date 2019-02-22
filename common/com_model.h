@@ -18,8 +18,10 @@ GNU General Public License for more details.
 
 #include "bspfile.h"	// we need some declarations from it
 
+#ifndef MATHLIB_H
 typedef vec_t		vec2_t[2];
 typedef vec_t		vec4_t[4];
+#endif
 
 /*
 ==============================================================================
@@ -133,7 +135,7 @@ typedef struct mnode_s
 } mnode_t;
 
 typedef struct msurface_s	msurface_t;
-typedef struct decal_s	decal_t;
+typedef struct decal_s		decal_t;
 
 // JAY: Compress this as much as possible
 struct decal_s
@@ -173,7 +175,7 @@ typedef struct mleaf_s
 
 } mleaf_t;
 
-typedef struct msurface_s
+struct msurface_s
 {
 	int		visframe;		// should be drawn when node is crossed
 
@@ -205,7 +207,7 @@ typedef struct msurface_s
 
 	color24		*samples;		// note: this is the actual lightmap data for this surface
 	decal_t		*pdecals;
-} msurface_t;
+};
 
 typedef struct msurfmesh_s
 {
