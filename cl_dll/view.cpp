@@ -249,6 +249,7 @@ float V_CalcRoll( vec3_t angles, vec3_t velocity, float rollangle, float rollspe
 	return side * sign;
 }
 
+/*
 typedef struct pitchdrift_s
 {
 	float pitchvel;
@@ -258,6 +259,7 @@ typedef struct pitchdrift_s
 } pitchdrift_t;
 
 static pitchdrift_t pd;
+*/
 
 /*
 ===============

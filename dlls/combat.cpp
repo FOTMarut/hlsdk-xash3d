@@ -459,10 +459,10 @@ Activity CBaseMonster::GetDeathActivity( void )
 Activity CBaseMonster::GetSmallFlinchActivity( void )
 {
 	Activity	flinchActivity;
-	BOOL		fTriedDirection;
+	//BOOL		fTriedDirection;
 	//float		flDot;
 
-	fTriedDirection = FALSE;
+	//fTriedDirection = FALSE;
 	UTIL_MakeVectors( pev->angles );
 	//flDot = DotProduct( gpGlobals->v_forward, g_vecAttackDir * -1 );
 
@@ -1479,12 +1479,12 @@ This version is used by Players, uses the random seed generator to sync client a
 */
 Vector CBaseEntity::FireBulletsPlayer( ULONG cShots, Vector vecSrc, Vector vecDirShooting, Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker, int shared_rand )
 {
-	static int tracerCount;
+	//static int tracerCount;
 	TraceResult tr;
 	Vector vecRight = gpGlobals->v_right;
 	Vector vecUp = gpGlobals->v_up;
 	float x = 0.0f, y = 0.0f;
-	float z;
+	//float z;
 
 	if( pevAttacker == NULL )
 		pevAttacker = pev;  // the default attacker is ourselves

@@ -128,7 +128,7 @@ public:
 
 private:
 	float m_fFade;
-	RGBA  m_rgba;
+	//RGBA  m_rgba;
 	WEAPON *m_pWeapon;
 	int m_HUD_bucket0;
 	int m_HUD_selection;
@@ -642,7 +642,7 @@ public:
 	int Redraw( float flTime, int intermission );
 	int UpdateClientData( client_data_t *cdata, float time );
 
-	CHud() : m_iSpriteCount(0), m_pHudList(NULL) {}  
+	CHud() : m_pHudList(NULL), m_iSpriteCount(0) {}
 	~CHud();			// destructor, frees allocated memory
 
 	// user messages

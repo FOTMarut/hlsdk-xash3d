@@ -1680,7 +1680,7 @@ int PM_CheckStuck( void )
 	int hitent;
 	int idx;
 	float fTime;
-	int i;
+	//int i;
 	pmtrace_t traceresult;
 
 	static float rgStuckCheckTime[MAX_CLIENTS][2]; // Last time we did a full
@@ -1707,7 +1707,7 @@ int PM_CheckStuck( void )
 			PM_ResetStuckOffsets( pmove->player_index, pmove->server );
 			do 
 			{
-				i = PM_GetRandomStuckOffsets( pmove->player_index, pmove->server, offset );
+				/*i =*/ PM_GetRandomStuckOffsets( pmove->player_index, pmove->server, offset );
 
 				VectorAdd( base, offset, test );
 				if( pmove->PM_TestPlayerPosition( test, &traceresult ) == -1 )
@@ -1738,7 +1738,7 @@ int PM_CheckStuck( void )
 
 	pmove->PM_StuckTouch( hitent, &traceresult );
 
-	i = PM_GetRandomStuckOffsets( pmove->player_index, pmove->server, offset );
+	/*i =*/ PM_GetRandomStuckOffsets( pmove->player_index, pmove->server, offset );
 
 	VectorAdd( base, offset, test );
 	if( ( hitent = pmove->PM_TestPlayerPosition( test, NULL ) ) == -1 )

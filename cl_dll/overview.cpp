@@ -15,7 +15,9 @@
 #include "com_model.h"
 #include "studio_util.h"
 
+#ifdef _MSC_VER
 #pragma warning(disable: 4244)
+#endif
 
 //-----------------------------------------------------------------------------
 // Purpose: 

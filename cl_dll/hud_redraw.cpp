@@ -213,7 +213,7 @@ int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r,
 	// draw the string until we hit the null character or a newline character
 	for( ; *szIt != 0 && *szIt != '\n'; szIt++ )
 	{
-		int w = gHUD.m_scrinfo.charWidths['M'];
+		int w = gHUD.m_scrinfo.charWidths[(unsigned char)'M'];
 		if( xpos + w  > iMaxX )
 			return xpos;
 		if( ( *szIt == '^' ) && ( *( szIt + 1 ) >= '0') && ( *( szIt + 1 ) <= '7') )
@@ -243,7 +243,7 @@ int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g
 		// draw the string until we hit the null character or a newline character
 		for( ; *szIt != 0 && *szIt != '\n'; szIt++ )
 		{
-			int w = gHUD.m_scrinfo.charWidths['M'];
+			int w = gHUD.m_scrinfo.charWidths[(unsigned char)'M'];
 			if( xpos + w  > iMaxX )
 				return xpos;
 			if( ( *szIt == '^' ) && ( *( szIt + 1 ) >= '0') && ( *( szIt + 1 ) <= '7') )

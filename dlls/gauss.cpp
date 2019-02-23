@@ -582,7 +582,11 @@ void CGauss::WeaponIdle( void )
 	}
 	else
 	{
+#ifdef __GNUC__
+		int __attribute__((unused)) iAnim;
+#else
 		int iAnim;
+#endif
 		float flRand = RANDOM_FLOAT( 0, 1 );
 		if( flRand <= 0.5 )
 		{

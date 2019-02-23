@@ -24,7 +24,9 @@
 #include "studio_util.h"
 #include "screenfade.h"
 
+#ifdef _MSC_VER
 #pragma warning(disable: 4244)
+#endif
 
 extern "C" int		iJumpSpectator;
 extern "C" float	vJumpOrigin[3];

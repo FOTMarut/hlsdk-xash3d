@@ -2835,7 +2835,7 @@ void CBaseMonster::ReportAIState( void )
 	static const char *pStateNames[] = { "None", "Idle", "Combat", "Alert", "Hunt", "Prone", "Scripted", "Dead" };
 
 	ALERT( level, "%s: ", STRING(pev->classname) );
-	if( (int)m_MonsterState < ARRAYSIZE( pStateNames ) )
+	if( (size_t)m_MonsterState < ARRAYSIZE( pStateNames ) )
 		ALERT( level, "State: %s, ", pStateNames[m_MonsterState] );
 	int i = 0;
 	while( activity_map[i].type != 0 )

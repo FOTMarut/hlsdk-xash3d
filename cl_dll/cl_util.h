@@ -167,10 +167,12 @@ void VectorInverse( float *v );
 
 extern vec3_t vec3_origin;
 
+#ifdef _MSC_VER
 // disable 'possible loss of data converting float to int' warning message
 #pragma warning( disable: 4244 )
 // disable 'truncation from 'const double' to 'float' warning message
 #pragma warning( disable: 4305 )
+#endif
 
 inline void UnpackRGB( int &r, int &g, int &b, unsigned long ulRGB )\
 {\
