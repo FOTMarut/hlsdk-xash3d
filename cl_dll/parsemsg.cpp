@@ -17,7 +17,6 @@
 //
 
 typedef unsigned char byte;
-#define true 1
 
 static byte *gpBuf;
 static int giSize;

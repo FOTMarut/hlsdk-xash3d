@@ -1730,9 +1730,10 @@ void CSaveRestoreBuffer::BufferRewind( int size )
 }
 
 #ifndef _WIN32
-extern "C" unsigned _rotr( unsigned val, int shift )
+extern "C" inline unsigned _rotr( unsigned val, int shift )
 {
-	return (val >> (31 & shift)) | (val << (31 & -shift));
+	shift &= 31;
+	return (val >> shift) | (val << (31 & -shift));
 }
 #endif
 
