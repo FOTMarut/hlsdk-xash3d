@@ -43,7 +43,7 @@ void Demo_WriteBuffer( int type, int size, unsigned char *buffer )
 {
 	int pos = 0;
 	unsigned char buf[32 * 1024];
-	*(int *)&buf[pos] = type;
+	memcpy( &buf[pos], &type, sizeof(int) );
 	pos += sizeof(int);
 
 	memcpy( &buf[pos], buffer, size );

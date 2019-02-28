@@ -23,6 +23,7 @@
 #include "const.h"
 #include "entity_state.h"
 #include "r_efx.h"
+#include <stdint.h>
 
 // g_runfuncs is true if this is the first time we've "predicated" a particular movement/firing
 //  command.  If it is 1, then we should play events/sounds etc., otherwise, we just will be
@@ -237,12 +238,16 @@ float UTIL_SharedRandomFloat( unsigned int seed, float low, float high )
 {
 	unsigned int range;
 
-	U_Srand( (int)seed + *(int *)&low + *(int *)&high );
+	uint32_t low_as_int, high_as_int;
+	memcpy(&low_as_int, &low, sizeof(low));
+	memcpy(&high_as_int, &high, sizeof(high));
+
+	U_Srand( (uint32_t)seed + low_as_int + high_as_int );
 
 	U_Random();
 	U_Random();
 
-	range = high - low;
+	range = (int)( high - low );
 	if( !range )
 	{
 		return low;

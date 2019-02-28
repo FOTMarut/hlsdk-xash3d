@@ -491,11 +491,10 @@ void CHudSpectator::DirectorMessage( int iSize, void *pbuf )
 
 				msg->effect = READ_BYTE();		// effect
 
-				UnpackRGB( (int&)msg->r1, (int&)msg->g1, (int&)msg->b1, READ_LONG() );	// color
-				msg->r2 = msg->r1;
-				msg->g2 = msg->g1;
-				msg->b2 = msg->b1;
-				msg->a2 = msg->a1 = 0xFF;	// not transparent
+				UnpackRGB( msg->r1, msg->g1, msg->b1, READ_LONG() );	// color
+				msg->a1 = 0xFF;	// not transparent
+
+				memcpy( &msg->r2, &msg->r1, sizeof(msg->r1)*4 );
 
 				msg->x = READ_FLOAT();	// x pos
 				msg->y = READ_FLOAT();	// y pos

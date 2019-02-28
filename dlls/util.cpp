@@ -30,6 +30,7 @@
 #include "player.h"
 #include "weapons.h"
 #include "gamerules.h"
+#include <stdint.h>
 
 float UTIL_WeaponTimeBase( void )
 {
@@ -113,7 +114,11 @@ float UTIL_SharedRandomFloat( unsigned int seed, float low, float high )
 {
 	unsigned int range;
 
-	U_Srand( (int)seed + *(int *)&low + *(int *)&high );
+	uint32_t low_as_int, high_as_int;
+	memcpy(&low_as_int, &low, sizeof(low));
+	memcpy(&high_as_int, &high, sizeof(high));
+
+	U_Srand( (uint32_t)seed + low_as_int + high_as_int );
 
 	U_Random();
 	U_Random();

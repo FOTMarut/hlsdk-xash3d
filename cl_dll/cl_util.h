@@ -181,6 +181,13 @@ inline void UnpackRGB( int &r, int &g, int &b, unsigned long ulRGB )\
 	b = ulRGB & 0xFF;\
 }
 
+inline void UnpackRGB( byte &r, byte &g, byte &b, unsigned long ulRGB )\
+{\
+	r = ( ulRGB & 0xFF0000 ) >> 16;\
+	g = ( ulRGB & 0xFF00 ) >> 8;\
+	b = ulRGB & 0xFF;\
+}
+
 HSPRITE LoadSprite( const char *pszName );
 
 bool HUD_MessageBox( const char *msg );

@@ -505,7 +505,7 @@ float HUD_GetFOV( void )
 		unsigned char buf[100];
 
 		// Active
-		*(float *)&buf[i] = g_lastFOV;
+		memcpy( &buf[i], &g_lastFOV, sizeof(float) );
 		i += sizeof(float);
 
 		Demo_WriteBuffer( TYPE_ZOOM, i, buf );
