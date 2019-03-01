@@ -626,17 +626,17 @@ void SetObjectCollisionBox( entvars_t *pev )
 		max = 0;
 		for( i = 0; i < 3; i++ )
 		{
-			v = fabs( ( (float *)pev->mins )[i] );
+			v = fabs( ( pev->mins.asArray() )[i] );
 			if( v > max )
 				max = v;
-			v = fabs( ( (float *)pev->maxs )[i] );
+			v = fabs( ( pev->maxs.asArray() )[i] );
 			if( v > max )
 				max = v;
 		}
 		for( i = 0; i < 3; i++ )
 		{
-			( (float *)pev->absmin )[i] = ( (float *)pev->origin )[i] - max;
-			( (float *)pev->absmax )[i] = ( (float *)pev->origin )[i] + max;
+			( pev->absmin.asArray() )[i] = ( pev->origin.asArray() )[i] - max;
+			( pev->absmax.asArray() )[i] = ( pev->origin.asArray() )[i] + max;
 		}
 	}
 	else

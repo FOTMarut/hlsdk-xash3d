@@ -41,10 +41,10 @@ void UpdateBeams( void )
 	int idx = pthisplayer->index;
 		
 	// Get our exact viewangles from engine
-	gEngfuncs.GetViewAngles( (float *)angles );
+	gEngfuncs.GetViewAngles( angles.asArray() );
 
 	// Determine our last predicted origin
-	HUD_GetLastOrg( (float *)&origin );
+	HUD_GetLastOrg( origin.asArray() );
 
 	AngleVectors( angles, forward, right, up );
 

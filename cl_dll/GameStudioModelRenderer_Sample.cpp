@@ -579,7 +579,7 @@ void CGameStudioModelRenderer::SetupClientAnimation( entity_state_t *pplayer )
 
 	int oldseq = st->sequence;
 	Game_GetSequence( &st->sequence, &st->gaitsequence ); //CVAR_GET_FLOAT( "sequence" );
-	Game_GetOrientation( (float *)&st->origin, (float *)&st->angles );
+	Game_GetOrientation( st->origin.asArray(), st->angles.asArray() );
 	st->realangles = st->angles;
 
 	if ( st->sequence != oldseq )

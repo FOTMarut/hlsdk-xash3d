@@ -557,7 +557,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 		ofs[0] = ofs[1] = ofs[2] = 0.0;
 
-		CL_CameraOffset( (float *)&ofs );
+		CL_CameraOffset( ofs.asArray() );
 
 		VectorCopy( ofs, camAngles );
 		camAngles[ROLL]	= 0;
@@ -632,9 +632,9 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	VectorAdd( pparams->viewangles, pparams->punchangle, pparams->viewangles );
 
 	// Include client side punch, too
-	VectorAdd( pparams->viewangles, (float *)&g_ev_punchangle, pparams->viewangles );
+	VectorAdd( pparams->viewangles, g_ev_punchangle.asArray(), pparams->viewangles );
 
-	V_DropPunchAngle( pparams->frametime, (float *)&g_ev_punchangle );
+	V_DropPunchAngle( pparams->frametime, g_ev_punchangle.asArray() );
 
 	// smooth out stair step ups
 #if 1
@@ -1672,12 +1672,12 @@ void V_Move( int mx, int my )
 	farpoint = v_origin + 8192 * forward;
 
 	// Trace
-	tr = *( gEngfuncs.PM_TraceLine( (float *)&v_origin, (float *)&farpoint, PM_TRACELINE_PHYSENTSONLY, 2 /*point sized hull*/, -1 ) );
+	tr = *( gEngfuncs.PM_TraceLine( v_origin.asArray(), farpoint.asArray(), PM_TRACELINE_PHYSENTSONLY, 2 /*point sized hull*/, -1 ) );
 
 	if( tr.fraction != 1.0 && tr.ent != 0 )
 	{
 		hitent = PM_GetPhysEntInfo( tr.ent );
-		PM_ParticleLine( (float *)&v_origin, (float *)&tr.endpos, 5, 1.0, 0.0 );
+		PM_ParticleLine( v_origin.asArray(), tr.endpos.asArray(), 5, 1.0, 0.0 );
 	}
 	else
 	{
