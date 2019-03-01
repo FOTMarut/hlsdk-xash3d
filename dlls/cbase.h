@@ -719,7 +719,7 @@ public:
 //
 template <class T> T * GetClassPtr( T *a )
 {
-	entvars_t *pev = (entvars_t *)a;
+	entvars_t *pev = a->pev;
 
 	// allocate entity if necessary
 	if( pev == NULL )

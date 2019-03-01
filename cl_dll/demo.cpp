@@ -21,8 +21,8 @@
 
 int g_demosniper = 0;
 int g_demosniperdamage = 0;
-float g_demosniperorg[3];
 float g_demosniperangles[3];
+float g_demosniperorg[3];
 float g_demozoom;
 
 // FIXME:  There should be buffer helper functions to avoid all of the *(int *)& crap.
@@ -69,30 +69,22 @@ void DLLEXPORT Demo_ReadBuffer( int size, unsigned char *buffer )
 	switch( type )
 	{
 	case TYPE_SNIPERDOT:
-		g_demosniper = *(int *)&buffer[i];
+		memcpy( &g_demosniper, &buffer[i], sizeof(int) );
 		i += sizeof(int);
 		
 		if( g_demosniper )
 		{
-			g_demosniperdamage = *(int *)&buffer[i];
+			memcpy( &g_demosniperdamage, &buffer[i], sizeof(int) );
 			i += sizeof(int);
 
-			g_demosniperangles[0] = *(float *)&buffer[i];
-			i += sizeof(float);
-			g_demosniperangles[1] = *(float *)&buffer[i];
-			i += sizeof(float);
-			g_demosniperangles[2] = *(float *)&buffer[i];
-			i += sizeof(float);
-			g_demosniperorg[0] = *(float *)&buffer[i];
-			i += sizeof(float);
-			g_demosniperorg[1] = *(float *)&buffer[i];
-			i += sizeof(float);
-			g_demosniperorg[2] = *(float *)&buffer[i];
-			i += sizeof(float);
+			memcpy( &g_demosniperangles, &buffer[i], sizeof(float)*3 );
+			i += sizeof(float) * 3;
+			memcpy( &g_demosniperorg, &buffer[i], sizeof(float)*3 );
+			i += sizeof(float) * 3;
 		}
 		break;
 	case TYPE_ZOOM:
-		g_demozoom = *(float *)&buffer[i];
+		memcpy( &g_demozoom, &buffer[i], sizeof(float) );
 		i += sizeof(float);
 		break;
 	default:

@@ -599,7 +599,7 @@ void CTentacle::Cycle( void )
 					case 0:
 						sound = "tentacle/te_sing1.wav";
 						break;
-					case 1:
+					default: // case 1
 						sound = "tentacle/te_sing2.wav";
 						break;
 					}
@@ -870,7 +870,7 @@ void CTentacle::HandleAnimEvent( MonsterEvent_t *pEvent )
 		case 0:
 			sound = "tentacle/te_roar1.wav";
 			break;
-		case 1:
+		default: // case 1
 			sound = "tentacle/te_roar2.wav";
 			break;
 		}
@@ -884,7 +884,7 @@ void CTentacle::HandleAnimEvent( MonsterEvent_t *pEvent )
 		case 0:
 			sound = "tentacle/te_search1.wav";
 			break;
-		case 1:
+		default: // case 1
 			sound = "tentacle/te_search2.wav";
 			break;
 		}
@@ -898,7 +898,7 @@ void CTentacle::HandleAnimEvent( MonsterEvent_t *pEvent )
 		case 0:
 			sound = "tentacle/te_move1.wav";
 			break;
-		case 1:
+		default: // case 1
 			sound = "tentacle/te_move2.wav";
 			break;
 		}
