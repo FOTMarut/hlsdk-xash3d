@@ -3413,7 +3413,7 @@ void CBasePlayer::ImpulseCommands()
 		{
 			// line hit something, so paint a decal
 			m_flNextDecalTime = gpGlobals->time + decalfrequency.value;
-			CSprayCan *pCan = GetClassPtr( (CSprayCan *)NULL );
+			CSprayCan *pCan = GetClassPtr<CSprayCan>( NULL );
 			pCan->Spawn( pev );
 		}
 		break;
@@ -3583,7 +3583,7 @@ void CBasePlayer::CheatImpulseCommands( int iImpulse )
 		if( tr.flFraction != 1.0 )
 		{
 			// line hit something, so paint a decal
-			CBloodSplat *pBlood = GetClassPtr( (CBloodSplat *)NULL );
+			CBloodSplat *pBlood = GetClassPtr<CBloodSplat>( NULL );
 			pBlood->Spawn( pev );
 		}
 		break;

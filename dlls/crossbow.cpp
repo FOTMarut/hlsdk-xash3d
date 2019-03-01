@@ -54,7 +54,7 @@ LINK_ENTITY_TO_CLASS( crossbow_bolt, CCrossbowBolt )
 CCrossbowBolt *CCrossbowBolt::BoltCreate( void )
 {
 	// Create a new entity with CCrossbowBolt private data
-	CCrossbowBolt *pBolt = GetClassPtr( (CCrossbowBolt *)NULL );
+	CCrossbowBolt *pBolt = GetClassPtr<CCrossbowBolt>( NULL );
 	pBolt->pev->classname = MAKE_STRING( "crossbow_bolt" );	// g-cont. enable save\restore
 	pBolt->Spawn();
 

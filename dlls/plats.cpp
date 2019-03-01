@@ -321,7 +321,7 @@ void CFuncPlat::Spawn()
 
 static void PlatSpawnInsideTrigger( entvars_t *pevPlatform )
 {
-	GetClassPtr( (CPlatTrigger *)NULL )->SpawnInsideTrigger( GetClassPtr( (CFuncPlat *)pevPlatform ) );
+	GetClassPtr<CPlatTrigger>( NULL )->SpawnInsideTrigger( GetClassPtr<CFuncPlat>( pevPlatform ) );
 }
 		
 //

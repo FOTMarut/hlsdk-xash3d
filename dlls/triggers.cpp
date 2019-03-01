@@ -395,7 +395,7 @@ void CMultiManager::ManagerThink( void )
 
 CMultiManager *CMultiManager::Clone( void )
 {
-	CMultiManager *pMulti = GetClassPtr( (CMultiManager *)NULL );
+	CMultiManager *pMulti = GetClassPtr<CMultiManager>( NULL );
 
 	edict_t *pEdict = pMulti->pev->pContainingEntity;
 	memcpy( pMulti->pev, pev, sizeof(*pev) );
@@ -836,7 +836,7 @@ void CTriggerHurt::RadiationThink( void )
 	// reset origin
 	if( !FNullEnt( pentPlayer ) )
 	{
-		pPlayer = GetClassPtr( (CBasePlayer *)VARS( pentPlayer ) );
+		pPlayer = GetClassPtr<CBasePlayer>( VARS( pentPlayer ) );
 
 		pevTarget = VARS( pentPlayer );
 
@@ -1462,7 +1462,7 @@ void CChangeLevel::ChangeLevelNow( CBaseEntity *pActivator )
 	// Create an entity to fire the changetarget
 	if( m_changeTarget )
 	{
-		CFireAndDie *pFireAndDie = GetClassPtr( (CFireAndDie *)NULL );
+		CFireAndDie *pFireAndDie = GetClassPtr<CFireAndDie>( NULL );
 		if( pFireAndDie )
 		{
 			// Set target and delay
@@ -1588,7 +1588,7 @@ int CChangeLevel::ChangeList( LEVELLIST *pLevelList, int maxList )
 	{
 		CChangeLevel *pTrigger;
 
-		pTrigger = GetClassPtr((CChangeLevel *)VARS(pentChangelevel));
+		pTrigger = GetClassPtr<CChangeLevel>( VARS(pentChangelevel) );
 		if( pTrigger )
 		{
 			// Find the corresponding landmark
@@ -1690,11 +1690,11 @@ void NextLevel( void )
 	if( FNullEnt( pent ) )
 	{
 		gpGlobals->mapname = MAKE_STRING( "start" );
-		pChange = GetClassPtr( (CChangeLevel *)NULL );
+		pChange = GetClassPtr<CChangeLevel>( NULL );
 		strcpy( pChange->m_szMapName, "start" );
 	}
 	else
-		pChange = GetClassPtr( (CChangeLevel *)VARS( pent ) );
+		pChange = GetClassPtr<CChangeLevel>( VARS( pent ) );
 
 	strcpy( st_szNextMap, pChange->m_szMapName );
 	g_fGameOver = TRUE;

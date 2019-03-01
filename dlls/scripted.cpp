@@ -207,7 +207,7 @@ void CCineMonster::Touch( CBaseEntity *pOther )
 	ALERT( at_aiconsole, "Cine Touch\n" );
 	if( m_pentTarget && OFFSET( pOther->pev ) == OFFSET( m_pentTarget ) )
 	{
-		CBaseMonster *pTarget = GetClassPtr( (CBaseMonster *)VARS( m_pentTarget ) );
+		CBaseMonster *pTarget = GetClassPtr<CBaseMonster>( VARS( m_pentTarget ) );
 		pTarget->m_monsterState == MONSTERSTATE_SCRIPT;
 	}
 */
@@ -653,7 +653,7 @@ void ScriptEntityCancel( edict_t *pentCine )
 	// make sure they are a scripted_sequence
 	if( FClassnameIs( pentCine, CLASSNAME ) )
 	{
-		CCineMonster *pCineTarget = GetClassPtr( (CCineMonster *)VARS( pentCine ) );
+		CCineMonster *pCineTarget = GetClassPtr<CCineMonster>( VARS( pentCine ) );
 
 		// make sure they have a monster in mind for the script
 		CBaseEntity *pEntity = pCineTarget->m_hTargetEnt;
@@ -704,7 +704,7 @@ void CCineMonster::DelayStart( int state )
 	{
 		if( FClassnameIs( pentCine, "scripted_sequence" ) )
 		{
-			CCineMonster *pTarget = GetClassPtr( ( CCineMonster *)VARS( pentCine ) );
+			CCineMonster *pTarget = GetClassPtr<CCineMonster>( VARS( pentCine ) );
 			if( state )
 			{
 				pTarget->m_iDelay++;

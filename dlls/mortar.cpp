@@ -303,7 +303,7 @@ void CMortar::MortarExplode( void )
 #if 0
 void CMortar::ShootTimed( EVARS *pevOwner, Vector vecStart, float time )
 {
-	CMortar *pMortar = GetClassPtr( (CMortar *)NULL );
+	CMortar *pMortar = GetClassPtr<CMortar>( NULL );
 	pMortar->Spawn();
 
 	TraceResult tr;

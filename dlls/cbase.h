@@ -717,16 +717,14 @@ public:
 // Converts a entvars_t * to a class pointer
 // It will allocate the class and entity if necessary
 //
-template <class T> T * GetClassPtr( T *a )
+template <class T> T * GetClassPtr( entvars_t *pev )
 {
-	entvars_t *pev = a->pev;
-
 	// allocate entity if necessary
 	if( pev == NULL )
 		pev = VARS( CREATE_ENTITY() );
 
 	// get the private data
-	a = (T *)GET_PRIVATE( ENT( pev ) );
+	T* a = static_cast<T*>( GET_PRIVATE( ENT( pev ) ) );
 
 	if( a == NULL ) 
 	{

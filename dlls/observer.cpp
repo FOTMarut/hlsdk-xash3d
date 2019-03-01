@@ -277,7 +277,7 @@ void CBasePlayer::StopObserver()
 	pev->iuser1 = pev->iuser2 = 0;
 	m_iHideHUD = 0;
 
-	GetClassPtr( (CBasePlayer *)pev )->Spawn();
+	GetClassPtr<CBasePlayer>( pev )->Spawn();
 	pev->nextthink = -1;
 
 	// Update Team Status
