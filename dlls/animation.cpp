@@ -24,7 +24,8 @@ typedef int BOOL;
 // hack into header files that we can ship
 typedef int qboolean;
 typedef unsigned char byte;
-#include "mathlib.h"
+//#include "mathlib.h"
+#include "extdll.h"
 #include "const.h"
 #include "progdefs.h"
 #include "edict.h"
@@ -147,7 +148,7 @@ void GetEyePosition( void *pmodel, float *vecEyePosition )
 		return;
 	}
 
-	VectorCopy( pstudiohdr->eyeposition, vecEyePosition );
+	memcpy( vecEyePosition, pstudiohdr->eyeposition, sizeof(vec_t)*3 );
 }
 
 int LookupSequence( void *pmodel, const char *label )

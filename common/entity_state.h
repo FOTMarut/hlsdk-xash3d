@@ -16,6 +16,9 @@
 #ifndef ENTITY_STATE_H
 #define ENTITY_STATE_H
 
+#include "pm_info.h"
+#include "weaponinfo.h"
+
 // For entityType below
 #define ENTITY_NORMAL		(1<<0)
 #define ENTITY_BEAM			(1<<1)
@@ -119,8 +122,6 @@ struct entity_state_s
 	vec3_t		vuser4;
 };
 
-#include "pm_info.h"
-
 typedef struct clientdata_s
 {
 	vec3_t		origin;
@@ -174,8 +175,6 @@ typedef struct clientdata_s
 	vec3_t		vuser4;
 
 } clientdata_t;
-
-#include "weaponinfo.h"
 
 typedef struct local_state_s
 {

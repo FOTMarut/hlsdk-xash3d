@@ -55,7 +55,7 @@ void Draw_Triangles( void )
 		gHUD.m_hsprCursor = SPR_Load( sz );
 	}
 
-	if( !gEngfuncs.pTriAPI->SpriteTexture( (struct model_s *)gEngfuncs.GetSpritePointer( gHUD.m_hsprCursor ), 0 ) )
+	if( !gEngfuncs.pTriAPI->SpriteTexture( (model_t *)gEngfuncs.GetSpritePointer( gHUD.m_hsprCursor ), 0 ) )
 	{
 		return;
 	}

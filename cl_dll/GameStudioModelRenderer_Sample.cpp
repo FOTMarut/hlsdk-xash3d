@@ -579,7 +579,7 @@ void CGameStudioModelRenderer::SetupClientAnimation( entity_state_t *pplayer )
 
 	int oldseq = st->sequence;
 	Game_GetSequence( &st->sequence, &st->gaitsequence ); //CVAR_GET_FLOAT( "sequence" );
-	Game_GetOrientation( st->origin.asArray(), st->angles.asArray() );
+	Game_GetOrientation( st->origin, st->angles );
 	st->realangles = st->angles;
 
 	if ( st->sequence != oldseq )
@@ -973,7 +973,7 @@ Export this function for the engine to use the studio renderer class to render o
 ====================
 */
 
-extern "C" int DLLEXPORT HUD_GetStudioModelInterface( int version, struct r_studio_interface_s **ppinterface, struct engine_studio_api_s *pstudio )
+extern "C" int DLLEXPORT HUD_GetStudioModelInterface( int version, r_studio_interface_t **ppinterface, engine_studio_api_t *pstudio )
 {
 	if ( version != STUDIO_INTERFACE_VERSION )
 		return 0;

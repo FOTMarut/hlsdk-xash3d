@@ -16,13 +16,18 @@
 #ifndef CL_ENTITY_H
 #define CL_ENTITY_H
 
-typedef struct efrag_s
+#include "com_model.h"
+
+typedef struct cl_entity_s cl_entity_t;
+typedef struct efrag_s efrag_t;
+
+struct efrag_s
 {
-	struct mleaf_s	*leaf;
-	struct efrag_s	*leafnext;
-	struct cl_entity_s	*entity;
-	struct efrag_s	*entnext;
-} efrag_t;
+	mleaf_t	*leaf;
+	efrag_t	*leafnext;
+	cl_entity_t	*entity;
+	efrag_t	*entnext;
+};
 
 typedef struct
 {
@@ -54,8 +59,6 @@ typedef struct
 	vec3_t		origin;
 	vec3_t		angles;
 } position_history_t;
-
-typedef struct cl_entity_s cl_entity_t;
 
 #define HISTORY_MAX		64		// Must be power of 2
 #define HISTORY_MASK	( HISTORY_MAX - 1 )
@@ -93,9 +96,9 @@ struct cl_entity_s
 	// Other entity local information
 	int		trivial_accept;
 
-	struct model_s	*model;	// cl.model_precache[ curstate.modelindes ];  all visible entities have a model
-	struct efrag_s	*efrag;	// linked list of efrags
-	struct mnode_s	*topnode;	// for bmodels, first world node that splits bmodel, or NULL if not split
+	model_t	*model;	// cl.model_precache[ curstate.modelindes ];  all visible entities have a model
+	efrag_t	*efrag;	// linked list of efrags
+	mnode_t	*topnode;	// for bmodels, first world node that splits bmodel, or NULL if not split
 
 	float		syncbase;	// for client-side animations -- used by obsolete alias animation system, remove?
 	int		visframe;	// last frame this entity was found in an active leaf

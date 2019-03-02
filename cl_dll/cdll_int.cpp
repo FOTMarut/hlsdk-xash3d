@@ -69,10 +69,10 @@ void	DLLEXPORT HUD_Init( void );
 int		DLLEXPORT HUD_Redraw( float flTime, int intermission );
 int		DLLEXPORT HUD_UpdateClientData( client_data_t *cdata, float flTime );
 void	DLLEXPORT HUD_Reset ( void );
-void	DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server );
-void	DLLEXPORT HUD_PlayerMoveInit( struct playermove_s *ppmove );
+void	DLLEXPORT HUD_PlayerMove( playermove_t *ppmove, int server );
+void	DLLEXPORT HUD_PlayerMoveInit( playermove_t *ppmove );
 char	DLLEXPORT HUD_PlayerMoveTexture( char *name );
-int		DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size );
+int		DLLEXPORT HUD_ConnectionlessPacket( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size );
 int		DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs );
 void	DLLEXPORT HUD_Frame( double time );
 void	DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
@@ -121,7 +121,7 @@ HUD_ConnectionlessPacket
   size of the response_buffer, so you must zero it out if you choose not to respond.
 ================================
 */
-int DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size )
+int DLLEXPORT HUD_ConnectionlessPacket( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size )
 {
 	// Zero it out since we aren't going to respond.
 	// If we wanted to response, we'd write data into response_buffer
@@ -132,7 +132,7 @@ int DLLEXPORT HUD_ConnectionlessPacket( const struct netadr_s *net_from, const c
 	return 0;
 }
 
-void DLLEXPORT HUD_PlayerMoveInit( struct playermove_s *ppmove )
+void DLLEXPORT HUD_PlayerMoveInit( playermove_t *ppmove )
 {
 	PM_Init( ppmove );
 }
@@ -142,7 +142,7 @@ char DLLEXPORT HUD_PlayerMoveTexture( char *name )
 	return PM_FindTextureType( name );
 }
 
-void DLLEXPORT HUD_PlayerMove( struct playermove_s *ppmove, int server )
+void DLLEXPORT HUD_PlayerMove( playermove_t *ppmove, int server )
 {
 	PM_Move( ppmove, server );
 }

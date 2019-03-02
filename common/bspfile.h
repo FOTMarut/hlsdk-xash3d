@@ -16,6 +16,16 @@ GNU General Public License for more details.
 #ifndef BSPFILE_H
 #define BSPFILE_H
 
+// TODO: sort this out
+#ifdef __cplusplus
+#define vec3_t Vector
+class Vector;
+#else
+#include "mathlib.h"
+#endif
+
+#include "const.h"
+
 /*
 ==============================================================================
 

@@ -35,9 +35,11 @@
 
 // PM_PlayerTrace results.
 #include "pmtrace.h"
+#include "pm_movevars.h"
 
 #include "com_model.h"
 #include "usercmd.h"
+
 
 // physent_t
 typedef struct physent_s
@@ -45,8 +47,8 @@ typedef struct physent_s
 	char		name[32];		// Name of model, or "player" or "world".
 	int		player;
 	vec3_t		origin;		// Model's origin in world coordinates.
-	struct model_s	*model;		// only for bsp models
-	struct model_s	*studiomodel;	// SOLID_BBOX, but studio clip intersections.
+	model_t	*model;		// only for bsp models
+	model_t	*studiomodel;	// SOLID_BBOX, but studio clip intersections.
 	vec3_t		mins, maxs;	// only for non-bsp models
 	int		info;		// For client or server to use to identify (index into edicts or cl_entities)
 	vec3_t		angles;		// rotated entities need this info for hull testing to work.
@@ -178,7 +180,7 @@ typedef struct playermove_s
 
 	char		physinfo[MAX_PHYSINFO_STRING]; // Physics info string
 
-	struct movevars_s	*movevars;
+	movevars_t	*movevars;
 	vec3_t		player_mins[4];
 	vec3_t		player_maxs[4];
 	
@@ -193,18 +195,18 @@ typedef struct playermove_s
 	void		(*PM_StuckTouch)( int hitent, pmtrace_t *ptraceresult );
 	int		(*PM_PointContents)( float *p, int *truecontents /*filled in if this is non-null*/ );
 	int		(*PM_TruePointContents)( float *p );
-	int		(*PM_HullPointContents)( struct hull_s *hull, int num, float *p );   
+	int		(*PM_HullPointContents)( hull_t *hull, int num, float *p );   
 #ifdef __MINGW32__
 	pmtrace_t		*(*PM_PlayerTrace_real)( pmtrace_t * retvalue, float *start, float *end, int traceFlags, int ignore_pe );
 
 #else
 	pmtrace_t		(*PM_PlayerTrace)( float *start, float *end, int traceFlags, int ignore_pe );
 #endif
-	struct pmtrace_s	*(*PM_TraceLine)( float *start, float *end, int flags, int usehulll, int ignore_pe );
+	pmtrace_t	*(*PM_TraceLine)( float *start, float *end, int flags, int usehulll, int ignore_pe );
 	int		(*RandomLong)( int lLow, int lHigh );
 	float		(*RandomFloat)( float flLow, float flHigh );
-	int		(*PM_GetModelType)( struct model_s *mod );
-	void		(*PM_GetModelBounds)( struct model_s *mod, float *mins, float *maxs );
+	int		(*PM_GetModelType)( model_t *mod );
+	void		(*PM_GetModelBounds)( model_t *mod, float *mins, float *maxs );
 	void		*(*PM_HullForBsp)( physent_t *pe, float *offset );
 	float		(*PM_TraceModel)( physent_t *pEnt, float *start, float *end, trace_t *trace );
 	int		(*COM_FileSize)( char *filename );
@@ -224,8 +226,8 @@ typedef struct playermove_s
 	pmtrace_t		(*PM_PlayerTraceEx) (float *start, float *end, int traceFlags, int (*pfnIgnore)( physent_t *pe ));
 #endif
 	int		(*PM_TestPlayerPositionEx) (float *pos, pmtrace_t *ptrace, int (*pfnIgnore)( physent_t *pe ));
-	struct pmtrace_s	*(*PM_TraceLineEx)( float *start, float *end, int flags, int usehulll, int (*pfnIgnore)( physent_t *pe ));
-	struct msurface_s	*(*PM_TraceSurface)( int ground, float *vstart, float *vend );
+	pmtrace_t	*(*PM_TraceLineEx)( float *start, float *end, int flags, int usehulll, int (*pfnIgnore)( physent_t *pe ));
+	msurface_t	*(*PM_TraceSurface)( int ground, float *vstart, float *vend );
 } playermove_t;
 
 #ifdef __MINGW32__

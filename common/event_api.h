@@ -16,6 +16,8 @@
 #ifndef EVENT_API_H
 #define EVENT_API_H
 
+#include "pm_defs.h"
+
 #define EVENT_API_VERSION	1
 
 typedef struct event_api_s
@@ -28,17 +30,17 @@ typedef struct event_api_s
 	int	( *EV_LocalPlayerDucking )( void );
 	void	( *EV_LocalPlayerViewheight )( float * );
 	void	( *EV_LocalPlayerBounds )( int hull, float *mins, float *maxs );
-	int	( *EV_IndexFromTrace)( struct pmtrace_s *pTrace );
-	struct physent_s *( *EV_GetPhysent )( int idx );
+	int	( *EV_IndexFromTrace)( pmtrace_t *pTrace );
+	physent_t *( *EV_GetPhysent )( int idx );
 	void	( *EV_SetUpPlayerPrediction )( int dopred, int bIncludeLocalClient );
 	void	( *EV_PushPMStates )( void );
 	void	( *EV_PopPMStates )( void );
 	void	( *EV_SetSolidPlayers )( int playernum );
 	void	( *EV_SetTraceHull )( int hull );
-	void	( *EV_PlayerTrace )( float *start, float *end, int traceFlags, int ignore_pe, struct pmtrace_s *tr );
+	void	( *EV_PlayerTrace )( float *start, float *end, int traceFlags, int ignore_pe, pmtrace_t *tr );
 	void	( *EV_WeaponAnimation )( int sequence, int body );
 	unsigned short ( *EV_PrecacheEvent )( int type, const char* psz );
-	void	( *EV_PlaybackEvent )( int flags, const struct edict_s *pInvoker, unsigned short eventindex, float delay, float *origin, float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
+	void	( *EV_PlaybackEvent )( int flags, const edict_t *pInvoker, unsigned short eventindex, float delay, float *origin, float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
 	const char *( *EV_TraceTexture )( int ground, float *vstart, float *vend );
 	void	( *EV_StopAllSounds )( int entnum, int entchannel );
 	void	( *EV_KillEvents )( int entnum, const char *eventname );
@@ -46,9 +48,9 @@ typedef struct event_api_s
 	// Xash3D extension
 	unsigned short (*EV_IndexForEvent)( const char *name );
 	const char *(*EV_EventForIndex)( unsigned short index );
-	void	( *EV_PlayerTraceExt )( float *start, float *end, int traceFlags, int (*pfnIgnore)( struct physent_s *pe ), struct pmtrace_s *tr );
+	void	( *EV_PlayerTraceExt )( float *start, float *end, int traceFlags, int (*pfnIgnore)( physent_t *pe ), pmtrace_t *tr );
 	const char *(*EV_SoundForIndex)( int index );
-	struct msurface_s *( *EV_TraceSurface )( int ground, float *vstart, float *vend );
+	msurface_t *( *EV_TraceSurface )( int ground, float *vstart, float *vend );
 } event_api_t;
 
 #endif//EVENT_API_H

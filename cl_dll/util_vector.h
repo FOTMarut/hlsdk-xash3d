@@ -118,9 +118,6 @@ public:
 		return (float)sqrt( x * x + y * y );
 	}
 
-	inline       vec_t* asArray( void )       { return &x; }
-	inline const vec_t* asArray( void ) const { return &x; }
-
 	// Members
 	vec_t x, y, z;
 };

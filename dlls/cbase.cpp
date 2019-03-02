@@ -24,8 +24,8 @@
 
 void EntvarsKeyvalue( entvars_t *pev, KeyValueData *pkvd );
 
-extern "C" void PM_Move ( struct playermove_s *ppmove, int server );
-extern "C" void PM_Init ( struct playermove_s *ppmove  );
+extern "C" void PM_Move ( playermove_t *ppmove, int server );
+extern "C" void PM_Init ( playermove_t *ppmove  );
 extern "C" char PM_FindTextureType( const char *name );
 
 extern Vector VecBModelOrigin( entvars_t* pevBModel );
@@ -626,17 +626,17 @@ void SetObjectCollisionBox( entvars_t *pev )
 		max = 0;
 		for( i = 0; i < 3; i++ )
 		{
-			v = fabs( ( pev->mins.asArray() )[i] );
+			v = fabs( ( pev->mins )[i] );
 			if( v > max )
 				max = v;
-			v = fabs( ( pev->maxs.asArray() )[i] );
+			v = fabs( ( pev->maxs )[i] );
 			if( v > max )
 				max = v;
 		}
 		for( i = 0; i < 3; i++ )
 		{
-			( pev->absmin.asArray() )[i] = ( pev->origin.asArray() )[i] - max;
-			( pev->absmax.asArray() )[i] = ( pev->origin.asArray() )[i] + max;
+			( pev->absmin )[i] = ( pev->origin )[i] - max;
+			( pev->absmax )[i] = ( pev->origin )[i] + max;
 		}
 	}
 	else

@@ -25,6 +25,11 @@
 #include <stdio.h>
 #include "custom.h"
 #include "cvardef.h"
+#include "entity_state.h"
+#include "pm_defs.h"
+#include "netadr.h"
+#include "triangleapi.h"
+#include "con_nprint.h"
 //
 // Defines entity interface between engine and DLLs.
 // This header file included by engine files and DLL files.
@@ -162,12 +167,12 @@ typedef struct enginefuncs_s
 	void	(*pfnFreeEntPrivateData)( edict_t *pEdict );
 	const char *(*pfnSzFromIndex)( int iString );
 	int	(*pfnAllocString)( const char *szValue );
-	struct entvars_s *(*pfnGetVarsOfEnt)( edict_t *pEdict );
+	entvars_t *(*pfnGetVarsOfEnt)( edict_t *pEdict );
 	edict_t*	(*pfnPEntityOfEntOffset)( int iEntOffset );
 	int	(*pfnEntOffsetOfPEntity)( const edict_t *pEdict );
 	int	(*pfnIndexOfEdict)( const edict_t *pEdict );
 	edict_t*	(*pfnPEntityOfEntIndex)( int iEntIndex );
-	edict_t*	(*pfnFindEntityByVars)( struct entvars_s* pvars );
+	edict_t*	(*pfnFindEntityByVars)( entvars_t* pvars );
 	void*	(*pfnGetModelPtr)( edict_t* pEdict );
 	int	(*pfnRegUserMsg)( const char *pszName, int iSize );
 	void	(*pfnAnimationAutomove)( const edict_t* pEdict, float flTime );
@@ -235,8 +240,8 @@ typedef struct enginefuncs_s
 	void	(*pfnDeltaSetFieldByIndex)( struct delta_s *pFields, int fieldNumber );
 	void	(*pfnDeltaUnsetFieldByIndex)( struct delta_s *pFields, int fieldNumber );
 	void	(*pfnSetGroupMask)( int mask, int op );
-	int	(*pfnCreateInstancedBaseline)( int classname, struct entity_state_s *baseline );
-	void	(*pfnCvar_DirectSet)( struct cvar_s *var, const char *value );
+	int	(*pfnCreateInstancedBaseline)( int classname, entity_state_t *baseline );
+	void	(*pfnCvar_DirectSet)( cvar_t *var, const char *value );
 
 	// Forces the client and server to be running with the same version of the specified file
 	//  ( e.g., a player model ).
@@ -434,22 +439,22 @@ typedef struct
 	// Notify game .dll that engine is going to shut down. Allows mod authors to set a breakpoint.
 	void	(*pfnSys_Error)( const char *error_string );
 
-	void	(*pfnPM_Move)( struct playermove_s *ppmove, qboolean server );
-	void	(*pfnPM_Init)( struct playermove_s *ppmove );
+	void	(*pfnPM_Move)( playermove_t *ppmove, qboolean server );
+	void	(*pfnPM_Init)( playermove_t *ppmove );
 	char	(*pfnPM_FindTextureType)( const char *name );
-	void	(*pfnSetupVisibility)( struct edict_s *pViewEntity, struct edict_s *pClient, unsigned char **pvs, unsigned char **pas );
-	void	(*pfnUpdateClientData) ( const struct edict_s *ent, int sendweapons, struct clientdata_s *cd );
-	int	(*pfnAddToFullPack)( struct entity_state_s *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet );
-	void	(*pfnCreateBaseline)( int player, int eindex, struct entity_state_s *baseline, struct edict_s *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs );
+	void	(*pfnSetupVisibility)( edict_t *pViewEntity, edict_t *pClient, unsigned char **pvs, unsigned char **pas );
+	void	(*pfnUpdateClientData) ( const edict_t *ent, int sendweapons, clientdata_t *cd );
+	int	(*pfnAddToFullPack)( entity_state_t *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet );
+	void	(*pfnCreateBaseline)( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs );
 	void	(*pfnRegisterEncoders)( void );
-	int	(*pfnGetWeaponData)( struct edict_s *player, struct weapon_data_s *info );
+	int	(*pfnGetWeaponData)( edict_t *player, weapon_data_t *info );
 
-	void	(*pfnCmdStart)( const edict_t *player, const struct usercmd_s *cmd, unsigned int random_seed );
+	void	(*pfnCmdStart)( const edict_t *player, const usercmd_t *cmd, unsigned int random_seed );
 	void	(*pfnCmdEnd)( const edict_t *player );
 
 	// Return 1 if the packet is valid.  Set response_buffer_size if you want to send a response packet.  Incoming, it holds the max
 	//  size of the response_buffer, so you must zero it out if you choose not to respond.
-	int	(*pfnConnectionlessPacket )( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size );
+	int	(*pfnConnectionlessPacket )( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size );
 
 	// Enumerates player hulls.  Returns 0 if the hull number doesn't exist, 1 otherwise
 	int	(*pfnGetHullBounds)	( int hullnumber, float *mins, float *maxs );
@@ -459,7 +464,7 @@ typedef struct
 
 	// One of the pfnForceUnmodified files failed the consistency check for the specified player
 	// Return 0 to allow the client to continue, 1 to force immediate disconnection ( with an optional disconnect message of up to 256 characters )
-	int	(*pfnInconsistentFile)( const struct edict_s *player, const char *filename, char *disconnect_message );
+	int	(*pfnInconsistentFile)( const edict_t *player, const char *filename, char *disconnect_message );
 
 	// The game .dll should return 1 if lag compensation should be allowed ( could also just set
 	//  the sv_unlag cvar.

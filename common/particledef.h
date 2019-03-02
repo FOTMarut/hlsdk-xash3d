@@ -32,23 +32,24 @@ typedef enum
 	pt_tracer		// Always have callback
 } ptype_t;
 
-typedef struct particle_s
+typedef struct particle_s particle_t;
+struct particle_s
 {
 	vec3_t		org;
 	short		color;
 	short		packedColor;
-	struct particle_s	*next;
+	particle_t	*next;
 	vec3_t		vel;
 	float		ramp;
 	float		die;
 	ptype_t		type;
-	void		(*deathfunc)( struct particle_s *particle );
+	void		(*deathfunc)( particle_t *particle );
 
 	// for pt_clientcusttom, we'll call this function each frame
-	void		(*callback)( struct particle_s *particle, float frametime );
+	void		(*callback)( particle_t *particle, float frametime );
 	
 	// For deathfunc, etc.
 	unsigned char	context;
-} particle_t;
+};
 
 #endif//PARTICLEDEF_H

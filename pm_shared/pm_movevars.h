@@ -50,5 +50,4 @@ struct movevars_s
 	float	skyangle;		// skybox rotate angle
 };
 
-extern movevars_t movevars;
 #endif

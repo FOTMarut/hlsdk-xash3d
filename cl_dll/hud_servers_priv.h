@@ -16,14 +16,14 @@ class CHudServers
 public:
 	typedef struct request_s
 	{
-		struct request_s	*next;
+		request_t	*next;
 		netadr_t		remote_address;
 		int			context;
 	} request_t;
 
 	typedef struct server_s
 	{
-		struct server_s		*next;
+		server_t		*next;
 		netadr_t		remote_address;
 		char			*info;
 		int			ping;
@@ -63,11 +63,11 @@ public:
 	int	GetServerCount( void );
 	void	SortServers( const char *fieldname );
 
-	void	ListResponse( struct net_response_s *response );
-	void	ServerResponse( struct net_response_s *response );
-	void	PingResponse( struct net_response_s *response );
-	void	RulesResponse( struct net_response_s *response );
-	void	PlayersResponse( struct net_response_s *response );
+	void	ListResponse( net_response_t *response );
+	void	ServerResponse( net_response_t *response );
+	void	PingResponse( net_response_t *response );
+	void	RulesResponse( net_response_t *response );
+	void	PlayersResponse( net_response_t *response );
 private:
 	
 	server_t *GetServer( int server );

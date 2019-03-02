@@ -20,26 +20,26 @@
 extern "C"
 {
 // HLDM
-void EV_FireGlock1( struct event_args_s *args  );
-void EV_FireGlock2( struct event_args_s *args  );
-void EV_FireShotGunSingle( struct event_args_s *args  );
-void EV_FireShotGunDouble( struct event_args_s *args  );
-void EV_FireMP5( struct event_args_s *args  );
-void EV_FireMP52( struct event_args_s *args  );
-void EV_FirePython( struct event_args_s *args  );
-void EV_FireGauss( struct event_args_s *args  );
-void EV_SpinGauss( struct event_args_s *args  );
-void EV_Crowbar( struct event_args_s *args );
-void EV_FireCrossbow( struct event_args_s *args );
-void EV_FireCrossbow2( struct event_args_s *args );
-void EV_FireRpg( struct event_args_s *args );
-void EV_EgonFire( struct event_args_s *args );
-void EV_EgonStop( struct event_args_s *args );
-void EV_HornetGunFire( struct event_args_s *args );
-void EV_TripmineFire( struct event_args_s *args );
-void EV_SnarkFire( struct event_args_s *args );
+void EV_FireGlock1( event_args_t *args  );
+void EV_FireGlock2( event_args_t *args  );
+void EV_FireShotGunSingle( event_args_t *args  );
+void EV_FireShotGunDouble( event_args_t *args  );
+void EV_FireMP5( event_args_t *args  );
+void EV_FireMP52( event_args_t *args  );
+void EV_FirePython( event_args_t *args  );
+void EV_FireGauss( event_args_t *args  );
+void EV_SpinGauss( event_args_t *args  );
+void EV_Crowbar( event_args_t *args );
+void EV_FireCrossbow( event_args_t *args );
+void EV_FireCrossbow2( event_args_t *args );
+void EV_FireRpg( event_args_t *args );
+void EV_EgonFire( event_args_t *args );
+void EV_EgonStop( event_args_t *args );
+void EV_HornetGunFire( event_args_t *args );
+void EV_TripmineFire( event_args_t *args );
+void EV_SnarkFire( event_args_t *args );
 
-void EV_TrainPitchAdjust( struct event_args_s *args );
+void EV_TrainPitchAdjust( event_args_t *args );
 }
 
 /*

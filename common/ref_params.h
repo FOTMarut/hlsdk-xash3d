@@ -16,6 +16,8 @@
 #ifndef REF_PARAMS_H
 #define REF_PARAMS_H
 
+#include "pm_movevars.h"
+
 typedef struct ref_params_s
 {
 	// output
@@ -59,10 +61,10 @@ typedef struct ref_params_s
 	int		smoothing;
 
 	// Last issued usercmd
-	struct usercmd_s	*cmd;
+	usercmd_t	*cmd;
 
 	// Movevars
-	struct movevars_s	*movevars;
+	movevars_t	*movevars;
 
 	int		viewport[4];	// the viewport coordinates x, y, width, height
 	int		nextView;		// the renderer calls ClientDLL_CalcRefdef() and Renderview

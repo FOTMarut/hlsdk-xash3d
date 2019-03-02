@@ -37,7 +37,7 @@ ListResponse
 Callback from engine
 ===================
 */
-void NET_CALLBACK ListResponse( struct net_response_s *response )
+void NET_CALLBACK ListResponse( net_response_t *response )
 {
 	if( g_pServers )
 	{
@@ -52,7 +52,7 @@ ServerResponse
 Callback from engine
 ===================
 */
-void NET_CALLBACK ServerResponse( struct net_response_s *response )
+void NET_CALLBACK ServerResponse( net_response_t *response )
 {
 	if( g_pServers )
 	{
@@ -67,7 +67,7 @@ PingResponse
 Callback from engine
 ===================
 */
-void NET_CALLBACK PingResponse( struct net_response_s *response )
+void NET_CALLBACK PingResponse( net_response_t *response )
 {
 	if( g_pServers )
 	{
@@ -82,7 +82,7 @@ RulesResponse
 Callback from engine
 ===================
 */
-void NET_CALLBACK RulesResponse( struct net_response_s *response )
+void NET_CALLBACK RulesResponse( net_response_t *response )
 {
 	if( g_pServers )
 	{
@@ -97,7 +97,7 @@ PlayersResponse
 Callback from engine
 ===================
 */
-void NET_CALLBACK PlayersResponse( struct net_response_s *response )
+void NET_CALLBACK PlayersResponse( net_response_t *response )
 {
 	if( g_pServers )
 	{
@@ -111,7 +111,7 @@ ListResponse
 
 ===================
 */
-void CHudServers::ListResponse( struct net_response_s *response )
+void CHudServers::ListResponse( net_response_t *response )
 {
 	request_t *list;
 	request_t *p;
@@ -157,7 +157,7 @@ ServerResponse
 
 ===================
 */
-void CHudServers::ServerResponse( struct net_response_s *response )
+void CHudServers::ServerResponse( net_response_t *response )
 {
 	char *szresponse;
 	request_t *p;
@@ -208,7 +208,7 @@ PingResponse
 
 ===================
 */
-void CHudServers::PingResponse( struct net_response_s *response )
+void CHudServers::PingResponse( net_response_t *response )
 {
 	char sz[32];
 
@@ -233,7 +233,7 @@ RulesResponse
 
 ===================
 */
-void CHudServers::RulesResponse( struct net_response_s *response )
+void CHudServers::RulesResponse( net_response_t *response )
 {
 	char *szresponse;
 	
@@ -261,7 +261,7 @@ PlayersResponse
 
 ===================
 */
-void CHudServers::PlayersResponse( struct net_response_s *response )
+void CHudServers::PlayersResponse( net_response_t *response )
 {
 	char *szresponse;
 

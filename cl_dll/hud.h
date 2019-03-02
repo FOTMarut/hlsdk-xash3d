@@ -314,7 +314,7 @@ public:
 	void GetAllPlayersInfo( void );
 
 private:
-	struct cvar_s *cl_showpacketloss;
+	cvar_t *cl_showpacketloss;
 };
 */
 
@@ -399,8 +399,8 @@ public:
 	friend class CHudSpectator;
 
 private:
-	struct cvar_s *	m_HUD_saytext;
-	struct cvar_s *	m_HUD_saytext_time;
+	cvar_t *	m_HUD_saytext;
+	cvar_t *	m_HUD_saytext_time;
 };
 
 //
@@ -604,7 +604,7 @@ private:
 	wrect_t *m_rgrcRects;	/*[HUD_SPRITE_COUNT]*/
 	char *m_rgszSpriteNames; /*[HUD_SPRITE_COUNT][MAX_SPRITE_NAME_LENGTH]*/
 
-	struct cvar_s *default_fov;
+	cvar_t *default_fov;
 public:
 	HSPRITE GetSprite( int index ) 
 	{

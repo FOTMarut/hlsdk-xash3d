@@ -18,6 +18,8 @@ GNU General Public License for more details.
 
 #include "bspfile.h"	// we need some declarations from it
 
+typedef struct efrag_s	efrag_t;
+
 #ifndef MATHLIB_H
 typedef vec_t		vec2_t[2];
 typedef vec_t		vec4_t[4];
@@ -39,6 +41,27 @@ typedef vec_t		vec4_t[4];
 #define MAXLIGHTMAPS	4
 #define NUM_AMBIENTS	4		// automatic ambient sounds
 
+typedef struct mplane_s				mplane_t;
+typedef struct msurface_s			msurface_t;
+typedef struct decal_s				decal_t;
+typedef struct texture_s			texture_t;
+typedef struct glvert_s				glvert_t;
+typedef struct glpoly_s				glpoly_t;
+typedef struct mnode_s				mnode_t;
+typedef struct mleaf_s				mleaf_t;
+typedef struct msurfmesh_s			msurfmesh_t;
+typedef struct mextrasurf_s			mextrasurf_t;
+typedef struct hull_s				hull_t;
+typedef struct cache_user_s			cache_user_t;
+typedef struct model_s				model_t;
+typedef struct alight_s				alight_t;
+typedef struct auxvert_s			auxvert_t;
+typedef struct player_info_s 		player_info_t;
+typedef struct mspriteframe_s		mspriteframe_t;
+typedef struct mspritegroup_s		mspritegroup_t;
+typedef struct mspriteframedesc_s	mspriteframedesc_t;
+typedef struct msprite_s			msprite_t;
+
 // model types
 typedef enum
 {
@@ -49,14 +72,14 @@ typedef enum
 	mod_studio
 } modtype_t;
 
-typedef struct mplane_s
+struct mplane_s
 {
 	vec3_t		normal;
 	float		dist;
 	byte		type;		// for fast side tests
 	byte		signbits;		// signx + (signy<<1) + (signz<<1)
 	byte		pad[2];
-} mplane_t;
+};
 
 typedef struct
 {
@@ -69,20 +92,20 @@ typedef struct
 	unsigned int	cachededgeoffset;
 } medge_t;
 
-typedef struct texture_s
+struct texture_s
 {
 	char		name[16];
 	unsigned int	width, height;
 	int		gl_texturenum;
-	struct msurface_s	*texturechain;	// for gl_texsort drawing
+	msurface_t	*texturechain;	// for gl_texsort drawing
 	int		anim_total;	// total tenths in sequence ( 0 = no)
 	int		anim_min, anim_max;	// time for this frame min <=time< max
-	struct texture_s	*anim_next;	// in the animation sequence
-	struct texture_s	*alternate_anims;	// bmodels in frame 1 use these
+	texture_t	*anim_next;	// in the animation sequence
+	texture_t	*alternate_anims;	// bmodels in frame 1 use these
 	unsigned short	fb_texturenum;	// auto-luma texturenum
 	unsigned short	dt_texturenum;	// detail-texture binding
 	unsigned int	unused[3];	// reserved 
-} texture_t;
+};
 
 typedef struct
 {
@@ -96,7 +119,7 @@ typedef struct
 
 // 73 bytes per VBO vertex
 // FIXME: align to 32 bytes
-typedef struct glvert_s
+struct glvert_s
 {
 	vec3_t		vertex;		// position
 	vec3_t		normal;		// normal
@@ -106,36 +129,33 @@ typedef struct glvert_s
 	vec3_t		tangent;		// tangent
 	vec3_t		binormal;		// binormal
 	byte		color[4];		// colors per vertex
-} glvert_t;
+};
 
-typedef struct glpoly_s
+struct glpoly_s
 {
-	struct glpoly_s	*next;
-	struct glpoly_s	*chain;
+	glpoly_t	*next;
+	glpoly_t	*chain;
 	int		numverts;
 	int		flags;          		// for SURF_UNDERWATER
 	float		verts[4][VERTEXSIZE];	// variable sized (xyz s1t1 s2t2)
-} glpoly_t;
+};
 
-typedef struct mnode_s
+struct mnode_s
 {
 // common with leaf
 	int		contents;		// 0, to differentiate from leafs
 	int		visframe;		// node needs to be traversed if current
 
 	float		minmaxs[6];	// for bounding box culling
-	struct mnode_s	*parent;
+	mnode_t	*parent;
 
 // node specific
 	mplane_t		*plane;
-	struct mnode_s	*children[2];	
+	mnode_t	*children[2];	
 
 	unsigned short	firstsurface;
 	unsigned short	numsurfaces;
-} mnode_t;
-
-typedef struct msurface_s	msurface_t;
-typedef struct decal_s		decal_t;
+};
 
 // JAY: Compress this as much as possible
 struct decal_s
@@ -151,11 +171,11 @@ struct decal_s
 // Xash3D added
 	vec3_t		position;		// location of the decal center in world space.
 	vec3_t		saxis;		// direction of the s axis in world space
-	struct msurfmesh_s	*mesh;		// decal mesh in local space
+	msurfmesh_t	*mesh;		// decal mesh in local space
 	int		reserved[4];	// for future expansions
 };
 
-typedef struct mleaf_s
+struct mleaf_s
 {
 // common with node
 	int		contents;
@@ -163,17 +183,17 @@ typedef struct mleaf_s
 
 	float		minmaxs[6];	// for bounding box culling
 
-	struct mnode_s	*parent;
+	mnode_t	*parent;
 // leaf specific
 	byte		*compressed_vis;
-	struct efrag_s	*efrags;
+	efrag_t	*efrags;
 
 	msurface_t	**firstmarksurface;
 	int		nummarksurfaces;
 	byte		*compressed_pas;
 	byte		ambient_sound_level[NUM_AMBIENTS];
 
-} mleaf_t;
+};
 
 struct msurface_s
 {
@@ -191,7 +211,7 @@ struct msurface_s
 	int		light_s, light_t;	// gl lightmap coordinates
 
 	glpoly_t		*polys;		// multiple if warped
-	struct msurface_s	*texturechain;
+	msurface_t	*texturechain;
 
 	mtexinfo_t	*texinfo;
 
@@ -203,13 +223,13 @@ struct msurface_s
 	int		lightmaptexturenum;
 	byte		styles[MAXLIGHTMAPS];
 	int		cached_light[MAXLIGHTMAPS];	// values currently used in lightmap
-	struct msurface_s	*lightmapchain;		// for new dlights rendering (was cached_dlight)
+	msurface_t	*lightmapchain;		// for new dlights rendering (was cached_dlight)
 
 	color24		*samples;		// note: this is the actual lightmap data for this surface
 	decal_t		*pdecals;
 };
 
-typedef struct msurfmesh_s
+struct msurfmesh_s
 {
 	unsigned short	numVerts;
 	unsigned short	numElems;		// ~ 20 000 vertex per one surface. Should be enough
@@ -219,12 +239,12 @@ typedef struct msurfmesh_s
 	glvert_t		*verts;		// vertexes array
 	unsigned short	*elems;		// indices		
 
-	struct msurface_s	*surf;		// pointer to parent surface. Just for consistency
-	struct msurfmesh_s	*next;		// temporary chain of subdivided surfaces
-} msurfmesh_t;
+	msurface_t	*surf;		// pointer to parent surface. Just for consistency
+	msurfmesh_t	*next;		// temporary chain of subdivided surfaces
+};
 
 // surface extradata stored in cache.data for all brushmodels
-typedef struct mextrasurf_s
+struct mextrasurf_s
 {
 	vec3_t		mins, maxs;
 	vec3_t		origin;		// surface origin
@@ -234,14 +254,14 @@ typedef struct mextrasurf_s
 
 	int		mirrortexturenum;	// gl texnum
 	float		mirrormatrix[4][4];
-	struct mextrasurf_s	*mirrorchain;	// for gl_texsort drawing
-	struct mextrasurf_s	*detailchain;	// for detail textures drawing
+	mextrasurf_t	*mirrorchain;	// for gl_texsort drawing
+	mextrasurf_t	*detailchain;	// for detail textures drawing
 	color24		*deluxemap;	// note: this is the actual deluxemap data for this surface
 
 	int		reserved[32];	// just for future expansions or mod-makers
-} mextrasurf_t;
+};
 
-typedef struct hull_s
+struct hull_s
 {
 	dclipnode_t	*clipnodes;
 	mplane_t		*planes;
@@ -249,17 +269,17 @@ typedef struct hull_s
 	int		lastclipnode;
 	vec3_t		clip_mins;
 	vec3_t		clip_maxs;
-} hull_t;
+};
 
 #ifndef CACHE_USER
 #define CACHE_USER
-typedef struct cache_user_s
+struct cache_user_s
 {
 	void		*data;		// extradata
-} cache_user_t;
+};
 #endif
 
-typedef struct model_s
+struct model_s
 {
 	char		name[64];		// model name
 	qboolean		needload;		// bmodels and sprites don't cache normally
@@ -326,27 +346,27 @@ typedef struct model_s
 // additional model data
 //
 	cache_user_t	cache;		// only access through Mod_Extradata
-} model_t;
+};
 
-typedef struct alight_s
+struct alight_s
 {
 	int		ambientlight;	// clip at 128
 	int		shadelight;	// clip at 192 - ambientlight
 	vec3_t		color;
 	float		*plightvec;
-} alight_t;
+};
 
-typedef struct auxvert_s
+struct auxvert_s
 {
 	float		fv[3];		// viewspace x, y
-} auxvert_t;
+};
 
 #define MAX_SCOREBOARDNAME	32
 #define MAX_INFO_STRING	256
 
 #include "custom.h"
 
-typedef struct player_info_s
+struct player_info_s
 {
 	int		userid;			// User id on server
 	char		userinfo[MAX_INFO_STRING];	// User info string
@@ -371,35 +391,35 @@ typedef struct player_info_s
 	vec3_t		prevgaitorigin;
 
 	customization_t	customdata;
-} player_info_t;
+};
 
 //
 // sprite representation in memory
 //
 typedef enum { SPR_SINGLE = 0, SPR_GROUP, SPR_ANGLED } spriteframetype_t;
 
-typedef struct mspriteframe_s
+struct mspriteframe_s
 {
 	int		width;
 	int		height;
 	float		up, down, left, right;
 	int		gl_texturenum;
-} mspriteframe_t;
+};
 
-typedef struct
+struct mspritegroup_s
 {
 	int		numframes;
 	float		*intervals;
 	mspriteframe_t	*frames[1];
-} mspritegroup_t;
+};
 
-typedef struct
+struct mspriteframedesc_s
 {
 	spriteframetype_t	type;
 	mspriteframe_t	*frameptr;
-} mspriteframedesc_t;
+};
 
-typedef struct
+struct msprite_s
 {
 	short		type;
 	short		texFormat;
@@ -410,6 +430,6 @@ typedef struct
 	int		facecull;
 	int		synctype;
 	mspriteframedesc_t	frames[1];
-} msprite_t;
+};
 
 #endif//COM_MODEL_H

@@ -347,7 +347,7 @@ void DLLEXPORT CAM_Think( void )
 	// Move towards ideal
 	VectorCopy( cam_ofs, camAngles );
 
-	gEngfuncs.GetViewAngles( viewangles.asArray() );
+	gEngfuncs.GetViewAngles( viewangles );
 
 	if( cam_snapto->value )
 	{
@@ -466,7 +466,7 @@ void CAM_ToThirdPerson( void )
 		return;
 	}
 #endif
-	gEngfuncs.GetViewAngles( viewangles.asArray() );
+	gEngfuncs.GetViewAngles( viewangles );
 
 	if( !cam_thirdperson )
 	{
@@ -533,7 +533,7 @@ void CAM_ClearStates( void )
 {
 	vec3_t viewangles;
 
-	gEngfuncs.GetViewAngles( viewangles.asArray() );
+	gEngfuncs.GetViewAngles( viewangles );
 
 	cam_pitchup.state = 0;
 	cam_pitchdown.state = 0;

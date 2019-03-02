@@ -43,17 +43,17 @@ extern void SpectatorThink( edict_t *pEntity );
 extern void Sys_Error( const char *error_string );
 
 extern void SetupVisibility( edict_t *pViewEntity, edict_t *pClient, unsigned char **pvs, unsigned char **pas );
-extern void UpdateClientData( const struct edict_s *ent, int sendweapons, struct clientdata_s *cd );
-extern int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet );
-extern void CreateBaseline( int player, int eindex, struct entity_state_s *baseline, struct edict_s *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs );
+extern void UpdateClientData( const edict_t *ent, int sendweapons, clientdata_t *cd );
+extern int AddToFullPack( entity_state_t *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet );
+extern void CreateBaseline( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs );
 extern void RegisterEncoders( void );
 
-extern int GetWeaponData( struct edict_s *player, struct weapon_data_s *info );
+extern int GetWeaponData( edict_t *player, weapon_data_t *info );
 
-extern void CmdStart( const edict_t *player, const struct usercmd_s *cmd, unsigned int random_seed );
+extern void CmdStart( const edict_t *player, const usercmd_t *cmd, unsigned int random_seed );
 extern void CmdEnd ( const edict_t *player );
 
-extern int ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size );
+extern int ConnectionlessPacket( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size );
 
 extern int GetHullBounds( int hullnumber, float *mins, float *maxs );
 

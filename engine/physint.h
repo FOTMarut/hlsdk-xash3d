@@ -16,6 +16,8 @@ GNU General Public License for more details.
 #ifndef PHYSINT_H
 #define PHYSINT_H
 
+#include "render_api.h"
+
 #define SV_PHYSICS_INTERFACE_VERSION		6
 
 #define STRUCT_FROM_LINK( l, t, m )		((t *)((byte *)l - (int)&(((t *)0)->m)))
@@ -26,15 +28,16 @@ GNU General Public License for more details.
 #define SERVER_LOADING	1
 #define SERVER_ACTIVE	2
 
-typedef struct areanode_s
+typedef struct areanode_s areanode_t;
+struct areanode_s
 {
 	int		axis;		// -1 = leaf node
 	float		dist;
-	struct areanode_s	*children[2];
+	areanode_t	*children[2];
 	link_t		trigger_edicts;
 	link_t		solid_edicts;
 	link_t		water_edicts;	// func water
-} areanode_t;
+};
 
 typedef struct server_physics_api_s
 {
@@ -47,18 +50,18 @@ typedef struct server_physics_api_s
 	int		( *pfnServerState )( void );
 	void		( *pfnHost_Error )( const char *error, ... );	// cause Host Error
 // ONLY ADD NEW FUNCTIONS TO THE END OF THIS STRUCT.  INTERFACE VERSION IS FROZEN AT 6
-	struct triangleapi_s *pTriAPI;	// draw coliisions etc. Only for local system
+	triangleapi_t *pTriAPI;	// draw coliisions etc. Only for local system
 
 	// draw debug messages (must be called from DrawOrthoTriangles). Only for local system
 	int		( *pfnDrawConsoleString )( int x, int y, char *string );
 	void		( *pfnDrawSetTextColor )( float r, float g, float b );
 	void		( *pfnDrawConsoleStringLen )( const char *string, int *length, int *height );
 	void		( *Con_NPrintf )( int pos, char *fmt, ... );
-	void		( *Con_NXPrintf )( struct con_nprint_s *info, char *fmt, ... );
+	void		( *Con_NXPrintf )( con_nprint_t *info, char *fmt, ... );
 	const char	*( *pfnGetLightStyle )( int style ); // read custom appreance for selected lightstyle
 	void		( *pfnUpdateFogSettings )( unsigned int packed_fog );
 	char		**(*pfnGetFilesList)( const char *pattern, int *numFiles, int gamedironly );
-	struct msurface_s	*(*pfnTraceSurface)( edict_t *pTextureEntity, const float *v1, const float *v2 );
+	msurface_t	*(*pfnTraceSurface)( edict_t *pTextureEntity, const float *v1, const float *v2 );
 	const byte	*(*pfnGetTextureData)( unsigned int texnum );
 
 	// static allocations
@@ -94,7 +97,7 @@ typedef struct physics_interface_s
 	// tracing entities with SOLID_CUSTOM mode on a server (not used by pmove code)
 	void		( *ClipMoveToEntity)( edict_t *ent, const float *start, float *mins, float *maxs, const float *end, trace_t *trace );
 	// tracing entities with SOLID_CUSTOM mode on a server (only used by pmove code)
-	void		( *ClipPMoveToEntity)( struct physent_s *pe, const float *start, float *mins, float *maxs, const float *end, struct pmtrace_s *tr );
+	void		( *ClipPMoveToEntity)( physent_t *pe, const float *start, float *mins, float *maxs, const float *end, pmtrace_t *tr );
 	// called at end the frame of SV_Physics call
 	void		( *SV_EndFrame )( void );
 	// called through save\restore process
@@ -108,7 +111,7 @@ typedef struct physics_interface_s
 	// read custom string (e.g. using user implementation of stringtable, not engine strings)
 	const char*	(*pfnGetString)( string_t iString );
 	// helper for restore custom decals that have custom message (e.g. Paranoia)
-	int		(*pfnRestoreDecal)( struct decallist_s *entry, edict_t *pEdict, qboolean adjacent );
+	int		(*pfnRestoreDecal)( decallist_t *entry, edict_t *pEdict, qboolean adjacent );
 } physics_interface_t;
 
 #endif//PHYSINT_H

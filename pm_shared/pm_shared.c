@@ -3296,7 +3296,7 @@ invoked by each side as appropriate.  There should be no distinction, internally
 and client.  This will ensure that prediction behaves appropriately.
 */
 
-void PM_Move( struct playermove_s *ppmove, int server )
+void PM_Move( playermove_t *ppmove, int server )
 {
 	assert( pm_shared_initialized );
 
@@ -3340,7 +3340,7 @@ int PM_GetPhysEntInfo( int ent )
 	return -1;
 }
 
-void PM_Init( struct playermove_s *ppmove )
+void PM_Init( playermove_t *ppmove )
 {
 	assert( !pm_shared_initialized );
 

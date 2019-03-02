@@ -105,7 +105,7 @@ typedef struct engine_api_s
 
 static engine_api_t engineapi;
 
-typedef int (*engine_api_func)( int version, int size, struct engine_api_s *api );
+typedef int (*engine_api_func)( int version, int size, engine_api_t *api );
 
 //-----------------------------------------------------------------------------
 // Purpose: Get launcher/engine interface from engine module

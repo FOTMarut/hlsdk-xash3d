@@ -1097,8 +1097,8 @@ void SetupVisibility( edict_t *pViewEntity, edict_t *pClient, unsigned char **pv
 		}
 	}
 
-	*pvs = ENGINE_SET_PVS( org.asArray() );
-	*pas = ENGINE_SET_PAS( org.asArray() );
+	*pvs = ENGINE_SET_PVS( org );
+	*pas = ENGINE_SET_PAS( org );
 }
 
 #include "entity_state.h"
@@ -1116,7 +1116,7 @@ player is 1 if the ent/e is a player and 0 otherwise
 pSet is either the PAS or PVS that we previous set up.  We can use it to ask the engine to filter the entity against the PAS or PVS.
 we could also use the pas/ pvs that we set in SetupVisibility, if we wanted to.  Caching the value is valid in that case, but still only for the current frame
 */
-int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet )
+int AddToFullPack( entity_state_t *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet )
 {
 	int i;
 
@@ -1138,7 +1138,7 @@ int AddToFullPack( struct entity_state_s *state, int e, edict_t *ent, edict_t *h
 	// If pSet is NULL, then the test will always succeed and the entity will be added to the update
 	if( ent != host )
 	{
-		if( !ENGINE_CHECK_VISIBILITY( (const struct edict_s *)ent, pSet ) )
+		if( !ENGINE_CHECK_VISIBILITY( (const edict_t *)ent, pSet ) )
 		{
 			// env_sky is visible always
 			if( !FClassnameIs( ent, "env_sky" ) )
@@ -1317,7 +1317,7 @@ CreateBaseline
 Creates baselines used for network encoding, especially for player data since players are not spawned until connect time.
 ===================
 */
-void CreateBaseline( int player, int eindex, struct entity_state_s *baseline, struct edict_s *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs )
+void CreateBaseline( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs )
 {
 	baseline->origin		= entity->v.origin;
 	baseline->angles		= entity->v.angles;
@@ -1618,7 +1618,7 @@ void RegisterEncoders( void )
 	DELTA_ADDENCODER( "Player_Encode", Player_Encode );
 }
 
-int GetWeaponData( struct edict_s *player, struct weapon_data_s *info )
+int GetWeaponData( edict_t *player, weapon_data_t *info )
 {
 #if defined( CLIENT_WEAPONS )
 	int i;
@@ -1689,7 +1689,7 @@ Data sent to current client only
 engine sets cd to 0 before calling.
 =================
 */
-void UpdateClientData( const struct edict_s *ent, int sendweapons, struct clientdata_s *cd )
+void UpdateClientData( const edict_t *ent, int sendweapons, clientdata_t *cd )
 {
 	if( !ent || !ent->pvPrivateData )
 		return;
@@ -1802,7 +1802,7 @@ We're about to run this usercmd for the specified player.  We can set up groupin
 This is the time to examine the usercmd for anything extra.  This call happens even if think does not.
 =================
 */
-void CmdStart( const edict_t *player, const struct usercmd_s *cmd, unsigned int random_seed )
+void CmdStart( const edict_t *player, const usercmd_t *cmd, unsigned int random_seed )
 {
 	entvars_t *pev = (entvars_t *)&player->v;
 	CBasePlayer *pl = (CBasePlayer *)CBasePlayer::Instance( pev );
@@ -1846,7 +1846,7 @@ ConnectionlessPacket
   size of the response_buffer, so you must zero it out if you choose not to respond.
 ================================
 */
-int ConnectionlessPacket( const struct netadr_s *net_from, const char *args, char *response_buffer, int *response_buffer_size )
+int ConnectionlessPacket( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size )
 {
 	// Parse stuff from args
 	//int max_buffer_size = *response_buffer_size;

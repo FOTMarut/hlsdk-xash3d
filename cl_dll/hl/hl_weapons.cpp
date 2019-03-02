@@ -504,7 +504,7 @@ void UTIL_ParticleBox( CBasePlayer *player, float *mins, float *maxs, float life
 		mmax[i] = player->pev->origin[i] + maxs[i];
 	}
 
-	gEngfuncs.pEfxAPI->R_ParticleBox( mmin.asArray(), mmax.asArray(), 5.0, 0, 255, 0 );
+	gEngfuncs.pEfxAPI->R_ParticleBox( mmin, mmax, 5.0, 0, 255, 0 );
 }
 
 /*
@@ -541,7 +541,7 @@ void UTIL_ParticleBoxes( void )
 			mins = pe->origin + pe->mins;
 			maxs = pe->origin + pe->maxs;
 
-			gEngfuncs.pEfxAPI->R_ParticleBox( mins.asArray(), maxs.asArray(), 0, 0, 255, 2.0 );
+			gEngfuncs.pEfxAPI->R_ParticleBox( mins, maxs, 0, 0, 255, 2.0 );
 		}
 	}
 
@@ -1031,7 +1031,7 @@ runfuncs is 1 if this is the first time we've predicted this command.  If so, so
 be ignored
 =====================
 */
-void _DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s *to, struct usercmd_s *cmd, int runfuncs, double time, unsigned int random_seed )
+void _DLLEXPORT HUD_PostRunCmd( local_state_t *from, local_state_t *to, usercmd_t *cmd, int runfuncs, double time, unsigned int random_seed )
 {
 	g_runfuncs = runfuncs;
 

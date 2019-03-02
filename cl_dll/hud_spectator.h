@@ -45,7 +45,7 @@ typedef struct overviewInfo_s
 typedef struct overviewEntity_s
 {
 	HSPRITE					hSprite;
-	struct cl_entity_s *	entity;
+	cl_entity_t *	entity;
 	double					killTime;
 } overviewEntity_t;
 
@@ -60,7 +60,7 @@ public:
 	void InitHUDData( void );
 	bool AddOverviewEntityToList( HSPRITE sprite, cl_entity_t * ent, double killTime );
 	void DeathMessage( int victim );
-	bool AddOverviewEntity( int type, struct cl_entity_s *ent, const char *modelname );
+	bool AddOverviewEntity( int type, cl_entity_t *ent, const char *modelname );
 	void CheckOverviewEntities();
 	void DrawOverview();
 	void DrawOverviewEntities();
@@ -116,7 +116,7 @@ private:
 
 	wrect_t		m_crosshairRect;
 
-	struct model_s	*m_MapSprite;	// each layer image is saved in one sprite, where each tile is a sprite frame
+	model_t	*m_MapSprite;	// each layer image is saved in one sprite, where each tile is a sprite frame
 	float		m_flNextObserverInput;
 	float		m_zoomDelta;
 	float		m_moveDelta;

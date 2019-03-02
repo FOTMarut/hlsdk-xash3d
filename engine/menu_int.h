@@ -81,7 +81,7 @@ typedef struct ui_enginefuncs_s
 	void	(*Con_Printf)( char *fmt, ... );
 	void	(*Con_DPrintf)( char *fmt, ... );
 	void	(*Con_NPrintf)( int pos, char *fmt, ... );
-	void	(*Con_NXPrintf)( struct con_nprint_s *info, char *fmt, ... );
+	void	(*Con_NXPrintf)( con_nprint_t *info, char *fmt, ... );
 
 	// sound handlers
 	void	(*pfnPlayLocalSound)( const char *szSound );
@@ -100,11 +100,11 @@ typedef struct ui_enginefuncs_s
 	void	(*pfnSetConsoleDefaultColor)( int r, int g, int b ); // color must came from colors.lst
 
 	// custom rendering (for playermodel preview)
-	struct cl_entity_s* (*pfnGetPlayerModel)( void );	// for drawing playermodel previews
-	void	(*pfnSetModel)( struct cl_entity_s *ed, const char *path );
+	cl_entity_t* (*pfnGetPlayerModel)( void );	// for drawing playermodel previews
+	void	(*pfnSetModel)( cl_entity_t *ed, const char *path );
 	void	(*pfnClearScene)( void );
-	void	(*pfnRenderScene)( const struct ref_params_s *fd );
-	int	(*CL_CreateVisibleEntity)( int type, struct cl_entity_s *ent );
+	void	(*pfnRenderScene)( const ref_params_t *fd );
+	int	(*CL_CreateVisibleEntity)( int type, cl_entity_t *ent );
 
 	// misc handlers
 	void	(*pfnHostError)( const char *szFmt, ... );

@@ -12,11 +12,11 @@
 #define NET_CALLBACK /* */
 
 // Dispatchers
-void NET_CALLBACK ListResponse( struct net_response_s *response );
-void NET_CALLBACK ServerResponse( struct net_response_s *response );
-void NET_CALLBACK PingResponse( struct net_response_s *response );
-void NET_CALLBACK RulesResponse( struct net_response_s *response );
-void NET_CALLBACK PlayersResponse( struct net_response_s *response );
+void NET_CALLBACK ListResponse( net_response_t *response );
+void NET_CALLBACK ServerResponse( net_response_t *response );
+void NET_CALLBACK PingResponse( net_response_t *response );
+void NET_CALLBACK RulesResponse( net_response_t *response );
+void NET_CALLBACK PlayersResponse( net_response_t *response );
 
 void ServersInit( void );
 void ServersShutdown( void );

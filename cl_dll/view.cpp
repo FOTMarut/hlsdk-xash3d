@@ -45,7 +45,7 @@ extern "C"
 	int CL_IsThirdPerson( void );
 	void CL_CameraOffset( float *ofs );
 
-	void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams );
+	void DLLEXPORT V_CalcRefdef( ref_params_t *pparams );
 
 	void PM_ParticleLine( float *start, float *end, int pcolor, float life, float vert );
 	int PM_GetVisEntInfo( int ent );
@@ -176,7 +176,7 @@ void V_InterpolateAngles( float *start, float *end, float *output, float frac )
 } */
 
 // Quakeworld bob code, this fixes jitters in the mutliplayer since the clock (pparams->time) isn't quite linear
-float V_CalcBob( struct ref_params_s *pparams )
+float V_CalcBob( ref_params_t *pparams )
 {
 	static double bobtime;
 	static float bob;
@@ -283,7 +283,7 @@ mlook and mouse, or klook and keyboard, pitch drifting is constantly stopped.
 V_CalcGunAngle
 ==================
 */
-void V_CalcGunAngle( struct ref_params_s *pparams )
+void V_CalcGunAngle( ref_params_t *pparams )
 {	
 	cl_entity_t *viewent;
 
@@ -310,7 +310,7 @@ V_AddIdle
 Idle swaying
 ==============
 */
-void V_AddIdle( struct ref_params_s *pparams )
+void V_AddIdle( ref_params_t *pparams )
 {
 	pparams->viewangles[ROLL] += v_idlescale * sin( pparams->time * v_iroll_cycle.value ) * v_iroll_level.value;
 	pparams->viewangles[PITCH] += v_idlescale * sin( pparams->time * v_ipitch_cycle.value ) * v_ipitch_level.value;
@@ -324,7 +324,7 @@ V_CalcViewRoll
 Roll is induced by movement and damage
 ==============
 */
-void V_CalcViewRoll( struct ref_params_s *pparams )
+void V_CalcViewRoll( ref_params_t *pparams )
 {
 	float side;
 	cl_entity_t *viewentity;
@@ -352,7 +352,7 @@ V_CalcIntermissionRefdef
 
 ==================
 */
-void V_CalcIntermissionRefdef( struct ref_params_s *pparams )
+void V_CalcIntermissionRefdef( ref_params_t *pparams )
 {
 	cl_entity_t /**ent,*/ *view;
 	float old;
@@ -409,7 +409,7 @@ V_CalcRefdef
 
 ==================
 */
-void V_CalcNormalRefdef( struct ref_params_s *pparams )
+void V_CalcNormalRefdef( ref_params_t *pparams )
 {
 	cl_entity_t *ent, *view;
 	int i;
@@ -557,7 +557,7 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 
 		ofs[0] = ofs[1] = ofs[2] = 0.0;
 
-		CL_CameraOffset( ofs.asArray() );
+		CL_CameraOffset( ofs );
 
 		VectorCopy( ofs, camAngles );
 		camAngles[ROLL]	= 0;
@@ -632,9 +632,9 @@ void V_CalcNormalRefdef( struct ref_params_s *pparams )
 	VectorAdd( pparams->viewangles, pparams->punchangle, pparams->viewangles );
 
 	// Include client side punch, too
-	VectorAdd( pparams->viewangles, g_ev_punchangle.asArray(), pparams->viewangles );
+	VectorAdd( pparams->viewangles, g_ev_punchangle, pparams->viewangles );
 
-	V_DropPunchAngle( pparams->frametime, g_ev_punchangle.asArray() );
+	V_DropPunchAngle( pparams->frametime, g_ev_punchangle );
 
 	// smooth out stair step ups
 #if 1
@@ -1333,7 +1333,7 @@ int V_FindViewModelByWeaponModel( int weaponindex )
 		{ NULL, NULL }
 	};
 
-	struct model_s *weaponModel = IEngineStudio.GetModelByIndex( weaponindex );
+	model_t *weaponModel = IEngineStudio.GetModelByIndex( weaponindex );
 
 	if( weaponModel )
 	{
@@ -1361,7 +1361,7 @@ V_CalcSpectatorRefdef
 
 ==================
 */
-void V_CalcSpectatorRefdef( struct ref_params_s * pparams )
+void V_CalcSpectatorRefdef( ref_params_t * pparams )
 {
 	static vec3_t velocity( 0.0f, 0.0f, 0.0f );
 
@@ -1521,7 +1521,7 @@ void V_CalcSpectatorRefdef( struct ref_params_s * pparams )
 	VectorCopy( v_origin, pparams->vieworg );
 }
 
-void DLLEXPORT V_CalcRefdef( struct ref_params_s *pparams )
+void DLLEXPORT V_CalcRefdef( ref_params_t *pparams )
 {
 	// intermission / finale rendering
 	if( pparams->intermission )
@@ -1672,12 +1672,12 @@ void V_Move( int mx, int my )
 	farpoint = v_origin + 8192 * forward;
 
 	// Trace
-	tr = *( gEngfuncs.PM_TraceLine( v_origin.asArray(), farpoint.asArray(), PM_TRACELINE_PHYSENTSONLY, 2 /*point sized hull*/, -1 ) );
+	tr = *( gEngfuncs.PM_TraceLine( v_origin, farpoint, PM_TRACELINE_PHYSENTSONLY, 2 /*point sized hull*/, -1 ) );
 
 	if( tr.fraction != 1.0 && tr.ent != 0 )
 	{
 		hitent = PM_GetPhysEntInfo( tr.ent );
-		PM_ParticleLine( v_origin.asArray(), tr.endpos.asArray(), 5, 1.0, 0.0 );
+		PM_ParticleLine( v_origin, tr.endpos, 5, 1.0, 0.0 );
 	}
 	else
 	{

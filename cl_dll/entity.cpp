@@ -28,13 +28,13 @@ int g_iAlive = 1;
 
 extern "C"
 {
-	int DLLEXPORT HUD_AddEntity( int type, struct cl_entity_s *ent, const char *modelname );
+	int DLLEXPORT HUD_AddEntity( int type, cl_entity_t *ent, const char *modelname );
 	void DLLEXPORT HUD_CreateEntities( void );
-	void DLLEXPORT HUD_StudioEvent( const struct mstudioevent_s *event, const struct cl_entity_s *entity );
-	void DLLEXPORT HUD_TxferLocalOverrides( struct entity_state_s *state, const struct clientdata_s *client );
-	void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct entity_state_s *src );
-	void DLLEXPORT HUD_TxferPredictionData ( struct entity_state_s *ps, const struct entity_state_s *pps, struct clientdata_s *pcd, const struct clientdata_s *ppcd, struct weapon_data_s *wd, const struct weapon_data_s *pwd );
-	void DLLEXPORT HUD_TempEntUpdate( double frametime, double client_time, double cl_gravity, struct tempent_s **ppTempEntFree, struct tempent_s **ppTempEntActive, int ( *Callback_AddVisibleEntity )( struct cl_entity_s *pEntity ), void ( *Callback_TempEntPlaySound )( struct tempent_s *pTemp, float damp ) );
+	void DLLEXPORT HUD_StudioEvent( const mstudioevent_t *event, const cl_entity_t *entity );
+	void DLLEXPORT HUD_TxferLocalOverrides( entity_state_t *state, const clientdata_t *client );
+	void DLLEXPORT HUD_ProcessPlayerState( entity_state_t *dst, const entity_state_t *src );
+	void DLLEXPORT HUD_TxferPredictionData ( entity_state_t *ps, const entity_state_t *pps, clientdata_t *pcd, const clientdata_t *ppcd, weapon_data_t *wd, const weapon_data_t *pwd );
+	void DLLEXPORT HUD_TempEntUpdate( double frametime, double client_time, double cl_gravity, TEMPENTITY **ppTempEntFree, TEMPENTITY **ppTempEntActive, int ( *Callback_AddVisibleEntity )( cl_entity_t *pEntity ), void ( *Callback_TempEntPlaySound )( TEMPENTITY *pTemp, float damp ) );
 	struct cl_entity_s DLLEXPORT *HUD_GetUserEntity( int index );
 }
 
@@ -44,7 +44,7 @@ HUD_AddEntity
 	Return 0 to filter entity from visible list for rendering
 ========================
 */
-int DLLEXPORT HUD_AddEntity( int type, struct cl_entity_s *ent, const char *modelname )
+int DLLEXPORT HUD_AddEntity( int type, cl_entity_t *ent, const char *modelname )
 {
 	switch( type )
 	{
@@ -82,7 +82,7 @@ playerstate update in entity_state_t.  In order for these overrides to eventuall
 structure, we need to copy them into the state structure at this point.
 =========================
 */
-void DLLEXPORT HUD_TxferLocalOverrides( struct entity_state_s *state, const struct clientdata_s *client )
+void DLLEXPORT HUD_TxferLocalOverrides( entity_state_t *state, const clientdata_t *client )
 {
 	VectorCopy( client->origin, state->origin );
 
@@ -105,7 +105,7 @@ We have received entity_state_t for this player over the network.  We need to co
 playerstate structure
 =========================
 */
-void DLLEXPORT HUD_ProcessPlayerState( struct entity_state_s *dst, const struct entity_state_s *src )
+void DLLEXPORT HUD_ProcessPlayerState( entity_state_t *dst, const entity_state_t *src )
 {
 	// Copy in network data
 	VectorCopy( src->origin, dst->origin );
@@ -171,7 +171,7 @@ Because we can predict an arbitrary number of frames before the server responds 
  update is occupying.
 =========================
 */
-void DLLEXPORT HUD_TxferPredictionData( struct entity_state_s *ps, const struct entity_state_s *pps, struct clientdata_s *pcd, const struct clientdata_s *ppcd, struct weapon_data_s *wd, const struct weapon_data_s *pwd )
+void DLLEXPORT HUD_TxferPredictionData( entity_state_t *ps, const entity_state_t *pps, clientdata_t *pcd, const clientdata_t *ppcd, weapon_data_t *wd, const weapon_data_t *pwd )
 {
 	ps->oldbuttons				= pps->oldbuttons;
 	ps->flFallVelocity			= pps->flFallVelocity;
@@ -236,7 +236,7 @@ void MoveModel( void )
 	cl_entity_t *player;
 	int i, j;
 	int modelindex;
-	struct model_s *mod;
+	model_t *mod;
 
 	// Load it up with some bogus data
 	player = gEngfuncs.GetLocalPlayer();
@@ -301,7 +301,7 @@ void TraceModel( void )
 */
 
 /*
-void ParticleCallback( struct particle_s *particle, float frametime )
+void ParticleCallback( particle_t *particle, float frametime )
 {
 	int i;
 
@@ -367,7 +367,7 @@ void Particles( void )
 */
 
 /*
-void TempEntCallback( struct tempent_s *ent, float frametime, float currenttime )
+void TempEntCallback( TEMPENTITY *ent, float frametime, float currenttime )
 {
 	int i;
 
@@ -391,7 +391,7 @@ void TempEnts( void )
 
 	TEMPENTITY *p;
 	int i, j;
-	struct model_s *mod;
+	model_t *mod;
 	vec3_t origin;
 	int index;
 
@@ -408,7 +408,7 @@ void TempEnts( void )
 			}
 		}
 
-		p = gEngfuncs.pEfxAPI->CL_TentEntAllocCustom( origin.asArray(), mod, 0, TempEntCallback );
+		p = gEngfuncs.pEfxAPI->CL_TentEntAllocCustom( origin, mod, 0, TempEntCallback );
 		if( !p )
 			break;
 
@@ -435,7 +435,7 @@ void BeamEndModel( void )
 {
 	cl_entity_t *player, *model;
 	int modelindex;
-	struct model_s *mod;
+	model_t *mod;
 
 	// Load it up with some bogus data
 	player = gEngfuncs.GetLocalPlayer();
@@ -470,7 +470,7 @@ void Beams( void )
 {
 	static float lasttime;
 	float curtime;
-	struct model_s *mod;
+	model_t *mod;
 	int index;
 
 	BeamEndModel();
@@ -538,28 +538,28 @@ The entity's studio model description indicated an event was
 fired during this frame, handle the event by it's tag ( e.g., muzzleflash, sound )
 =========================
 */
-void DLLEXPORT HUD_StudioEvent( const struct mstudioevent_s *event, const struct cl_entity_s *entity )
+void DLLEXPORT HUD_StudioEvent( const mstudioevent_t *event, const cl_entity_t *entity )
 {
 	switch( event->event )
 	{
 	case 5001:
-		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[0].asArray(), atoi( event->options ) );
+		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[0], atoi( event->options ) );
 		break;
 	case 5011:
-		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[1].asArray(), atoi( event->options ) );
+		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[1], atoi( event->options ) );
 		break;
 	case 5021:
-		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[2].asArray(), atoi( event->options ) );
+		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[2], atoi( event->options ) );
 		break;
 	case 5031:
-		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[3].asArray(), atoi( event->options ) );
+		gEngfuncs.pEfxAPI->R_MuzzleFlash( entity->attachment[3], atoi( event->options ) );
 		break;
 	case 5002:
-		gEngfuncs.pEfxAPI->R_SparkEffect( entity->attachment[0].asArray(), atoi( event->options ), -100, 100 );
+		gEngfuncs.pEfxAPI->R_SparkEffect( entity->attachment[0], atoi( event->options ), -100, 100 );
 		break;
 	// Client side sound
 	case 5004:		
-		gEngfuncs.pfnPlaySoundByNameAtLocation( (char *)event->options, 1.0, entity->attachment[0].asArray() );
+		gEngfuncs.pfnPlaySoundByNameAtLocation( (char *)event->options, 1.0, entity->attachment[0] );
 		break;
 	default:
 		break;

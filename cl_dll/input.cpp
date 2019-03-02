@@ -31,7 +31,7 @@ extern "C"
 extern "C" 
 {
 	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
-	void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active );
+	void DLLEXPORT CL_CreateMove( float frametime, usercmd_t *cmd, int active );
 	void DLLEXPORT HUD_Shutdown( void );
 	int DLLEXPORT HUD_Key_Event( int eventcode, int keynum, const char *pszCurrentBinding );
 }
@@ -123,12 +123,13 @@ kbutton_t	in_score;
 kbutton_t	in_break;
 kbutton_t	in_graph;  // Display the netgraph
 
-typedef struct kblist_s
+typedef struct kblist_s kblist_t;
+struct kblist_s
 {
-	struct kblist_s *next;
+	kblist_t *next;
 	kbutton_t *pkey;
 	char name[32];
-} kblist_t;
+};
 
 kblist_t *g_kbkeys = NULL;
 
@@ -773,7 +774,7 @@ if active == 1 then we are 1) not playing back demos ( where our commands are ig
 2 ) we have finished signing on to server
 ================
 */
-void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active )
+void DLLEXPORT CL_CreateMove( float frametime, usercmd_t *cmd, int active )
 {
 	float spd;
 	vec3_t viewangles;
@@ -783,13 +784,13 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 	{
 		//memset( viewangles, 0, sizeof(vec3_t) );
 		//viewangles[0] = viewangles[1] = viewangles[2] = 0.0;
-		gEngfuncs.GetViewAngles( viewangles.asArray() );
+		gEngfuncs.GetViewAngles( viewangles );
 
 		CL_AdjustAngles( frametime, viewangles );
 
 		memset( cmd, 0, sizeof(*cmd) );
 
-		gEngfuncs.SetViewAngles( viewangles.asArray() );
+		gEngfuncs.SetViewAngles( viewangles );
 
 		if( in_strafe.state & 1 )
 		{
@@ -860,7 +861,7 @@ void DLLEXPORT CL_CreateMove( float frametime, struct usercmd_s *cmd, int active
 		}
 	}
 
-	gEngfuncs.GetViewAngles( viewangles.asArray() );
+	gEngfuncs.GetViewAngles( viewangles );
 	// Set current view angles.
 
 	if( g_iAlive )

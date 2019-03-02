@@ -18,21 +18,19 @@
 #define MATHLIB_H
 #include <math.h>
 
+#ifndef DID_VECX_T_DEFINE
+#define DID_VECX_T_DEFINE
 typedef float vec_t;
 typedef vec_t vec2_t[2];
-
-#ifndef DID_VEC3_T_DEFINE
-#define DID_VEC3_T_DEFINE
 typedef vec_t vec3_t[3];
-#endif
-
 typedef vec_t vec4_t[4];	// x,y,z,w
+#endif
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-struct mplane_s;
+#include "com_model.h"
 
 extern vec3_t vec3_origin;
 //extern	int nanmask;
@@ -83,7 +81,7 @@ void VectorAngles( const vec3_t forward, vec3_t angles );
 
 int InvertMatrix( const float * m, float *out );
 
-int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, struct mplane_s *plane);
+int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, mplane_t *plane);
 float	anglemod(float a);
 
 #define BOX_ON_PLANE_SIDE(emins, emaxs, p)	\

@@ -53,7 +53,8 @@ typedef struct resourceinfo_s
 #define RES_ALWAYS		(1<<5)	// Download always even if available on client
 #define RES_CHECKFILE	(1<<7)	// Check file on client
 
-typedef struct resource_s
+typedef struct resource_s resource_t;
+struct resource_s
 {
 	char			szFileName[64];	// File name to download/precache.
 	resourcetype_t		type;		// t_sound, t_skin, t_model, t_decal.
@@ -67,11 +68,12 @@ typedef struct resource_s
 						// if it's a custom resource.
 
 	unsigned char		rguc_reserved[32];	// For future expansion
-	struct resource_s		*pNext;		// Next in chain.
-	struct resource_s		*pPrev;
-} resource_t;
+	resource_t		*pNext;		// Next in chain.
+	resource_t		*pPrev;
+};
 
-typedef struct customization_s
+typedef struct customization_s customization_t;
+struct customization_s
 {
 	qboolean			bInUse;		// Is this customization in use;
 	resource_t		resource;		// The resource_t for this customization
@@ -83,8 +85,8 @@ typedef struct customization_s
 						// the data (e.g., the cachewad_t)
 	void			*pBuffer;		// Buffer that holds the data for the customization
 						// (the raw .wad data)
-	struct customization_s	*pNext;		// Next in chain
-} customization_t;
+	customization_t	*pNext;		// Next in chain
+};
 
 #define FCUST_FROMHPAK		( 1<<0 )
 #define FCUST_WIPEDATA		( 1<<1 )
