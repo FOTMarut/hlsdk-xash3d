@@ -1387,7 +1387,7 @@ static entity_field_alias_t entity_field_alias[] =
 	{ "angles[2]",			0 },
 };
 
-void Entity_FieldInit( struct delta_s *pFields )
+void Entity_FieldInit( delta_t *pFields )
 {
 	entity_field_alias[FIELD_ORIGIN0].field		= DELTA_FINDFIELD( pFields, entity_field_alias[FIELD_ORIGIN0].name );
 	entity_field_alias[FIELD_ORIGIN1].field		= DELTA_FINDFIELD( pFields, entity_field_alias[FIELD_ORIGIN1].name );
@@ -1405,7 +1405,7 @@ Callback for sending entity_state_t info over network.
 FIXME:  Move to script
 ==================
 */
-void Entity_Encode( struct delta_s *pFields, const unsigned char *from, const unsigned char *to )
+void Entity_Encode( delta_t *pFields, const unsigned char *from, const unsigned char *to )
 {
 	entity_state_t *f, *t;
 	int localplayer = 0;
@@ -1462,7 +1462,7 @@ static entity_field_alias_t player_field_alias[] =
 	{ "origin[2]",			0 },
 };
 
-void Player_FieldInit( struct delta_s *pFields )
+void Player_FieldInit( delta_t *pFields )
 {
 	player_field_alias[FIELD_ORIGIN0].field		= DELTA_FINDFIELD( pFields, player_field_alias[FIELD_ORIGIN0].name );
 	player_field_alias[FIELD_ORIGIN1].field		= DELTA_FINDFIELD( pFields, player_field_alias[FIELD_ORIGIN1].name );
@@ -1476,7 +1476,7 @@ Player_Encode
 Callback for sending entity_state_t for players info over network. 
 ==================
 */
-void Player_Encode( struct delta_s *pFields, const unsigned char *from, const unsigned char *to )
+void Player_Encode( delta_t *pFields, const unsigned char *from, const unsigned char *to )
 {
 	entity_state_t *f, *t;
 	int localplayer = 0;
@@ -1538,7 +1538,7 @@ entity_field_alias_t custom_entity_field_alias[] =
 	{ "animtime",			0 },
 };
 
-void Custom_Entity_FieldInit( struct delta_s *pFields )
+void Custom_Entity_FieldInit( delta_t *pFields )
 {
 	custom_entity_field_alias[CUSTOMFIELD_ORIGIN0].field = DELTA_FINDFIELD( pFields, custom_entity_field_alias[CUSTOMFIELD_ORIGIN0].name );
 	custom_entity_field_alias[CUSTOMFIELD_ORIGIN1].field = DELTA_FINDFIELD( pFields, custom_entity_field_alias[CUSTOMFIELD_ORIGIN1].name );
@@ -1559,7 +1559,7 @@ Callback for sending entity_state_t info ( for custom entities ) over network.
 FIXME:  Move to script
 ==================
 */
-void Custom_Encode( struct delta_s *pFields, const unsigned char *from, const unsigned char *to )
+void Custom_Encode( delta_t *pFields, const unsigned char *from, const unsigned char *to )
 {
 	entity_state_t *f, *t;
 	int beamType;

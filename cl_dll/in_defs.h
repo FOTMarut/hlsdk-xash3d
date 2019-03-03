@@ -21,7 +21,7 @@
 #include <windows.h>
 #undef HSPRITE
 #else
-typedef struct point_s
+typedef struct tagPOINT
 {
 	int x;
 	int y;

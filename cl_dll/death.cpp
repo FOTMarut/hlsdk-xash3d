@@ -25,7 +25,8 @@
 
 DECLARE_MESSAGE( m_DeathNotice, DeathMsg )
 
-struct DeathNoticeItem {
+struct DeathNoticeItem
+{
 	char szKiller[MAX_PLAYER_NAME_LENGTH * 2];
 	char szVictim[MAX_PLAYER_NAME_LENGTH * 2];
 	int iId;	// the index number of the associated sprite

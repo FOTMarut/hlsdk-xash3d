@@ -19,7 +19,7 @@
 #ifndef SKILL_H
 #define SKILL_H
 
-struct skilldata_t
+typedef struct skilldata_s
 {
 	int iSkillLevel; // game skill level
 
@@ -136,7 +136,7 @@ struct skilldata_t
 	float plrStomach;
 	float plrLeg;
 	float plrArm;
-};
+} skilldata_t;
 
 extern	DLL_GLOBAL	skilldata_t	gSkillData;
 float GetSkillCvar( const char *pName );

@@ -340,12 +340,14 @@ public:
 	int Remove( float &);
 
 private:
+	typedef struct tag_HEAP_NODE_s
+	{
+			int   Id;
+			float Priority;
+	} tag_HEAP_NODE_t;
+
 	int	m_cSize;
-    struct tag_HEAP_NODE
-    {
-        int   Id;
-        float Priority;
-    } m_heap[ MAX_STACK_NODES ];
+	tag_HEAP_NODE_t m_heap[ MAX_STACK_NODES ];
 	void Heap_SiftDown(int);
 	void Heap_SiftUp(void);
 

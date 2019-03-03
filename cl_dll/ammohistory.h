@@ -108,7 +108,8 @@ enum {
 class HistoryResource
 {
 private:
-	struct HIST_ITEM {
+	struct HIST_ITEM
+	{
 		int type;
 		float DisplayTime;  // the time at which this item should be removed from the history
 		int iCount;

@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #include "cvardef.h"
 #include "gameinfo.h"
 #include "wrect.h"
+#include "netadr.h"
 
 typedef int		HIMAGE;		// handle to a graphic
 
@@ -114,7 +115,7 @@ typedef struct ui_enginefuncs_s
 	// gameinfo handlers
 	int	(*pfnCreateMapsList)( int fRefresh );
 	int	(*pfnClientInGame)( void );
-	void	(*pfnClientJoin)( const struct netadr_s adr );
+	void	(*pfnClientJoin)( const netadr_t adr );
 	
 	// parse txt files
 	byte*	(*COM_LoadFile)( const char *filename, int *pLength );
@@ -172,7 +173,7 @@ typedef struct
 	void	(*pfnKeyEvent)( int key, int down );
 	void	(*pfnMouseMove)( int x, int y );
 	void	(*pfnSetActiveMenu)( int active );
-	void	(*pfnAddServerToList)( struct netadr_s adr, const char *info );
+	void	(*pfnAddServerToList)( netadr_t adr, const char *info );
 	void	(*pfnGetCursorPos)( int *pos_x, int *pos_y );
 	void	(*pfnSetCursorPos)( int pos_x, int pos_y );
 	void	(*pfnShowCursor)( int show );

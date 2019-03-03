@@ -35,7 +35,7 @@ extern "C"
 	void DLLEXPORT HUD_ProcessPlayerState( entity_state_t *dst, const entity_state_t *src );
 	void DLLEXPORT HUD_TxferPredictionData ( entity_state_t *ps, const entity_state_t *pps, clientdata_t *pcd, const clientdata_t *ppcd, weapon_data_t *wd, const weapon_data_t *pwd );
 	void DLLEXPORT HUD_TempEntUpdate( double frametime, double client_time, double cl_gravity, TEMPENTITY **ppTempEntFree, TEMPENTITY **ppTempEntActive, int ( *Callback_AddVisibleEntity )( cl_entity_t *pEntity ), void ( *Callback_TempEntPlaySound )( TEMPENTITY *pTemp, float damp ) );
-	struct cl_entity_s DLLEXPORT *HUD_GetUserEntity( int index );
+	cl_entity_t DLLEXPORT *HUD_GetUserEntity( int index );
 }
 
 /*

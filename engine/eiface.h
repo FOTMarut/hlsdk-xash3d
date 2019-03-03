@@ -39,6 +39,8 @@
 // This is conveniently done for them in extdll.h
 //
 
+typedef struct delta_s delta_t; // not actually defined
+
 typedef enum
 {
 	at_notice,
@@ -231,14 +233,14 @@ typedef struct enginefuncs_s
 
 	int	(*pfnCheckVisibility )( const edict_t *entity, unsigned char *pset );
 
-	void	(*pfnDeltaSetField)	( struct delta_s *pFields, const char *fieldname );
-	void	(*pfnDeltaUnsetField)( struct delta_s *pFields, const char *fieldname );
-	void	(*pfnDeltaAddEncoder)( const char *name, void (*conditionalencode)( struct delta_s *pFields, const unsigned char *from, const unsigned char *to ) );
+	void	(*pfnDeltaSetField)	( delta_t *pFields, const char *fieldname );
+	void	(*pfnDeltaUnsetField)( delta_t *pFields, const char *fieldname );
+	void	(*pfnDeltaAddEncoder)( const char *name, void (*conditionalencode)( delta_t *pFields, const unsigned char *from, const unsigned char *to ) );
 	int	(*pfnGetCurrentPlayer)( void );
 	int	(*pfnCanSkipPlayer)( const edict_t *player );
-	int	(*pfnDeltaFindField)( struct delta_s *pFields, const char *fieldname );
-	void	(*pfnDeltaSetFieldByIndex)( struct delta_s *pFields, int fieldNumber );
-	void	(*pfnDeltaUnsetFieldByIndex)( struct delta_s *pFields, int fieldNumber );
+	int	(*pfnDeltaFindField)( delta_t *pFields, const char *fieldname );
+	void	(*pfnDeltaSetFieldByIndex)( delta_t *pFields, int fieldNumber );
+	void	(*pfnDeltaUnsetFieldByIndex)( delta_t *pFields, int fieldNumber );
 	void	(*pfnSetGroupMask)( int mask, int op );
 	int	(*pfnCreateInstancedBaseline)( int classname, entity_state_t *baseline );
 	void	(*pfnCvar_DirectSet)( cvar_t *var, const char *value );

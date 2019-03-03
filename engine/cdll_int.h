@@ -56,6 +56,7 @@ struct cmdalias_s
 
 typedef int HSPRITE;	// handle to a graphic
 typedef int (*pfnUserMsgHook)( const char *pszName, int iSize, void *pbuf );
+typedef struct tagPOINT POINT;
 
 #include "wrect.h"
 
@@ -276,7 +277,7 @@ typedef struct cl_enginefuncs_s
 	// (but it might not get there).
 	int	( *pfnServerCmdUnreliable )( const char *szCmdString );
 
-	void	(*pfnGetMousePos)( struct tagPOINT *ppt );
+	void	(*pfnGetMousePos)( POINT *ppt );
 	void	(*pfnSetMousePos)( int x, int y );
 	void	(*pfnSetMouseEnable)( qboolean fEnable );
 

@@ -2318,7 +2318,7 @@ void CQueuePriority::Heap_SiftDown( int iSubRoot )
 	int parent = iSubRoot;
 	int child = HEAP_LEFT_CHILD( parent );
 
-	struct tag_HEAP_NODE Ref = m_heap[parent];
+	tag_HEAP_NODE_t Ref = m_heap[parent];
 
 	while( child < m_cSize )
 	{
@@ -2349,7 +2349,7 @@ void CQueuePriority::Heap_SiftUp( void )
 		if( m_heap[parent].Priority <= m_heap[child].Priority )
 			break;
 
-		struct tag_HEAP_NODE Tmp;
+		tag_HEAP_NODE_t Tmp;
 		Tmp = m_heap[child];
 		m_heap[child] = m_heap[parent];
 		m_heap[parent] = Tmp;
@@ -2738,15 +2738,15 @@ int CGraph::CheckNODFile( const char *szMapName )
 
 #define ENTRY_STATE_EMPTY -1
 
-struct tagNodePair
+typedef struct tagNodePair
 {
 	short iSrc;
 	short iDest;
-};
+} tagNodePair_t;
 
 void CGraph::HashInsert( int iSrcNode, int iDestNode, int iKey )
 {
-	struct tagNodePair np;
+	tagNodePair_t np;
 
 	np.iSrc  = iSrcNode;
 	np.iDest = iDestNode;
@@ -2768,7 +2768,7 @@ void CGraph::HashInsert( int iSrcNode, int iDestNode, int iKey )
 
 void CGraph::HashSearch( int iSrcNode, int iDestNode, int &iKey )
 {
-	struct tagNodePair np;
+	tagNodePair_t np;
 
 	np.iSrc = iSrcNode;
 	np.iDest = iDestNode;

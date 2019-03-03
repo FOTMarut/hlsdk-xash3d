@@ -30,7 +30,7 @@ extern "C"
 
 extern "C" 
 {
-	struct kbutton_s DLLEXPORT *KB_Find( const char *name );
+	kbutton_t DLLEXPORT *KB_Find( const char *name );
 	void DLLEXPORT CL_CreateMove( float frametime, usercmd_t *cmd, int active );
 	void DLLEXPORT HUD_Shutdown( void );
 	int DLLEXPORT HUD_Key_Event( int eventcode, int keynum, const char *pszCurrentBinding );
@@ -218,7 +218,7 @@ KB_Find
 Allows the engine to get a kbutton_t directly ( so it can check +mlook state, etc ) for saving out to .cfg files
 ============
 */
-struct kbutton_s DLLEXPORT *KB_Find( const char *name )
+kbutton_t DLLEXPORT *KB_Find( const char *name )
 {
 	kblist_t *p;
 	p = g_kbkeys;
