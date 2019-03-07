@@ -8,8 +8,8 @@
 #ifndef VGUI_COLOR_H
 #define VGUI_COLOR_H
 
-#include<VGUI.h>
-#include<VGUI_Scheme.h>
+#include "VGUI.h"
+#include "VGUI_Scheme.h"
 
 //TODO: rename getColor(r,g,b,a) to getRGBA(r,g,b,a)
 //TODO: rename setColor(r,g,b,a) to setRGBA(r,g,b,a)

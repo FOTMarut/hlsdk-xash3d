@@ -8,7 +8,7 @@
 #ifndef VGUI_KEYCODE_H
 #define VGUI_KEYCODE_H
 
-#include<VGUI.h>
+#include "VGUI.h"
 
 namespace vgui
 {

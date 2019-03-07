@@ -10,10 +10,10 @@
 #include "VGUI_Slider2.h"
 #include "vgui_loadtga.h"
 
-#include<VGUI_IntChangeSignal.h>
-#include<VGUI_Button.h>
-#include<VGUI_ActionSignal.h>
-#include<VGUI_LineBorder.h>
+#include "VGUI_IntChangeSignal.h"
+#include "VGUI_Button.h"
+#include "VGUI_ActionSignal.h"
+#include "VGUI_LineBorder.h"
 
 using namespace vgui;
 

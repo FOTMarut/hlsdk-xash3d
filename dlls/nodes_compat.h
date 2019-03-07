@@ -7,7 +7,7 @@
 
 #if _GRAPH_VERSION != _GRAPH_VERSION_RETAIL
 
-#include "stdint.h"
+#include <stdint.h>
 
 typedef int32_t PTR32;
 

@@ -42,7 +42,7 @@
 #define NOMCX
 #define NOIME
 #define HSPRITE HSPRITE_win32
-#include "windows.h"
+#include <windows.h>
 #undef HSPRITE
 #else // _WIN32
 #ifndef FALSE
@@ -60,9 +60,9 @@ typedef int BOOL;
 #endif //_WIN32
 
 // Misc C-runtime library headers
-#include "stdio.h"
-#include "stdlib.h"
-#include "math.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 
 #if defined(__LP64__) || defined(__LLP64__) || defined(_WIN64) || (defined(__x86_64__) && !defined(__ILP32__) ) || defined(_M_X64) || defined(__ia64) || defined (_M_IA64) || defined(__aarch64__) || defined(__powerpc64__)
   #define XASH_64BIT

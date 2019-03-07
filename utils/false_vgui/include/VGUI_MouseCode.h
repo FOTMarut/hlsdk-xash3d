@@ -8,7 +8,7 @@
 #ifndef VGUI_MOUSECODE_H
 #define VGUI_MOUSECODE_H
 
-#include<VGUI.h>
+#include "VGUI.h"
 
 namespace vgui
 {
