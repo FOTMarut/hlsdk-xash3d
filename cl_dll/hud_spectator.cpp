@@ -5,6 +5,8 @@
 // $NoKeywords: $
 //=============================================================================
 
+#include <stdio.h>
+
 #include "hud.h"
 #include "cl_util.h"
 #include "cl_entity.h"
@@ -36,7 +38,7 @@ extern void V_GetInEyePos( int entity, float * origin, float * angles );
 extern void V_ResetChaseCam();
 extern void V_GetChasePos( int target, float * cl_angles, float * origin, float * angles );
 extern void VectorAngles( const float *forward, float *angles );
-extern "C" void NormalizeAngles( float *angles );
+extern void NormalizeAngles( float *angles );
 extern float * GetClientColor( int clientIndex );
 
 extern vec3_t v_origin;		// last view origin
@@ -1231,7 +1233,7 @@ void CHudSpectator::DrawOverviewEntities()
 		int playerNum = ent->index - 1;
 
 		m_vPlayerPos[playerNum][0] = screen[0];	
-		m_vPlayerPos[playerNum][1] = screen[1] + Length( offset );	
+		m_vPlayerPos[playerNum][1] = screen[1] + offset.Length();
 		m_vPlayerPos[playerNum][2] = 1;	// mark player as visible 
 	}
 

@@ -31,6 +31,7 @@
 #include "event_args.h"
 #include "in_defs.h"
 
+#include <stdio.h>
 #include <string.h>
 
 #include "r_studioint.h"
@@ -1055,7 +1056,7 @@ void EV_FireGauss( event_args_t *args )
 
 						VectorSubtract( beam_tr.endpos, tr.endpos, delta );
 
-						n = Length( delta );
+						n = delta.Length();
 
 						if( n < flDamage )
 						{

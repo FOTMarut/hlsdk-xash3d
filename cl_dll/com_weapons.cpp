@@ -15,6 +15,7 @@
 
 // Com_Weapons.cpp
 // Shared weapons common/shared functions
+#include <stdio.h>
 #include <stdarg.h>
 #include "hud.h"
 #include "cl_util.h"

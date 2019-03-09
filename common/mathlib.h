@@ -18,23 +18,21 @@
 #define MATHLIB_H
 #include <math.h>
 
-#ifndef DID_VECX_T_DEFINE
-#define DID_VECX_T_DEFINE
 typedef float vec_t;
 typedef vec_t vec2_t[2];
+#ifndef DID_VEC3_T_DEFINE
+#define DID_VEC3_T_DEFINE
 typedef vec_t vec3_t[3];
-typedef vec_t vec4_t[4];	// x,y,z,w
 #endif
+typedef vec_t vec4_t[4];	// x,y,z,w
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-#include "com_model.h"
-
 extern vec3_t vec3_origin;
-//extern	int nanmask;
 
+//extern	int nanmask;
 //#define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)
 #define	IS_NAN(x) (!isfinite(x))
 
@@ -45,14 +43,15 @@ extern vec3_t vec3_origin;
 #define VectorSubtract(a,b,c) {(c)[0]=(a)[0]-(b)[0];(c)[1]=(a)[1]-(b)[1];(c)[2]=(a)[2]-(b)[2];}
 #define VectorAdd(a,b,c) {(c)[0]=(a)[0]+(b)[0];(c)[1]=(a)[1]+(b)[1];(c)[2]=(a)[2]+(b)[2];}
 #define VectorCopy(a,b) {(b)[0]=(a)[0];(b)[1]=(a)[1];(b)[2]=(a)[2];}
-#define VectorClear(a) {(a)[0]=0.0;(a)[1]=0.0;(a)[2]=0.0;}
+//#define VectorClear(a) {(a)[0]=0.0;(a)[1]=0.0;(a)[2]=0.0;}
+static inline void VectorClear( float *a ) { a[0] = 0.0; a[1] = 0.0; a[2] = 0.0; }
 
-void VectorMA (const vec3_t veca, float scale, const vec3_t vecb, vec3_t vecc);
+void VectorMA (const float *veca, float scale, const float *vecb, float *vecc);
 
-vec_t _DotProduct (vec3_t v1, vec3_t v2);
-void _VectorSubtract (vec3_t veca, vec3_t vecb, vec3_t out);
-void _VectorAdd (vec3_t veca, vec3_t vecb, vec3_t out);
-void _VectorCopy (vec3_t in, vec3_t out);
+//vec_t _DotProduct (vec3_t v1, vec3_t v2);
+//void _VectorSubtract (vec3_t veca, vec3_t vecb, vec3_t out);
+//void _VectorAdd (vec3_t veca, vec3_t vecb, vec3_t out);
+//void _VectorCopy (vec3_t in, vec3_t out);
 
 int VectorCompare (const vec3_t v1, const vec3_t v2);
 float Length (const vec3_t v);
@@ -72,31 +71,32 @@ void AngleMatrix (const vec3_t angles, float (*matrix)[4] );
 void AngleIMatrix (const vec3_t angles, float (*matrix)[4] );
 void VectorTransform (const vec3_t in1, float in2[3][4], vec3_t out);
 
-void NormalizeAngles( vec3_t angles );
-void InterpolateAngles( vec3_t start, vec3_t end, vec3_t output, float frac );
-float AngleBetweenVectors( const vec3_t v1, const vec3_t v2 );
+//void NormalizeAngles( vec3_t angles );
+//void InterpolateAngles( vec3_t start, vec3_t end, vec3_t output, float frac );
+//float AngleBetweenVectors( const vec3_t v1, const vec3_t v2 );
 
 void VectorMatrix( vec3_t forward, vec3_t right, vec3_t up);
 void VectorAngles( const vec3_t forward, vec3_t angles );
 
 int InvertMatrix( const float * m, float *out );
 
-int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, mplane_t *plane);
+//int BoxOnPlaneSide (vec3_t emins, vec3_t emaxs, mplane_t *plane);
 float	anglemod(float a);
 
-#define BOX_ON_PLANE_SIDE(emins, emaxs, p)	\
-	(((p)->type < 3)?						\
-	(										\
-		((p)->dist <= (emins)[(p)->type])?	\
-			1								\
-		:									\
-		(									\
-			((p)->dist >= (emaxs)[(p)->type])?\
-				2							\
-			:								\
-				3							\
-		)									\
-	)										\
-	:										\
-		BoxOnPlaneSide( (emins), (emaxs), (p)))
+//#define BOX_ON_PLANE_SIDE(emins, emaxs, p)	\
+//	(((p)->type < 3)?						\
+//	(										\
+//		((p)->dist <= (emins)[(p)->type])?	\
+//			1								\
+//		:									\
+//		(									\
+//			((p)->dist >= (emaxs)[(p)->type])?\
+//				2							\
+//			:								\
+//				3							\
+//		)									\
+//	)										\
+//	:										\
+//		BoxOnPlaneSide( (emins), (emaxs), (p)))
+
 #endif // MATHLIB_H

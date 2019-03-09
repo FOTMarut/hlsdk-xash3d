@@ -175,7 +175,7 @@ void V_InterpolateAngles( float *start, float *end, float *output, float frac )
 	V_NormalizeAngles( output );
 } */
 
-// Quakeworld bob code, this fixes jitters in the mutliplayer since the clock (pparams->time) isn't quite linear
+// Quakeworld bob code, this fixes jitters in the multiplayer since the clock (pparams->time) isn't quite linear
 float V_CalcBob( ref_params_t *pparams )
 {
 	static double bobtime;
@@ -667,7 +667,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 
 		VectorSubtract( pparams->simorg, lastorg, delta );
 
-		if( Length( delta ) != 0.0 )
+		if( delta.Length() != 0.0 )
 		{
 			VectorCopy( pparams->simorg, ViewInterp.Origins[ViewInterp.CurrentOrigin & ORIGIN_MASK] );
 			ViewInterp.OriginTime[ViewInterp.CurrentOrigin & ORIGIN_MASK] = pparams->time;
@@ -715,7 +715,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 				VectorMA( ViewInterp.Origins[foundidx & ORIGIN_MASK], frac, delta, neworg );
 
 				// Dont interpolate large changes
-				if( Length( delta ) < 64 )
+				if( delta.Length() < 64 )
 				{
 					VectorSubtract( neworg, pparams->simorg, delta );
 

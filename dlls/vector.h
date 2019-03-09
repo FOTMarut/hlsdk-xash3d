@@ -16,6 +16,18 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <stdlib.h>
+#include <math.h>
+
+typedef float		vec_t;
+typedef vec_t		vec2_t[2];
+#ifndef DID_VEC3_T_DEFINE
+#define DID_VEC3_T_DEFINE
+class Vector;
+typedef Vector		vec3_t;
+#endif
+typedef vec_t		vec4_t[4];	// x,y,z,w
+
 //=========================================================
 // 2DVector - used for many pathfinding and many other 
 // operations that are treated as planar rather than 3d.
@@ -23,24 +35,20 @@
 class Vector2D
 {
 public:
-	inline Vector2D(void): x( 0.0f ), y( 0.0f )						{ }
-	inline Vector2D(float X, float Y): x( 0.0f ), y( 0.0f )				{ x = X; y = Y; }
-	inline Vector2D operator+(const Vector2D& v)	const	{ return Vector2D( x + v.x, y + v.y );	}
-	inline Vector2D operator-(const Vector2D& v)	const	{ return Vector2D( x - v.x, y - v.y );	}
-	inline Vector2D operator*(float fl)		const	{ return Vector2D( x * fl, y * fl );	}
-	inline Vector2D operator/(float fl)		const	{ return Vector2D( x / fl, y / fl );	}
+	inline Vector2D(void): x( 0.0f ), y( 0.0f )			{ }
+	inline Vector2D(float X, float Y): x( X ), y( Y )	{ }
+	inline Vector2D operator+(const Vector2D& v) const	{ return Vector2D( x + v.x, y + v.y ); }
+	inline Vector2D operator-(const Vector2D& v) const	{ return Vector2D( x - v.x, y - v.y ); }
+	inline Vector2D operator*(float fl) const			{ return Vector2D( x * fl, y * fl ); }
+	inline Vector2D operator/(float fl) const			{ return Vector2D( x / fl, y / fl ); }
 
-	inline float Length(void)			const	{ return sqrt(x * x + y * y );		}
+	inline float Length(void) const						{ return sqrtf(x * x + y * y ); }
 
-	inline Vector2D Normalize ( void ) const
+	inline Vector2D Normalize( void ) const
 	{
-		//Vector2D vec2;
-
 		float flLen = Length();
 		if( flLen == 0 )
-		{
-			return Vector2D( 0, 0 );
-		}
+			return Vector2D( 0.0f, 0.0f );
 		else
 		{
 			flLen = 1 / flLen;
@@ -58,48 +66,44 @@ inline Vector2D operator*( float fl, const Vector2D& v ) { return v * fl; }
 // 3D Vector
 //=========================================================
 class Vector						// same data-layout as engine's vec3_t,
-{								//		which is a vec_t[3]
+{									// which is a vec_t[3]
 public:
-	// Construction/destruction
-	inline Vector( void ): x( 0.0f ), y( 0.0f ), z( 0.0f )								{ }
-	inline Vector( float X, float Y, float Z ): x( 0.0f ), y( 0.0f ), z( 0.0f )	{ x = X; y = Y; z = Z;				}
-	//inline Vector( double X, double Y, double Z )		{ x = (float)X; y = (float)Y; z = (float)Z;	}
-	//inline Vector( int X, int Y, int Z )			{ x = (float)X; y = (float)Y; z = (float)Z;	}
-	inline Vector( const Vector& v ): x( 0.0f ), y( 0.0f ), z( 0.0f )	{ x = v.x; y = v.y; z = v.z;			} 
-	inline Vector( float rgfl[3] ): x( 0.0f ), y( 0.0f ), z( 0.0f )	{ x = rgfl[0]; y = rgfl[1]; z = rgfl[2];	}
+	// Constructors
+	inline Vector( void ): x( 0.0f ), y( 0.0f ), z( 0.0f ) { }
+	inline Vector( float X, float Y, float Z ): x( X ), y( Y ), z( Z ) { }
+	//inline Vector( double X, double Y, double Z ): x( X ), y( Y ), z( Z ) { }
+	//inline Vector( int X, int Y, int Z) : x( X ), y( Y ), z( Z ) { }
+	inline Vector( const Vector& v ): x( v.x ), y( v.y ), z( v.z ) { } 
+	inline Vector( float rgfl[3] ): x( rgfl[0] ), y( rgfl[1] ), z( rgfl[2] ) { }
 
 	// Operators
-	inline Vector operator-( void ) const			{ return Vector( -x, -y, -z );			}
-	inline int operator==( const Vector& v ) const		{ return x==v.x && y==v.y && z==v.z;		}
-	inline int operator!=( const Vector& v ) const		{ return !( *this==v );				}
-	inline Vector operator+( const Vector& v ) const	{ return Vector( x + v.x, y + v.y, z + v.z );	}
-	inline Vector operator-( const Vector& v ) const	{ return Vector( x - v.x, y - v.y, z - v.z );	}
-	inline Vector operator*( float fl) const		{ return Vector( x * fl, y * fl, z * fl );	}
-	inline Vector operator/( float fl) const		{ return Vector( x / fl, y / fl, z / fl );	}
+	inline Vector operator-( void ) const				{ return Vector( -x, -y, -z ); }
+	inline int operator==( const Vector& v ) const		{ return x == v.x && y == v.y && z == v.z; }
+	inline int operator!=( const Vector& v ) const		{ return !( *this == v ); }
+	inline Vector operator+( const Vector& v ) const	{ return Vector( x + v.x, y + v.y, z + v.z ); }
+	inline Vector operator-( const Vector& v ) const	{ return Vector( x - v.x, y - v.y, z - v.z ); }
+	inline Vector operator*( float fl ) const			{ return Vector( x * fl, y * fl, z * fl ); }
+	inline Vector operator/( float fl ) const			{ return Vector( x / fl, y / fl, z / fl ); }
 
 	// Methods
 	inline void CopyToArray( float* rgfl ) const		{ rgfl[0] = x, rgfl[1] = y, rgfl[2] = z; }
-	inline float Length( void ) const					{ return sqrt( x * x + y * y + z * z ); }
-	operator float *()								{ return &x; } // Vectors will now automatically convert to float * when needed
-	operator const float *() const					{ return &x; } // Vectors will now automatically convert to float * when needed
+	inline float Length( void ) const					{ return sqrtf( x * x + y * y + z * z ); }
+	inline float Length2D( void ) const					{ return sqrtf( x * x + y * y ); }
+	operator vec_t *()									{ return &x; } // Vectors will now automatically convert to float * when needed
+	operator const vec_t *() const						{ return &x; } // Vectors will now automatically convert to float * when needed
 	inline Vector Normalize( void ) const
 	{
 		float flLen = Length();
-		if( flLen == 0 ) return Vector( 0, 0, 1 ); // ????
-		flLen = 1 / flLen;
-		return Vector( x * flLen, y * flLen, z * flLen );
+		if( flLen == 0 )
+			return Vector( 0.0f, 0.0f, 1.0f ); // Can't normalize a zero vector, so we return an arbitrary normal vector
+		else
+		{
+			flLen = 1 / flLen;
+			return Vector( x * flLen, y * flLen, z * flLen );
+		}
 	}
 
-	inline Vector2D Make2D( void ) const
-	{
-		Vector2D	Vec2;
-
-		Vec2.x = x;
-		Vec2.y = y;
-
-		return Vec2;
-	}
-	inline float Length2D( void ) const		{ return sqrt( x * x + y * y ); }
+	inline Vector2D Make2D( void ) const { return Vector2D(x, y); }
 
 	// Members
 	vec_t x, y, z;
@@ -107,4 +111,4 @@ public:
 inline Vector operator*( float fl, const Vector& v ) { return v * fl; }
 inline float DotProduct( const Vector& a, const Vector& b ) { return( a.x * b.x + a.y * b.y + a.z * b.z); }
 inline Vector CrossProduct( const Vector& a, const Vector& b ) { return Vector( a.y * b.z - a.z * b.y, a.z * b.x - a.x * b.z, a.x * b.y - a.y * b.x ); }
-#endif
+#endif // VECTOR_H
