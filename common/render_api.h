@@ -21,6 +21,7 @@ GNU General Public License for more details.
 #include "cl_entity.h"
 #include "ref_params.h"
 #include "studio.h"
+#include "beamdef.h"
 
 // changes for version 28
 // replace decal_t from software declaration to hardware (matched to normal HL)
@@ -33,8 +34,8 @@ GNU General Public License for more details.
 #define CL_RENDER_INTERFACE_VERSION	35
 #define MAX_STUDIO_DECALS		4096	// + unused space of BSP decals
 
-#define SURF_INFO( surf, mod )	((mextrasurf_t *)mod->cache.data + (surf - mod->surfaces)) 
-#define INFO_SURF( surf, mod )	(mod->surfaces + (surf - (mextrasurf_t *)mod->cache.data)) 
+#define SURF_INFO( surf, mod )	((mextrasurf_t *)mod->cache.data + (surf - mod->surfaces))
+#define INFO_SURF( surf, mod )	(mod->surfaces + (surf - (mextrasurf_t *)mod->cache.data))
 
 // render info parms
 #define PARM_TEX_WIDTH	1	// all parms with prefix 'TEX_' receive arg as texnum
@@ -131,9 +132,6 @@ typedef enum
 	TF_FLOATDATA	= (1<<28),	// incoming dataType has type GL_FLOAT
 } texFlags_t;
 
-typedef struct beam_s BEAM;
-typedef struct particle_s particle_t;
-
 // 12 bytes here
 typedef struct modelstate_s
 {
@@ -162,15 +160,18 @@ typedef struct decallist_s
 	modelstate_t	studio_state;	// studio decals only
 } decallist_t;
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 typedef struct render_api_s
 {
 	// Get renderer info (doesn't changes engine state at all)
-	int		(*RenderGetParm)( int parm, int arg );	// generic
+	int			(*RenderGetParm)( int parm, int arg );	// generic
 	void		(*GetDetailScaleForTexture)( int texture, float *xScale, float *yScale );
 	void		(*GetExtraParmsForTexture)( int texture, byte *red, byte *green, byte *blue, byte *alpha );
-	lightstyle_t*	(*GetLightStyle)( int number ); 
-	dlight_t*		(*GetDynamicLight)( int number );
-	dlight_t*		(*GetEntityLight)( int number );
+	lightstyle_t* (*GetLightStyle)( int number );
+	dlight_t*	(*GetDynamicLight)( int number );
+	dlight_t*	(*GetEntityLight)( int number );
 	byte		(*TextureToTexGamma)( byte color );	// software gamma support
 	void		(*GetBeamChains)( BEAM ***active_beams, BEAM ***free_beams, particle_t ***free_trails );
 
@@ -181,11 +182,11 @@ typedef struct render_api_s
 	void		(*R_StoreEfrags)( efrag_t **ppefrag, int framecount );// store efrags for static entities
 
 	// Texture tools
-	int		(*GL_FindTexture)( const char *name );
+	int			(*GL_FindTexture)( const char *name );
 	const char*	(*GL_TextureName)( unsigned int texnum );
 	const byte*	(*GL_TextureData)( unsigned int texnum ); // may be NULL
-	int		(*GL_LoadTexture)( const char *name, const byte *buf, size_t size, int flags );
-	int		(*GL_CreateTexture)( const char *name, int width, int height, const void *buffer, int flags ); 
+	int			(*GL_LoadTexture)( const char *name, const byte *buf, size_t size, int flags );
+	int			(*GL_CreateTexture)( const char *name, int width, int height, const void *buffer, int flags );
 	void		(*GL_SetTextureType)( unsigned int texnum, unsigned int type );
 	void		(*GL_TextureCacheFrame)( unsigned int texnum );
 	void		(*GL_FreeTexture)( unsigned int texnum );
@@ -197,12 +198,12 @@ typedef struct render_api_s
 
 	// AVIkit support
 	void		*(*AVI_LoadVideo)( const char *filename, int ignore_hwgamma );
-	int		(*AVI_GetVideoInfo)( void *Avi, long *xres, long *yres, float *duration );
+	int			(*AVI_GetVideoInfo)( void *Avi, long *xres, long *yres, float *duration );
 	long		(*AVI_GetVideoFrameNumber)( void *Avi, float time );
 	byte		*(*AVI_GetVideoFrame)( void *Avi, long frame );
 	void		(*AVI_UploadRawFrame)( int texture, int cols, int rows, int width, int height, const byte *data );
 	void		(*AVI_FreeVideo)( void *Avi );
-	int		(*AVI_IsActive)( void *Avi );
+	int			(*AVI_IsActive)( void *Avi );
 
 	// glState related calls (must use this instead of normal gl-calls to prevent de-synchornize local states between engine and the client)
 	void		(*GL_Bind)( int tmu, unsigned int texnum );
@@ -219,11 +220,11 @@ typedef struct render_api_s
 	void		(*GL_Reserved3)( void );
 		
 	// Misc renderer functions
-	void		(*GL_DrawParticles)( const float *vieworg, const float *fwd, const float *rt, const float *up, unsigned int clipFlags );
-	void		(*EnvShot)( const float *vieworg, const char *name, qboolean skyshot, int shotsize ); // creates a cubemap or skybox into gfx\env folder
-	int		(*COM_CompareFileTime)( const char *filename1, const char *filename2, int *iCompare );
+	void		(*GL_DrawParticles)( vec3_t_in vieworg, vec3_t_in fwd, vec3_t_in rt, vec3_t_in up, unsigned int clipFlags );
+	void		(*EnvShot)( vec3_t_in vieworg, const char *name, qboolean skyshot, int shotsize ); // creates a cubemap or skybox into gfx\env folder
+	int			(*COM_CompareFileTime)( const char *filename1, const char *filename2, int *iCompare );
 	void		(*Host_Error)( const char *error, ... ); // cause Host Error
-	int		(*SPR_LoadExt)( const char *szPicName, unsigned int texFlags ); // extended version of SPR_Load
+	int			(*SPR_LoadExt)( const char *szPicName, unsigned int texFlags ); // extended version of SPR_Load
 	void		(*TessPolygon)( msurface_t *surf, model_t *mod, float tessSize );
 	mstudiotexture_t *( *StudioGetTexture )( cl_entity_t *e );
 	const ref_overview_t *( *GetOverviewParms )( void );
@@ -240,23 +241,23 @@ typedef struct render_api_s
 // render callbacks
 typedef struct render_interface_s
 {
-	int		version;
+	int			version;
 	// passed through R_RenderFrame (0 - use engine renderer, 1 - use custom client renderer)
-	int		(*GL_RenderFrame)( const ref_params_t *pparams, qboolean drawWorld );
+	int			(*GL_RenderFrame)( const ref_params_t *pparams, qboolean drawWorld );
 	// build all the lightmaps on new level or when gamma is changed
 	void		(*GL_BuildLightmaps)( void );
 	// setup map bounds for ortho-projection when we in dev_overview mode
-	void		(*GL_OrthoBounds)( const float *mins, const float *maxs );
+	void		(*GL_OrthoBounds)( const vec2_t mins, const vec2_t maxs );
 	// handle decals which hit mod_studio or mod_sprite
-	void		(*R_StudioDecalShoot)( int decalTexture, cl_entity_t *ent, const float *start, const float *pos, int flags, modelstate_t *state );
+	void		(*R_StudioDecalShoot)( int decalTexture, cl_entity_t *ent, vec3_t_in start, vec3_t_in pos, int flags, modelstate_t *state );
 	// prepare studio decals for save
-	int		(*R_CreateStudioDecalList)( decallist_t *pList, int count, qboolean changelevel );
+	int			(*R_CreateStudioDecalList)( decallist_t *pList, int count, qboolean changelevel );
 	// clear decals by engine request (e.g. for demo recording or vid_restart)
 	void		(*R_ClearStudioDecals)( void );
 	// grab r_speeds message
-	qboolean		(*R_SpeedsMessage)( char *out, size_t size );
+	qboolean	(*R_SpeedsMessage)( char *out, size_t size );
 	// replace with built-in R_DrawCubemapView for make skyshots or envshots
-	qboolean		(*R_DrawCubemapView)( const float *origin, const float *angles, int size );
+	qboolean	(*R_DrawCubemapView)( vec3_t_in origin, vec3_t_in angles, int size );
 	// alloc or destroy studiomodel custom data
 	void		(*Mod_ProcessUserData)( model_t *mod, qboolean create, const byte *buffer );
 } render_interface_t;

@@ -18,6 +18,9 @@
 
 #define STUDIO_INTERFACE_VERSION 1
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 typedef struct engine_studio_api_s
 {
 	// Allocate number*size bytes and zero it
@@ -45,7 +48,7 @@ typedef struct engine_studio_api_s
 	// Get a pointer to a cvar by name
 	cvar_t	*( *GetCvar )( const char *name );
 	// Get current render origin and view vectors ( up, right and vpn )
-	void		( *GetViewInfo )( float *origin, float *upv, float *rightv, float *vpnv );
+	void		( *GetViewInfo )( vec3_t_out origin, vec3_t_out upv, vec3_t_out rightv, vec3_t_out vpnv );
 	// Get sprite model used for applying chrome effect
 	model_t	*( *GetChromeSprite )( void );
 	// Get model counters so we can incement instrumentation
@@ -109,7 +112,7 @@ typedef struct engine_studio_api_s
 
 	void		( *StudioSetRenderamt )( int iRenderamt );
 	void		( *StudioSetCullState )( int iCull );
-	void		( *StudioRenderShadow )( int iSprite, float *p1, float *p2, float *p3, float *p4 );
+	void		( *StudioRenderShadow )( int iSprite, vec3_t_in p1, vec3_t_in p2, vec3_t_in p3, vec3_t_in p4 );
 } engine_studio_api_t;
 
 typedef struct server_studio_api_s

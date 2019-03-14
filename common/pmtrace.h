@@ -23,7 +23,6 @@ typedef struct
 } pmplane_t;
 
 typedef struct pmtrace_s pmtrace_t;
-
 struct pmtrace_s
 {
 	qboolean	allsolid;		// if true, plane is not valid

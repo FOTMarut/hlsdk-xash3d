@@ -84,6 +84,9 @@ typedef struct physent_s
 	vec3_t		vuser4;
 } physent_t;
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 typedef struct playermove_s
 {
 	int		player_index;	// So we don't try to run the PM_CheckStuck nudging too quickly.
@@ -186,29 +189,29 @@ typedef struct playermove_s
 	
 	// Common functions
 	const char	*(*PM_Info_ValueForKey) ( const char *s, const char *key );
-	void		(*PM_Particle)( float *origin, int color, float life, int zpos, int zvel );
-	int		(*PM_TestPlayerPosition)( float *pos, pmtrace_t *ptrace );
+	void		(*PM_Particle)( vec3_t_in origin, int color, float life, int zpos, int zvel );
+	int		(*PM_TestPlayerPosition)( vec3_t_in pos, pmtrace_t *ptrace );
 	void		(*Con_NPrintf)( int idx, char *fmt, ... );
 	void		(*Con_DPrintf)( char *fmt, ... );
 	void		(*Con_Printf)( char *fmt, ... );
 	double		(*Sys_FloatTime)( void );
 	void		(*PM_StuckTouch)( int hitent, pmtrace_t *ptraceresult );
-	int		(*PM_PointContents)( float *p, int *truecontents /*filled in if this is non-null*/ );
-	int		(*PM_TruePointContents)( float *p );
-	int		(*PM_HullPointContents)( hull_t *hull, int num, float *p );   
+	int		(*PM_PointContents)( vec3_t_in p, int *truecontents /*filled in if this is non-null*/ );
+	int		(*PM_TruePointContents)( vec3_t_in p );
+	int		(*PM_HullPointContents)( hull_t *hull, int num, vec3_t_in p );
 #ifdef __MINGW32__
-	pmtrace_t		*(*PM_PlayerTrace_real)( pmtrace_t * retvalue, float *start, float *end, int traceFlags, int ignore_pe );
+	pmtrace_t		*(*PM_PlayerTrace_real)( pmtrace_t * retvalue, vec3_t_in start, vec3_t_in end, int traceFlags, int ignore_pe );
 
 #else
-	pmtrace_t		(*PM_PlayerTrace)( float *start, float *end, int traceFlags, int ignore_pe );
+	pmtrace_t		(*PM_PlayerTrace)( vec3_t_in start, vec3_t_in end, int traceFlags, int ignore_pe );
 #endif
-	pmtrace_t	*(*PM_TraceLine)( float *start, float *end, int flags, int usehulll, int ignore_pe );
+	pmtrace_t	*(*PM_TraceLine)( vec3_t_in start, vec3_t_in end, int flags, int usehulll, int ignore_pe );
 	int		(*RandomLong)( int lLow, int lHigh );
 	float		(*RandomFloat)( float flLow, float flHigh );
 	int		(*PM_GetModelType)( model_t *mod );
-	void		(*PM_GetModelBounds)( model_t *mod, float *mins, float *maxs );
-	void		*(*PM_HullForBsp)( physent_t *pe, float *offset );
-	float		(*PM_TraceModel)( physent_t *pEnt, float *start, float *end, trace_t *trace );
+	void		(*PM_GetModelBounds)( model_t *mod, vec3_t_out mins, vec3_t_out maxs );
+	void		*(*PM_HullForBsp)( physent_t *pe, vec3_t_out offset );
+	float		(*PM_TraceModel)( physent_t *pEnt, vec3_t_in start, vec3_t_in end, trace_t *trace );
 	int		(*COM_FileSize)( char *filename );
 	byte		*(*COM_LoadFile)( char *path, int usehunk, int *pLength );
 	void		(*COM_FreeFile)( void *buffer );
@@ -218,27 +221,27 @@ typedef struct playermove_s
 	// Run functions for this frame?
 	qboolean		runfuncs;
 	void		(*PM_PlaySound)( int channel, const char *sample, float volume, float attenuation, int fFlags, int pitch );
-	const char	*(*PM_TraceTexture)( int ground, float *vstart, float *vend );
-	void		(*PM_PlaybackEventFull)( int flags, int clientindex, unsigned short eventindex, float delay, float *origin, float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
+	const char	*(*PM_TraceTexture)( int ground, vec3_t_in vstart, vec3_t_in vend );
+	void		(*PM_PlaybackEventFull)( int flags, int clientindex, unsigned short eventindex, float delay, vec3_t_in origin, vec3_t_in angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
 #ifdef __MINGW32__
-	pmtrace_t		*(*PM_PlayerTraceEx_real) (pmtrace_t *retvalue, float *start, float *end, int traceFlags, int (*pfnIgnore)( physent_t *pe ));
+	pmtrace_t		*(*PM_PlayerTraceEx_real) (pmtrace_t *retvalue, vec3_t_in start, vec3_t_in end, int traceFlags, int (*pfnIgnore)( physent_t *pe ));
 #else
-	pmtrace_t		(*PM_PlayerTraceEx) (float *start, float *end, int traceFlags, int (*pfnIgnore)( physent_t *pe ));
+	pmtrace_t		(*PM_PlayerTraceEx) (vec3_t_in start, vec3_t_in end, int traceFlags, int (*pfnIgnore)( physent_t *pe ));
 #endif
-	int		(*PM_TestPlayerPositionEx) (float *pos, pmtrace_t *ptrace, int (*pfnIgnore)( physent_t *pe ));
-	pmtrace_t	*(*PM_TraceLineEx)( float *start, float *end, int flags, int usehulll, int (*pfnIgnore)( physent_t *pe ));
-	msurface_t	*(*PM_TraceSurface)( int ground, float *vstart, float *vend );
+	int		(*PM_TestPlayerPositionEx) (vec3_t_in pos, pmtrace_t *ptrace, int (*pfnIgnore)( physent_t *pe ));
+	pmtrace_t	*(*PM_TraceLineEx)( vec3_t_in start, vec3_t_in end, int flags, int usehulll, int (*pfnIgnore)( physent_t *pe ));
+	msurface_t	*(*PM_TraceSurface)( int ground, vec3_t_in vstart, vec3_t_in vend );
 } playermove_t;
 
 #ifdef __MINGW32__
 static pmtrace_t _pm_globalresult, _pm_globaltmp;
-	static inline pmtrace_t PM_PlayerTrace_wrap( float *start, float *end, int traceFlags, int ignore_pe, playermove_t *pmove )
+	static inline pmtrace_t PM_PlayerTrace_wrap( vec3_t_in start, vec3_t_in end, int traceFlags, int ignore_pe, playermove_t *pmove )
 	{
 		_pm_globaltmp = pmove->touchindex[MAX_PHYSENTS -1];
 		pmove->PM_PlayerTrace_real( &_pm_globalresult, start, end, traceFlags, ignore_pe );
 		return _pm_globalresult;
 	}
-	static inline pmtrace_t PM_PlayerTraceEx_wrap( float *start, float *end, int traceFlags, int (*pfnIgnore)( physent_t *pe ), playermove_t *pmove )
+	static inline pmtrace_t PM_PlayerTraceEx_wrap( vec3_t_in start, vec3_t_in end, int traceFlags, int (*pfnIgnore)( physent_t *pe ), playermove_t *pmove )
 	{
 		_pm_globaltmp = pmove->touchindex[MAX_PHYSENTS -1];
 		pmove->PM_PlayerTraceEx_real( &_pm_globalresult, start, end, traceFlags, pfnIgnore );

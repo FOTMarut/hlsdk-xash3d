@@ -130,6 +130,9 @@ typedef struct hud_player_info_s
 	ulonglong_t	m_nSteamID;
 } hud_player_info_t;
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 typedef struct cl_enginefuncs_s
 {
 	// sprite handlers
@@ -168,7 +171,7 @@ typedef struct cl_enginefuncs_s
 	void	(*pfnPlaySoundByIndex)( int iSound, float volume );
 
 	// vector helpers
-	void	(*pfnAngleVectors)( const float *vecAngles, float *forward, float *right, float *up );
+	void	(*pfnAngleVectors)( vec3_t_in vecAngles, vec3_t_out forward, vec3_t_out right, vec3_t_out up );
 
 	// text message system
 	client_textmessage_t *(*pfnTextMessageGet)( const char *pName );
@@ -183,8 +186,8 @@ typedef struct cl_enginefuncs_s
 	// Added for user input processing
 	int	(*GetWindowCenterX)( void );
 	int	(*GetWindowCenterY)( void );
-	void	(*GetViewAngles)( float * );
-	void	(*SetViewAngles)( float * );
+	void	(*GetViewAngles)( vec3_t_out );
+	void	(*SetViewAngles)( vec3_t_in );
 	int	(*GetMaxClients)( void );
 	void	(*Cvar_SetValue)( const char *cvar, float value );
 
@@ -210,20 +213,20 @@ typedef struct cl_enginefuncs_s
 
 	float	(*GetClientTime)( void );
 	void	(*V_CalcShake)( void );
-	void	(*V_ApplyShake)( float *origin, float *angles, float factor );
+	void	(*V_ApplyShake)( vec3_t_out origin, vec3_t_out angles, float factor );
 
-	int	(*PM_PointContents)( float *point, int *truecontents );
-	int	(*PM_WaterEntity)( float *p );
-	pmtrace_t *(*PM_TraceLine)( float *start, float *end, int flags, int usehull, int ignore_pe );
+	int	(*PM_PointContents)( vec3_t_in point, int *truecontents );
+	int	(*PM_WaterEntity)( vec3_t_in p );
+	pmtrace_t *(*PM_TraceLine)( vec3_t_in start, vec3_t_in end, int flags, int usehull, int ignore_pe );
 
 	model_t *(*CL_LoadModel)( const char *modelname, int *index );
 	int	(*CL_CreateVisibleEntity)( int type, cl_entity_t *ent );
 
 	const model_t* (*GetSpritePointer)( HSPRITE hSprite );
-	void	(*pfnPlaySoundByNameAtLocation)( const char *szSound, float volume, const float *origin );
+	void	(*pfnPlaySoundByNameAtLocation)( const char *szSound, float volume, vec3_t_in origin );
 	
 	unsigned short (*pfnPrecacheEvent)( int type, const char* psz );
-	void	(*pfnPlaybackEvent)( int flags, const edict_t *pInvoker, unsigned short eventindex, float delay, const float *origin, const float *angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
+	void	(*pfnPlaybackEvent)( int flags, const edict_t *pInvoker, unsigned short eventindex, float delay, vec3_t_in origin, vec3_t_in angles, float fparam1, float fparam2, int iparam1, int iparam2, int bparam1, int bparam2 );
 	void	(*pfnWeaponAnim)( int iAnim, int body );
 	float	(*pfnRandomFloat)( float flLow, float flHigh );	
 	int	(*pfnRandomLong)( int lLow, int lHigh );

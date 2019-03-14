@@ -167,7 +167,7 @@ void VectorScale( const float *in, float scale, float *out );
 float VectorNormalize( float *v );
 void VectorInverse( float *v );
 
-extern vec3_t vec3_origin;
+extern const vec3_t vec3_origin;
 
 #ifdef _MSC_VER
 // disable 'possible loss of data converting float to int' warning message

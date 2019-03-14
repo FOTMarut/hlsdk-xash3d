@@ -16,6 +16,8 @@
 #ifndef BEAMDEF_H
 #define BEAMDEF_H
 
+#include "particledef.h"
+
 #define FBEAM_STARTENTITY		0x00000001
 #define FBEAM_ENDENTITY		0x00000002
 #define FBEAM_FADEIN		0x00000004

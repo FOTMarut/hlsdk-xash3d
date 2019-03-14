@@ -30,10 +30,10 @@
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-extern vec3_t vec3_origin;
+extern const vec3_t vec3_origin;
 
 #ifdef _MSC_VER
-vec3_t vec3_origin;
+const vec3_t vec3_origin;
 #endif
 
 double sqrt( double x );

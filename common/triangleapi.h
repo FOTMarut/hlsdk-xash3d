@@ -33,6 +33,9 @@ typedef enum
 #define TRI_QUAD_STRIP	6
 #define TRI_POINTS		7	// Xash3D added
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 typedef struct triangleapi_s
 {
 	int	version;
@@ -44,17 +47,17 @@ typedef struct triangleapi_s
 	void	(*Color4f)( float r, float g, float b, float a );
 	void	(*Color4ub)( unsigned char r, unsigned char g, unsigned char b, unsigned char a );
 	void	(*TexCoord2f)( float u, float v );
-	void	(*Vertex3fv)( float *worldPnt );
+	void	(*Vertex3fv)( vec3_t_in worldPnt );
 	void	(*Vertex3f)( float x, float y, float z );
 	void	(*Brightness)( float brightness );
 	void	(*CullFace)( TRICULLSTYLE style );	
-	int	(*SpriteTexture)( model_t *pSpriteModel, int frame );
-	int	(*WorldToScreen)( float *world, float *screen );  // Returns 1 if it's z clipped
+	int		(*SpriteTexture)( model_t *pSpriteModel, int frame );
+	int		(*WorldToScreen)( vec3_t_in world, vec3_t_out screen );  // Returns 1 if it's z clipped
 	void	(*Fog)( float flFogColor[3], float flStart, float flEnd, int bOn ); //Works just like GL_FOG, flFogColor is r/g/b.
-	void	(*ScreenToWorld)( float *screen, float *world  ); 
+	void	(*ScreenToWorld)( vec3_t_in screen, vec3_t_out world  );
 	void	(*GetMatrix)( const int pname, float *matrix );
-	int	(*BoxInPVS)( float *mins, float *maxs );
-	void	(*LightAtPoint)( float *pos, float *value );
+	int		(*BoxInPVS)( vec3_t_in mins, vec3_t_in maxs );
+	void	(*LightAtPoint)( vec3_t_in pos, float *value );
 	void	(*Color4fRendermode)( float r, float g, float b, float a, int rendermode );
 	void	(*FogParams)( float flDensity, int iFogSkybox );
 } triangleapi_t;

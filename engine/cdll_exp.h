@@ -16,6 +16,9 @@ GNU General Public License for more details.
 #ifndef CDLL_EXP_H
 #define CDLL_EXP_H
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 // NOTE: ordering is important!
 typedef struct cldll_func_s
 {
@@ -35,7 +38,7 @@ typedef struct cldll_func_s
 	void	(*IN_Accumulate)( void );
 	void	(*CL_CreateMove)( float frametime, usercmd_t *cmd, int active );
 	int	(*CL_IsThirdPerson)( void );
-	void	(*CL_CameraOffset)( float *ofs );
+	void	(*CL_CameraOffset)( vec3_t_out ofs );
 	void	*(*KB_Find)( const char *name );
 	void	(*CAM_Think)( void );		// camera stuff
 	void	(*pfnCalcRefdef)( ref_params_t *pparams );
@@ -51,7 +54,7 @@ typedef struct cldll_func_s
 	void	(*pfnTxferPredictionData)( entity_state_t *ps, const entity_state_t *pps, clientdata_t *pcd, const clientdata_t *ppcd, weapon_data_t *wd, const weapon_data_t *pwd );
 	void	(*pfnDemo_ReadBuffer)( int size, byte *buffer );
 	int	(*pfnConnectionlessPacket)( const netadr_t *net_from, const char *args, char *buffer, int *size );
-	int	(*pfnGetHullBounds)( int hullnumber, float *mins, float *maxs );
+	int	(*pfnGetHullBounds)( int hullnumber, vec3_t_out mins, vec3_t_out maxs );
 	void	(*pfnFrame)( double time );
 	int	(*pfnKey_Event)( int eventcode, int keynum, const char *pszCurrentBinding );
 	void	(*pfnTempEntUpdate)( double frametime, double client_time, double cl_gravity, TEMPENTITY **ppTempEntFree, TEMPENTITY **ppTempEntActive, int ( *Callback_AddVisibleEntity )( cl_entity_t *pEntity ), void ( *Callback_TempEntPlaySound )( TEMPENTITY *pTemp, float damp ));

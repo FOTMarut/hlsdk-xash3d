@@ -39,6 +39,9 @@ struct areanode_s
 	link_t		water_edicts;	// func water
 };
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 typedef struct server_physics_api_s
 {
 	// unlink edict from old position and link onto new
@@ -61,7 +64,7 @@ typedef struct server_physics_api_s
 	const char	*( *pfnGetLightStyle )( int style ); // read custom appreance for selected lightstyle
 	void		( *pfnUpdateFogSettings )( unsigned int packed_fog );
 	char		**(*pfnGetFilesList)( const char *pattern, int *numFiles, int gamedironly );
-	msurface_t	*(*pfnTraceSurface)( edict_t *pTextureEntity, const float *v1, const float *v2 );
+	msurface_t	*(*pfnTraceSurface)( edict_t *pTextureEntity, vec3_t_in v1, vec3_t_in v2 );
 	const byte	*(*pfnGetTextureData)( unsigned int texnum );
 
 	// static allocations
@@ -95,9 +98,9 @@ typedef struct physics_interface_s
 	// used for draw debug messages (2d mode)
 	void		( *DrawOrthoTriangles )( void );
 	// tracing entities with SOLID_CUSTOM mode on a server (not used by pmove code)
-	void		( *ClipMoveToEntity)( edict_t *ent, const float *start, float *mins, float *maxs, const float *end, trace_t *trace );
+	void		( *ClipMoveToEntity)( edict_t *ent, vec3_t_in start, vec3_t_out mins, vec3_t_out maxs, vec3_t_in end, trace_t *trace );
 	// tracing entities with SOLID_CUSTOM mode on a server (only used by pmove code)
-	void		( *ClipPMoveToEntity)( physent_t *pe, const float *start, float *mins, float *maxs, const float *end, pmtrace_t *tr );
+	void		( *ClipPMoveToEntity)( physent_t *pe, vec3_t_in start, vec3_t_out mins, vec3_t_out maxs, vec3_t_in end, pmtrace_t *tr );
 	// called at end the frame of SV_Physics call
 	void		( *SV_EndFrame )( void );
 	// called through save\restore process

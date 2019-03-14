@@ -30,7 +30,7 @@ typedef vec_t vec4_t[4];	// x,y,z,w
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-extern vec3_t vec3_origin;
+extern const vec3_t vec3_origin;
 
 //extern	int nanmask;
 //#define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)

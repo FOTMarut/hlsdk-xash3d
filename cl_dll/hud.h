@@ -29,6 +29,7 @@
 #include "wrect.h"
 #include "cl_dll.h"
 #include "ammo.h"
+#include "cvardef.h"
 
 #define DHN_DRAWZERO 1
 #define DHN_2DIGITS  2
@@ -53,8 +54,6 @@ typedef struct
 {
 	unsigned char r, g, b, a;
 } RGBA;
-
-typedef struct cvar_s cvar_t;
 
 #define HUD_ACTIVE	1
 #define HUD_INTERMISSION 2
