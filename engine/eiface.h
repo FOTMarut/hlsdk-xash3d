@@ -30,6 +30,8 @@
 #include "netadr.h"
 #include "triangleapi.h"
 #include "con_nprint.h"
+#include "progdefs.h"
+#include "const.h"
 //
 // Defines entity interface between engine and DLLs.
 // This header file included by engine files and DLL files.
@@ -191,7 +193,7 @@ typedef struct enginefuncs_s
 	int	(*pfnCmd_Argc)( void );		// access client 'cmd' strings
 	void	(*pfnGetAttachment)( const edict_t *pEdict, int iAttachment, vec3_t_out rgflOrigin, vec3_t_out rgflAngles );
 	void	(*pfnCRC32_Init)( CRC32_t *pulCRC );
-	void	(*pfnCRC32_ProcessBuffer)( CRC32_t *pulCRC, void *p, int len );
+	void	(*pfnCRC32_ProcessBuffer)( CRC32_t *pulCRC, const void *p, int len );
 	void	(*pfnCRC32_ProcessByte)( CRC32_t *pulCRC, unsigned char ch );
 	CRC32_t	(*pfnCRC32_Final)( CRC32_t pulCRC );
 	int	(*pfnRandomLong)( int lLow, int lHigh );
@@ -450,7 +452,7 @@ typedef struct
 	void	(*pfnSetupVisibility)( edict_t *pViewEntity, edict_t *pClient, unsigned char **pvs, unsigned char **pas );
 	void	(*pfnUpdateClientData) ( const edict_t *ent, int sendweapons, clientdata_t *cd );
 	int	(*pfnAddToFullPack)( entity_state_t *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet );
-	void	(*pfnCreateBaseline)( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs );
+	void	(*pfnCreateBaseline)( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t_in player_mins, vec3_t_in player_maxs );
 	void	(*pfnRegisterEncoders)( void );
 	int	(*pfnGetWeaponData)( edict_t *player, weapon_data_t *info );
 

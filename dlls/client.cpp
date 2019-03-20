@@ -109,7 +109,7 @@ void ClientDisconnect( edict_t *pEntity )
 	char text[256] = "";
 	if( pEntity->v.netname )
 		_snprintf( text, sizeof(text), "- %s has left the game\n", STRING( pEntity->v.netname ) );
-	MESSAGE_BEGIN( MSG_ALL, gmsgSayText, NULL );
+	MESSAGE_BEGIN( MSG_ALL, gmsgSayText );
 		WRITE_BYTE( ENTINDEX( pEntity ) );
 		WRITE_STRING( text );
 	MESSAGE_END();
@@ -661,7 +661,7 @@ void ClientUserInfoChanged( edict_t *pEntity, char *infobuffer )
 		{
 			char text[256];
 			_snprintf( text, 256, "* %s changed name to %s\n", STRING( pEntity->v.netname ), g_engfuncs.pfnInfoKeyValue( infobuffer, "name" ) );
-			MESSAGE_BEGIN( MSG_ALL, gmsgSayText, NULL );
+			MESSAGE_BEGIN( MSG_ALL, gmsgSayText );
 				WRITE_BYTE( ENTINDEX( pEntity ) );
 				WRITE_STRING( text );
 			MESSAGE_END();
@@ -813,7 +813,7 @@ void StartFrame( void )
 	g_bhopcap = ( g_pGameRules->IsMultiplayer() && bhopcap.value != 0.0f ) ? 1 : 0;
 	if( g_bhopcap != oldBhopcap )
 	{
-		MESSAGE_BEGIN( MSG_ALL, gmsgBhopcap, NULL );
+		MESSAGE_BEGIN( MSG_ALL, gmsgBhopcap );
 			WRITE_BYTE( g_bhopcap );
 		MESSAGE_END();
 	}
@@ -1317,7 +1317,7 @@ CreateBaseline
 Creates baselines used for network encoding, especially for player data since players are not spawned until connect time.
 ===================
 */
-void CreateBaseline( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs )
+void CreateBaseline( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t_in player_mins, vec3_t_in player_maxs )
 {
 	baseline->origin		= entity->v.origin;
 	baseline->angles		= entity->v.angles;
@@ -1867,25 +1867,27 @@ GetHullBounds
   Engine calls this to enumerate player collision hulls, for prediction.  Return 0 if the hullnumber doesn't exist.
 ================================
 */
-int GetHullBounds( int hullnumber, float *mins, float *maxs )
+int GetHullBounds( int hullnumber, vec3_t_out mins, vec3_t_out maxs )
 {
 	int iret = 0;
+	Vector	&vmins = *(Vector *)mins,
+			&vmaxs = *(Vector *)maxs;
 
 	switch( hullnumber )
 	{
 	case 0:				// Normal player
-		VEC_HULL_MIN.CopyToArray(mins);
-		VEC_HULL_MAX.CopyToArray(maxs);
+		vmins = VEC_HULL_MIN;
+		vmaxs = VEC_HULL_MAX;
 		iret = 1;
 		break;
 	case 1:				// Crouched player
-		VEC_DUCK_HULL_MIN.CopyToArray(mins);
-		VEC_DUCK_HULL_MAX.CopyToArray(maxs);
+		vmins = VEC_DUCK_HULL_MIN;
+		vmaxs = VEC_DUCK_HULL_MAX;
 		iret = 1;
 		break;
 	case 2:				// Point based hull
-		Vector( 0, 0, 0 ).CopyToArray(mins);
-		Vector( 0, 0, 0 ).CopyToArray(maxs);
+		vmins.Clear();
+		vmaxs.Clear();
 		iret = 1;
 		break;
 	}

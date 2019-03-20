@@ -21,15 +21,15 @@
 
 int g_demosniper = 0;
 int g_demosniperdamage = 0;
-float g_demosniperangles[3];
-float g_demosniperorg[3];
+Vector g_demosniperangles;
+Vector g_demosniperorg;
 float g_demozoom;
 
 // FIXME:  There should be buffer helper functions to avoid all of the *(int *)& crap.
 
 extern "C" 
 {
-	void DLLEXPORT Demo_ReadBuffer( int size, unsigned char *buffer );
+	void DLLEXPORT Demo_ReadBuffer( int size, byte *buffer );
 }
 
 /*
@@ -39,14 +39,15 @@ Demo_WriteBuffer
 Write some data to the demo stream
 =====================
 */
-void Demo_WriteBuffer( int type, int size, unsigned char *buffer )
+void Demo_WriteBuffer( int type, int size, byte *buffer )
 {
-	int pos = 0;
-	unsigned char buf[32 * 1024];
-	memcpy( &buf[pos], &type, sizeof(int) );
-	pos += sizeof(int);
+	byte buf[32 * 1024];
+	byte *cur_data = buf;
 
-	memcpy( &buf[pos], buffer, size );
+	memcpy( cur_data, &type, sizeof(int) );
+	cur_data += sizeof(int);
+
+	memcpy( cur_data, buffer, size );
 
 	// Write full buffer out
 	gEngfuncs.pDemoAPI->WriteBuffer( size + sizeof(int), buf );
@@ -59,33 +60,33 @@ Demo_ReadBuffer
 Engine wants us to parse some data from the demo stream
 =====================
 */
-void DLLEXPORT Demo_ReadBuffer( int size, unsigned char *buffer )
+void DLLEXPORT Demo_ReadBuffer( int size, byte *buffer )
 {
-	int type;
-	int i = 0;
+	byte *cur_data = buffer;
 
-	type = *(int *)buffer;
-	i += sizeof(int);
+	const int &type = *(int *)cur_data;
+	cur_data += sizeof(int);
+
 	switch( type )
 	{
 	case TYPE_SNIPERDOT:
-		memcpy( &g_demosniper, &buffer[i], sizeof(int) );
-		i += sizeof(int);
+		memcpy( &g_demosniper, cur_data, sizeof(int) );
+		cur_data += sizeof(int);
 		
 		if( g_demosniper )
 		{
-			memcpy( &g_demosniperdamage, &buffer[i], sizeof(int) );
-			i += sizeof(int);
+			memcpy( &g_demosniperdamage, cur_data, sizeof(int) );
+			cur_data += sizeof(int);
 
-			memcpy( &g_demosniperangles, &buffer[i], sizeof(float)*3 );
-			i += sizeof(float) * 3;
-			memcpy( &g_demosniperorg, &buffer[i], sizeof(float)*3 );
-			i += sizeof(float) * 3;
+			memcpy( &g_demosniperangles, cur_data, sizeof(Vector) );
+			cur_data += sizeof(Vector);
+			memcpy( &g_demosniperorg, cur_data, sizeof(Vector) );
+			cur_data += sizeof(Vector);
 		}
 		break;
 	case TYPE_ZOOM:
-		memcpy( &g_demozoom, &buffer[i], sizeof(float) );
-		i += sizeof(float);
+		memcpy( &g_demozoom, cur_data, sizeof(float) );
+		cur_data += sizeof(float);
 		break;
 	default:
 		gEngfuncs.Con_DPrintf( "Unknown demo buffer type, skipping.\n" );

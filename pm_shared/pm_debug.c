@@ -98,7 +98,7 @@ PM_ParticleLine(vec3_t start, vec3_t end, int color, float life)
 
 ================
 */
-void PM_ParticleLine(vec3_t start, vec3_t end, int pcolor, float life, float vert)
+void PM_ParticleLine( const vec3_t start, const vec3_t end, int pcolor, float life, float vert)
 {
 	float linestep = 2.0f;
 	float curdist;

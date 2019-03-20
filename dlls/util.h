@@ -18,21 +18,13 @@
 //
 // Misc utility code
 //
-#ifndef ACTIVITY_H
 #include "activity.h"
-#endif
-
-#ifndef ENGINECALLBACK_H
 #include "enginecallback.h"
-#endif
-
-#ifndef PHYSCALLBACK_H
 #include "physcallback.h"
-#endif
 
 #include <string.h>
 #include <ctype.h>
-inline void MESSAGE_BEGIN( int msg_dest, int msg_type, const float *pOrigin, entvars_t *ent );  // implementation later in this file
+inline void MESSAGE_BEGIN( int msg_dest, int msg_type, vec3_t_in pOrigin, entvars_t *ent );
 
 extern globalvars_t				*gpGlobals;
 
@@ -154,8 +146,9 @@ inline entvars_t *VARS(edict_t *pent)
 inline entvars_t* VARS(EOFFSET eoffset)				{ return VARS(ENT(eoffset)); }
 inline int	  ENTINDEX(edict_t *pEdict)			{ return (*g_engfuncs.pfnIndexOfEdict)(pEdict); }
 inline edict_t* INDEXENT( int iEdictNum )		{ return (*g_engfuncs.pfnPEntityOfEntIndex)(iEdictNum); }
-inline void MESSAGE_BEGIN( int msg_dest, int msg_type, const float *pOrigin, entvars_t *ent ) {
-	(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ENT(ent));
+inline void MESSAGE_BEGIN( int msg_dest, int msg_type, vec3_t_in pOrigin, entvars_t *ent )
+{
+	MESSAGE_BEGIN( msg_dest, msg_type, pOrigin, ENT(ent) );
 }
 
 // Testing the three types of "entity" for nullity
@@ -249,7 +242,7 @@ extern void			UTIL_MakeVectors		(const Vector &vecAngles);
 extern int			UTIL_MonstersInSphere( CBaseEntity **pList, int listMax, const Vector &center, float radius );
 extern int			UTIL_EntitiesInBox( CBaseEntity **pList, int listMax, const Vector &mins, const Vector &maxs, int flagMask );
 
-inline void UTIL_MakeVectorsPrivate( const Vector &vecAngles, float *p_vForward, float *p_vRight, float *p_vUp )
+inline void UTIL_MakeVectorsPrivate( const Vector &vecAngles, vec3_t_out p_vForward, vec3_t_out p_vRight, vec3_t_out p_vUp )
 {
 	g_engfuncs.pfnAngleVectors( vecAngles, p_vForward, p_vRight, p_vUp );
 }
@@ -308,7 +301,7 @@ extern void			UTIL_PlayerDecalTrace( TraceResult *pTrace, int playernum, int dec
 extern void			UTIL_GunshotDecalTrace( TraceResult *pTrace, int decalNumber );
 extern void			UTIL_Sparks( const Vector &position );
 extern void			UTIL_Ricochet( const Vector &position, float scale );
-extern void			UTIL_StringToVector( float *pVector, const char *pString );
+extern void			UTIL_StringToVector( Vector &pVector, const char *pString );
 extern void			UTIL_StringToIntArray( int *pVector, int count, const char *pString );
 extern Vector		UTIL_ClampVectorToBox( const Vector &input, const Vector &clampSize );
 extern float		UTIL_Approach( float target, float value, float speed );

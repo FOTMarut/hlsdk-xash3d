@@ -67,7 +67,7 @@ typedef struct cldll_func_s
 	void	*(*pfnGetClientFactory)( void );
 	// Xash3D extension
 	int	(*pfnGetRenderInterface)( int version, render_api_t *renderfuncs, render_interface_t *callback );
-	void	(*pfnClipMoveToEntity)( physent_t *pe, const vec3_t start, vec3_t mins, vec3_t maxs, const vec3_t end, pmtrace_t *tr );
+	void	(*pfnClipMoveToEntity)( physent_t *pe, vec3_t_in start, vec3_t_out mins, vec3_t_out maxs, vec3_t_in end, pmtrace_t *tr );
 } cldll_func_t;
 
 #endif//CDLL_EXP_H

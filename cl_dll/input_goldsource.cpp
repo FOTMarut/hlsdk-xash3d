@@ -657,18 +657,15 @@ void GoldSourceInput::IN_MouseEvent (int mstate)
 // Input :  *x -
 //          *y -
 //-----------------------------------------------------------------------------
-void IN_ScaleMouse( float *x, float *y )
+void IN_ScaleMouse( float &x, float &y )
 {
-	float mx = *x;
-	float my = *y;
-
 	// This is the default sensitivity
 	float mouse_senstivity = ( gHUD.GetSensitivity() != 0 ) ? gHUD.GetSensitivity() : sensitivity->value;
 
 	// Using special accleration values
 	if ( m_customaccel->value != 0 )
 	{
-		float raw_mouse_movement_distance = sqrt( mx * mx + my * my );
+		float raw_mouse_movement_distance = sqrt( x * x + y * y );
 		float acceleration_scale = m_customaccel_scale->value;
 		float accelerated_sensitivity_max = m_customaccel_max->value;
 		float accelerated_sensitivity_exponent = m_customaccel_exponent->value;
@@ -680,23 +677,23 @@ void IN_ScaleMouse( float *x, float *y )
 			accelerated_sensitivity = accelerated_sensitivity_max;
 		}
 
-		*x *= accelerated_sensitivity;
-		*y *= accelerated_sensitivity;
+		x *= accelerated_sensitivity;
+		y *= accelerated_sensitivity;
 
 		// Further re-scale by yaw and pitch magnitude if user requests alternate mode 2
 		// This means that they will need to up their value for m_customaccel_scale greatly (>40x) since m_pitch/yaw default
 		//  to 0.022
 		if ( m_customaccel->value == 2 )
 		{
-			*x *= m_yaw->value;
-			*y *= m_pitch->value;
+			x *= m_yaw->value;
+			y *= m_pitch->value;
 		}
 	}
 	else
 	{
 		// Just apply the default
-		*x *= mouse_senstivity;
-		*y *= mouse_senstivity;
+		x *= mouse_senstivity;
+		y *= mouse_senstivity;
 	}
 }
 

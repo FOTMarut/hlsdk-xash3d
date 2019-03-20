@@ -16,6 +16,8 @@
 #ifndef PROGDEFS_H
 #define PROGDEFS_H
 
+typedef struct edict_s edict_t;
+
 typedef struct
 {	
 	float		time;
@@ -214,5 +216,7 @@ typedef struct entvars_s
 	edict_t		*euser3;
 	edict_t		*euser4;
 } entvars_t;
+
+#include "edict.h"
 
 #endif//PROGDEFS_H

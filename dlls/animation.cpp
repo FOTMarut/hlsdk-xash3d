@@ -57,7 +57,7 @@ extern globalvars_t				*gpGlobals;
 #pragma warning( disable : 4244 )
 #endif
 
-int ExtractBbox( void *pmodel, int sequence, float *mins, float *maxs )
+int ExtractBbox( void *pmodel, int sequence, Vector &mins, Vector &maxs )
 {
 	studiohdr_t *pstudiohdr;
 
@@ -69,13 +69,8 @@ int ExtractBbox( void *pmodel, int sequence, float *mins, float *maxs )
 
 	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex );
 
-	mins[0] = pseqdesc[sequence].bbmin[0];
-	mins[1] = pseqdesc[sequence].bbmin[1];
-	mins[2] = pseqdesc[sequence].bbmin[2];
-
-	maxs[0] = pseqdesc[sequence].bbmax[0];
-	maxs[1] = pseqdesc[sequence].bbmax[1];
-	maxs[2] = pseqdesc[sequence].bbmax[2];
+	mins = pseqdesc[sequence].bbmin;
+	maxs = pseqdesc[sequence].bbmax;
 
 	return 1;
 }
@@ -136,7 +131,7 @@ int LookupActivityHeaviest( void *pmodel, entvars_t *pev, int activity )
 	return seq;
 }
 
-void GetEyePosition( void *pmodel, float *vecEyePosition )
+void GetEyePosition( void *pmodel, Vector &vecEyePosition )
 {
 	studiohdr_t *pstudiohdr;
 
@@ -148,7 +143,7 @@ void GetEyePosition( void *pmodel, float *vecEyePosition )
 		return;
 	}
 
-	memcpy( vecEyePosition, pstudiohdr->eyeposition, sizeof(vec_t)*3 );
+	vecEyePosition = pstudiohdr->eyeposition;
 }
 
 int LookupSequence( void *pmodel, const char *label )

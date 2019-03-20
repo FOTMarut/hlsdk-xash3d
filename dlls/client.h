@@ -16,6 +16,9 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
+
 extern void respawn( entvars_t *pev, BOOL fCopyCorpse );
 extern BOOL ClientConnect( edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[ 128 ] );
 extern void ClientDisconnect( edict_t *pEntity );
@@ -45,7 +48,7 @@ extern void Sys_Error( const char *error_string );
 extern void SetupVisibility( edict_t *pViewEntity, edict_t *pClient, unsigned char **pvs, unsigned char **pas );
 extern void UpdateClientData( const edict_t *ent, int sendweapons, clientdata_t *cd );
 extern int AddToFullPack( entity_state_t *state, int e, edict_t *ent, edict_t *host, int hostflags, int player, unsigned char *pSet );
-extern void CreateBaseline( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t player_mins, vec3_t player_maxs );
+extern void CreateBaseline( int player, int eindex, entity_state_t *baseline, edict_t *entity, int playermodelindex, vec3_t_in player_mins, vec3_t_in player_maxs );
 extern void RegisterEncoders( void );
 
 extern int GetWeaponData( edict_t *player, weapon_data_t *info );
@@ -55,7 +58,7 @@ extern void CmdEnd ( const edict_t *player );
 
 extern int ConnectionlessPacket( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size );
 
-extern int GetHullBounds( int hullnumber, float *mins, float *maxs );
+extern int GetHullBounds( int hullnumber, vec3_t_out mins, vec3_t_out maxs );
 
 extern void CreateInstancedBaselines( void );
 

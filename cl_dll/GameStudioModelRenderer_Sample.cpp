@@ -29,7 +29,7 @@
 
 // Predicted values saved off in hl_weapons.cpp
 void Game_GetSequence( int *seq, int *gaitseq );
-void Game_GetOrientation( float *o, float *a );
+void Game_GetOrientation( Vector &o, Vector &a );
 
 float g_flStartScaleTime;
 int iPrevRenderState;

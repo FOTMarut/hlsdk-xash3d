@@ -614,7 +614,7 @@ void CHalfLifeTeamplay::RecountTeams( bool bResendInfo )
 			{
 				if( plr && IsValidTeam( plr->TeamID() ) )
 				{
-					MESSAGE_BEGIN( MSG_ALL, gmsgTeamInfo, NULL );
+					MESSAGE_BEGIN( MSG_ALL, gmsgTeamInfo );
 						WRITE_BYTE( plr->entindex() );
 						WRITE_STRING( plr->TeamID() );
 					MESSAGE_END();

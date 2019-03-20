@@ -17,6 +17,7 @@
 //
 #ifndef CL_UTIL_H
 #define CL_UTIL_H
+#include <math.h>
 #include "exportdef.h"
 #include "cvardef.h"
 
@@ -150,22 +151,19 @@ inline void PlaySound( int iSound, float vol ) { gEngfuncs.pfnPlaySoundByIndex( 
 
 #define max(a, b)  (((a) > (b)) ? (a) : (b))
 #define min(a, b)  (((a) < (b)) ? (a) : (b))
-#define fabs(x)	   ((x) > 0 ? (x) : 0 - (x))
+//#define abs(x)	   ((x) > 0 ? (x) : 0 - (x))
 
 void ScaleColors( int &r, int &g, int &b, int a );
 
-#ifndef MATHLIB_H
-#define DotProduct(x, y) ((x)[0] * (y)[0] + (x)[1] * (y)[1] + (x)[2] * (y)[2])
-#define VectorSubtract(a, b, c) { (c)[0] = (a)[0] - (b)[0]; (c)[1] = (a)[1] - (b)[1]; (c)[2] = (a)[2] - (b)[2]; }
-#define VectorAdd(a, b, c) { (c)[0] = (a)[0] + (b)[0]; (c)[1] = (a)[1] + (b)[1]; (c)[2] = (a)[2] + (b)[2]; }
-#define VectorCopy(a, b) { (b)[0] = (a)[0]; (b)[1] = (a)[1]; (b)[2] = (a)[2]; }
-inline void VectorClear( float *a ) { a[0] = 0.0; a[1] = 0.0; a[2] = 0.0; }
-#endif
+static inline void VectorSubtract( const Vector& a, const Vector& b, Vector& c ) { c = a - b; }
+static inline void VectorAdd( const Vector& a, const Vector& b, Vector& c ) { c = a + b; }
+static inline void VectorCopy( const Vector& a, Vector& b ) { b = a; }
+static inline void VectorClear( Vector& a ) { a.Clear(); }
 
-void VectorMA( const float *veca, float scale, const float *vecb, float *vecc );
-void VectorScale( const float *in, float scale, float *out );
-float VectorNormalize( float *v );
-void VectorInverse( float *v );
+void VectorMA( const Vector &veca, vec_t scale, const Vector &vecb, Vector &vecc );
+void VectorScale( const Vector &in, vec_t scale, Vector &out );
+float VectorNormalize( Vector &v );
+void VectorInverse( Vector &v );
 
 extern const vec3_t vec3_origin;
 

@@ -61,9 +61,9 @@ public:
 	void	WriteString( const char *pname, const char *pstring );			// Save a null-terminated string
 	void	WriteString( const char *pname, const int *stringId, int count );	// Save a null-terminated string (engine string)
 	void	WriteVector( const char *pname, const Vector &value );				// Save a vector
-	void	WriteVector( const char *pname, const float *value, int count );	// Save a vector
+	void	WriteVector( const char *pname, const Vector value[], int count );	// Save a vector
 	void	WritePositionVector( const char *pname, const Vector &value );		// Offset for landmark if necessary
-	void	WritePositionVector( const char *pname, const float *value, int count );	// array of pos vectors
+	void	WritePositionVector( const char *pname, const Vector value[], int count );	// array of pos vectors
 	void	WriteFunction( const char *pname, void **value, int count );		// Save a function pointer
 	int		WriteEntVars( const char *pname, entvars_t *pev );		// Save entvars_t (entvars_t)
 	int		WriteFields( const char *pname, void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCount );

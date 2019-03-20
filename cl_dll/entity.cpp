@@ -22,7 +22,7 @@
 
 void Game_AddObjects( void );
 
-extern vec3_t v_origin;
+extern Vector v_origin;
 
 int g_iAlive = 1;
 
@@ -809,7 +809,7 @@ void DLLEXPORT HUD_TempEntUpdate (
 						{
 							// Chop spark speeds a bit more
 							//
-							VectorScale( pTemp->entity.baseline.origin, 0.6, pTemp->entity.baseline.origin );
+							VectorScale( pTemp->entity.baseline.origin, 0.6f, pTemp->entity.baseline.origin );
 
 							if( pTemp->entity.baseline.origin.Length() < 10 )
 							{
@@ -874,7 +874,7 @@ void DLLEXPORT HUD_TempEntUpdate (
 						{
 
 							VectorScale( pTemp->entity.baseline.origin, damp, pTemp->entity.baseline.origin );
-							VectorScale( pTemp->entity.angles, 0.9, pTemp->entity.angles );
+							VectorScale( pTemp->entity.angles, 0.9f, pTemp->entity.angles );
 						}
 					}
 				}

@@ -48,7 +48,7 @@ void IN_Init( void );
 void IN_Move( float frametime, usercmd_t *cmd );
 void IN_Shutdown( void );
 void V_Init( void );
-void VectorAngles( const float *forward, float *angles );
+void VectorAngles( const Vector &forward, Vector &angles );
 int CL_ButtonBits( int );
 
 // xxx need client dll function to get and clear impuse
@@ -242,11 +242,8 @@ Add a kbutton_t * to the list of pointers the engine can retrieve via KB_Find
 void KB_Add( const char *name, kbutton_t *pkb )
 {
 	kblist_t *p;	
-	kbutton_t *kb;
 
-	kb = KB_Find( name );
-
-	if( kb )
+	if( KB_Find( name ) )
 		return;
 
 	p = (kblist_t *)malloc( sizeof(kblist_t) );
@@ -670,7 +667,7 @@ Returns 0.25 if a key was pressed and released during the frame,
 */
 float CL_KeyState( kbutton_t *key )
 {
-	float		val = 0.0;
+	float		val = 0.0f;
 	int		impulsedown, impulseup, down;
 
 	impulsedown = key->state & 2;
@@ -680,19 +677,19 @@ float CL_KeyState( kbutton_t *key )
 	if( impulsedown && !impulseup )
 	{
 		// pressed and held this frame?
-		val = down ? 0.5 : 0.0;
+		val = down ? 0.5f : 0.0f;
 	}
 
 	if( impulseup && !impulsedown )
 	{
 		// released this frame?
-		val = down ? 0.0 : 0.0;
+		val = down ? 0.0f : 0.0f;
 	}
 
 	if( !impulsedown && !impulseup )
 	{
 		// held the entire frame?
-		val = down ? 1.0 : 0.0;
+		val = down ? 1.0f : 0.0f;
 	}
 
 	if( impulsedown && impulseup )
@@ -700,12 +697,12 @@ float CL_KeyState( kbutton_t *key )
 		if( down )
 		{
 			// released and re-pressed this frame
-			val = 0.75;	
+			val = 0.75f;
 		}
 		else
 		{
 			// pressed and released this frame
-			val = 0.25;	
+			val = 0.25f;
 		}
 	}
 
@@ -721,48 +718,35 @@ CL_AdjustAngles
 Moves the local angle positions
 ================
 */
-void CL_AdjustAngles( float frametime, float *viewangles )
+void CL_AdjustAngles( float frametime, Vector &viewangles )
 {
 	float speed;
-	float up, down;
 
 	if( in_speed.state & 1 )
-	{
 		speed = frametime * cl_anglespeedkey->value;
-	}
 	else
-	{
 		speed = frametime;
-	}
 
 	if( !( in_strafe.state & 1 ) )
 	{
-		viewangles[YAW] -= speed * cl_yawspeed->value * CL_KeyState( &in_right );
-		viewangles[YAW] += speed * cl_yawspeed->value * CL_KeyState( &in_left );
+		viewangles[YAW] -= speed * cl_yawspeed->value * ( CL_KeyState( &in_right ) - CL_KeyState( &in_left ));
 		viewangles[YAW] = anglemod( viewangles[YAW] );
 	}
 
 	if( in_klook.state & 1 )
-	{
-		viewangles[PITCH] -= speed * cl_pitchspeed->value * CL_KeyState( &in_forward );
-		viewangles[PITCH] += speed * cl_pitchspeed->value * CL_KeyState( &in_back );
-	}
+		viewangles[PITCH] -= speed * cl_pitchspeed->value * ( CL_KeyState( &in_forward ) - CL_KeyState( &in_back ));
 
-	up = CL_KeyState( &in_lookup );
-	down = CL_KeyState( &in_lookdown );
-
-	viewangles[PITCH] -= speed * cl_pitchspeed->value * up;
-	viewangles[PITCH] += speed * cl_pitchspeed->value * down;
+	viewangles[PITCH] -= speed * cl_pitchspeed->value * ( CL_KeyState( &in_lookup ) - CL_KeyState( &in_lookdown ));
 
 	if( viewangles[PITCH] > cl_pitchdown->value )
 		viewangles[PITCH] = cl_pitchdown->value;
 	if( viewangles[PITCH] < -cl_pitchup->value )
 		viewangles[PITCH] = -cl_pitchup->value;
 
-	if( viewangles[ROLL] > 50 )
-		viewangles[ROLL] = 50;
-	if( viewangles[ROLL] < -50 )
-		viewangles[ROLL] = -50;
+	if( viewangles[ROLL] > 50.0f )
+		viewangles[ROLL] = 50.0f;
+	if( viewangles[ROLL] < -50.0f )
+		viewangles[ROLL] = -50.0f;
 }
 
 /*
@@ -777,8 +761,8 @@ if active == 1 then we are 1) not playing back demos ( where our commands are ig
 void DLLEXPORT CL_CreateMove( float frametime, usercmd_t *cmd, int active )
 {
 	float spd;
-	vec3_t viewangles;
-	static vec3_t oldangles;
+	Vector viewangles;
+	static Vector oldangles;
 
 	if( active )
 	{
@@ -793,16 +777,11 @@ void DLLEXPORT CL_CreateMove( float frametime, usercmd_t *cmd, int active )
 		gEngfuncs.SetViewAngles( viewangles );
 
 		if( in_strafe.state & 1 )
-		{
-			cmd->sidemove += cl_sidespeed->value * CL_KeyState( &in_right );
-			cmd->sidemove -= cl_sidespeed->value * CL_KeyState( &in_left );
-		}
+			cmd->sidemove += cl_sidespeed->value * ( CL_KeyState( &in_right ) - CL_KeyState( &in_left ) );
 
-		cmd->sidemove += cl_sidespeed->value * CL_KeyState( &in_moveright );
-		cmd->sidemove -= cl_sidespeed->value * CL_KeyState( &in_moveleft );
+		cmd->sidemove += cl_sidespeed->value * ( CL_KeyState( &in_moveright ) - CL_KeyState( &in_moveleft ) );
 
-		cmd->upmove += cl_upspeed->value * CL_KeyState( &in_up );
-		cmd->upmove -= cl_upspeed->value * CL_KeyState( &in_down );
+		cmd->upmove += cl_upspeed->value * ( CL_KeyState( &in_up ) - CL_KeyState( &in_down ) );
 
 		if( !(in_klook.state & 1 ) )
 		{	

@@ -123,7 +123,7 @@ int CHudHealth::MsgFunc_Damage( const char *pszName, int iSize, void *pbuf )
 	int damageTaken = READ_BYTE();	// health
 	long bitsDamage = READ_LONG(); // damage bits
 
-	vec3_t vecFrom;
+	Vector vecFrom;
 
 	for( int i = 0; i < 3; i++ )
 		vecFrom[i] = READ_COORD();
@@ -239,30 +239,30 @@ int CHudHealth::Draw( float flTime )
 	return DrawPain( flTime );
 }
 
-void CHudHealth::CalcDamageDirection( vec3_t vecFrom )
+void CHudHealth::CalcDamageDirection( const Vector& vecFrom )
 {
-	vec3_t forward, right, up;
+	Vector forward, right;
+	Vector vecFromRelative;
 	float side, front;
-	vec3_t vecOrigin, vecAngles;
 
-	if( !vecFrom[0] && !vecFrom[1] && !vecFrom[2] )
+	if( vecFrom.IsZero() )
 	{
 		m_fAttackFront = m_fAttackRear = m_fAttackRight = m_fAttackLeft = 0;
 		return;
 	}
 
-	memcpy( vecOrigin, gHUD.m_vecOrigin, sizeof(vec3_t) );
-	memcpy( vecAngles, gHUD.m_vecAngles, sizeof(vec3_t) );
+	const Vector& vecOrigin = gHUD.m_vecOrigin;
+	const Vector& vecAngles = gHUD.m_vecAngles;
 
-	VectorSubtract( vecFrom, vecOrigin, vecFrom );
+	vecFromRelative = vecFrom - vecOrigin;
 
-	float flDistToTarget = vecFrom.Length();
+	float flDistToTarget = vecFromRelative.Length();
 
-	vecFrom = vecFrom.Normalize();
-	AngleVectors( vecAngles, forward, right, up );
+	vecFromRelative = vecFromRelative.Normalize();
+	AngleVectors( vecAngles, forward, right, NULL );
 
-	front = DotProduct( vecFrom, right );
-	side = DotProduct( vecFrom, forward );
+	front = DotProduct( vecFromRelative, right );
+	side = DotProduct( vecFromRelative, forward );
 
 	if( flDistToTarget <= 50 )
 	{
@@ -270,29 +270,18 @@ void CHudHealth::CalcDamageDirection( vec3_t vecFrom )
 	}
 	else 
 	{
-		if( side > 0 )
-		{
-			if( side > 0.3 )
-				m_fAttackFront = max( m_fAttackFront, side );
-		}
-		else
-		{
-			float f = fabs( side );
-			if( f > 0.3 )
-				m_fAttackRear = max( m_fAttackRear, f );
-		}
+		float *m_fAttackVal;
+		float f;
 
-		if( front > 0 )
-		{
-			if( front > 0.3 )
-				m_fAttackRight = max( m_fAttackRight, front );
-		}
-		else
-		{
-			float f = fabs( front );
-			if( f > 0.3 )
-				m_fAttackLeft = max( m_fAttackLeft, f );
-		}
+		m_fAttackVal = (side > 0.0f) ? &m_fAttackFront : &m_fAttackRear;
+		f = fabs( side );
+		if( f > 0.3f )
+				*m_fAttackVal = max( *m_fAttackVal, f );
+
+		m_fAttackVal = (front > 0.0f) ? &m_fAttackRight : &m_fAttackLeft;
+		f = fabs( front );
+		if( f > 0.3f )
+				*m_fAttackVal = max( *m_fAttackVal, f );
 	}
 }
 

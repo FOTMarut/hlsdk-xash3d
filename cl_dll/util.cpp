@@ -36,87 +36,78 @@ extern const vec3_t vec3_origin;
 const vec3_t vec3_origin;
 #endif
 
-double sqrt( double x );
+float Length( const Vector &v ) { return v.Length(); }
 
-float Length( const float *v )
+void VectorAngles( const Vector &forward, Vector &angles )
 {
-	int	i;
-	float	length;
+	float &pitch = angles.x, &yaw = angles.y, &roll = angles.z;
 
-	length = 0;
-	for( i = 0; i < 3; i++ )
-		length += v[i] * v[i];
-	length = sqrt( length );		// FIXME
-
-	return length;
-}
-
-void VectorAngles( const float *forward, float *angles )
-{
-	float tmp, yaw, pitch;
-
-	if( forward[1] == 0 && forward[0] == 0 )
+	if( forward.y == 0.0f && forward.x == 0.0f )
 	{
-		yaw = 0;
-		if( forward[2] > 0 )
-			pitch = 90;
+		yaw = 0.0f;
+		if( forward.z > 0.0f )
+			pitch = 90.0f;
 		else
-			pitch = 270;
+			pitch = 270.0f;
 	}
 	else
 	{
-		yaw = ( atan2( forward[1], forward[0]) * 180 / M_PI );
-		if( yaw < 0 )
-			yaw += 360;
+		yaw = ( atan2f( forward.y, forward.x ) * 180.0f / M_PI );
+		if( yaw < 0.0f )
+			yaw += 360.0f;
 
-		tmp = sqrt( forward[0] * forward[0] + forward[1] * forward[1] );
-		pitch = ( atan2( forward[2], tmp ) * 180 / M_PI );
-		if( pitch < 0 )
-			pitch += 360;
+		float tmp = sqrtf( forward.x * forward.x + forward.y * forward.y );
+		pitch = ( atan2f( forward.z, tmp ) * 180.0f / M_PI );
+		if( pitch < 0.0f )
+			pitch += 360.0f;
 	}
 
-	angles[0] = pitch;
-	angles[1] = yaw;
-	angles[2] = 0;
+	roll = 0.0f;
 }
 
-float VectorNormalize( float *v )
+float VectorNormalize( Vector &v )
 {
-	float length, ilength;
-
-	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
-	length = sqrt( length );		// FIXME
-
-	if( length )
-	{
-		ilength = 1 / length;
-		v[0] *= ilength;
-		v[1] *= ilength;
-		v[2] *= ilength;
-	}
-
+	vec_t length = v.Length();
+	v = v.Normalize();
 	return length;
+//	float length, ilength;
+//
+//	length = v[0] * v[0] + v[1] * v[1] + v[2] * v[2];
+//	length = sqrt( length );		// FIXME
+//
+//	if( length )
+//	{
+//		ilength = 1 / length;
+//		v[0] *= ilength;
+//		v[1] *= ilength;
+//		v[2] *= ilength;
+//	}
+//
+//	return length;
 }
 
-void VectorInverse( float *v )
+void VectorInverse( Vector &v )
 {
-	v[0] = -v[0];
-	v[1] = -v[1];
-	v[2] = -v[2];
+	v = -v;
+//	v[0] = -v[0];
+//	v[1] = -v[1];
+//	v[2] = -v[2];
 }
 
-void VectorScale( const float *in, float scale, float *out )
+void VectorScale( const Vector &in, vec_t scale, Vector &out )
 {
-	out[0] = in[0] * scale;
-	out[1] = in[1] * scale;
-	out[2] = in[2] * scale;
+	out = in * scale;
+//	out[0] = in[0] * scale;
+//	out[1] = in[1] * scale;
+//	out[2] = in[2] * scale;
 }
 
-void VectorMA( const float *veca, float scale, const float *vecb, float *vecc )
+void VectorMA( const Vector &veca, vec_t scale, const Vector &vecb, Vector &vecc )
 {
-	vecc[0] = veca[0] + scale * vecb[0];
-	vecc[1] = veca[1] + scale * vecb[1];
-	vecc[2] = veca[2] + scale * vecb[2];
+	vecc = veca + scale * vecb;
+//	vecc[0] = veca[0] + scale * vecb[0];
+//	vecc[1] = veca[1] + scale * vecb[1];
+//	vecc[2] = veca[2] + scale * vecb[2];
 }
 
 HSPRITE LoadSprite( const char *pszName )

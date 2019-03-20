@@ -18,18 +18,18 @@ AngleMatrix
 
 ====================
 */
-void AngleMatrix( const float *angles, float (*matrix)[4] )
+void AngleMatrix( const Vector &angles, vec_t matrix[3][4] )
 {
-	float angle;
-	float sr, sp, sy, cr, cp, cy;
+	vec_t angle;
+	vec_t sr, sp, sy, cr, cp, cy;
 
-	angle = angles[YAW] * ( M_PI*2 / 360 );
+	angle = angles[YAW] * ( M_PI*2 / 360.0f );
 	sy = sin( angle );
 	cy = cos( angle );
-	angle = angles[PITCH] * ( M_PI*2 / 360 );
+	angle = angles[PITCH] * ( M_PI*2 / 360.0f );
 	sp = sin( angle );
 	cp = cos( angle );
-	angle = angles[ROLL] * ( M_PI*2 / 360 );
+	angle = angles[ROLL] * ( M_PI*2 / 360.0f );
 	sr = sin( angle );
 	cr = cos( angle );
 
@@ -43,9 +43,9 @@ void AngleMatrix( const float *angles, float (*matrix)[4] )
 	matrix[0][2] = (cr * sp * cy + -sr * -sy);
 	matrix[1][2] = (cr * sp * sy + -sr* cy);
 	matrix[2][2] = cr * cp;
-	matrix[0][3] = 0.0;
-	matrix[1][3] = 0.0;
-	matrix[2][3] = 0.0;
+	matrix[0][3] = 0.0f;
+	matrix[1][3] = 0.0f;
+	matrix[2][3] = 0.0f;
 }
 
 /*
@@ -54,15 +54,16 @@ VectorCompare
 
 ====================
 */
-int VectorCompare( const float *v1, const float *v2 )
+bool VectorCompare( const Vector &v1, const Vector &v2 )
 {
-	int i;
-
-	for( i = 0; i < 3; i++ )
-		if( v1[i] != v2[i] )
-			return 0;
-
-	return 1;
+	return v1 == v2;
+//	int i;
+//
+//	for( i = 0; i < 3; i++ )
+//		if( v1[i] != v2[i] )
+//			return 0;
+//
+//	return 1;
 }
 
 /*
@@ -71,11 +72,11 @@ CrossProduct
 
 ====================
 */
-void CrossProduct( const float *v1, const float *v2, float *cross )
+void CrossProduct( const Vector &v1, const Vector &v2, Vector &cross )
 {
-	cross[0] = v1[1]*v2[2] - v1[2]*v2[1];
-	cross[1] = v1[2]*v2[0] - v1[0]*v2[2];
-	cross[2] = v1[0]*v2[1] - v1[1]*v2[0];
+	cross.x = v1.y * v2.z - v1.z * v2.y;
+	cross.y = v1.z * v2.x - v1.x * v2.z;
+	cross.z = v1.x * v2.y - v1.y * v2.x;
 }
 
 /*
@@ -84,11 +85,12 @@ VectorTransform
 
 ====================
 */
-void VectorTransform( const float *in1, float in2[3][4], float *out )
+void VectorTransform( const Vector &in1, vec_t in2[3][4], Vector &out )
 {
-	out[0] = DotProduct(in1, in2[0]) + in2[0][3];
-	out[1] = DotProduct(in1, in2[1]) + in2[1][3];
-	out[2] = DotProduct(in1, in2[2]) + in2[2][3];
+	const vec4_t in1_4d = { in1.x, in1.y, in1.z, 1.0f};
+	out.x = DotProduct4d(in1_4d, in2[0]);
+	out.y = DotProduct4d(in1_4d, in2[1]);
+	out.z = DotProduct4d(in1_4d, in2[2]);
 }
 
 /*
@@ -97,35 +99,23 @@ ConcatTransforms
 
 ================
 */
-void ConcatTransforms( float in1[3][4], float in2[3][4], float out[3][4] )
+void ConcatTransforms( const vec_t in1[3][4], const vec_t in2[3][4], vec_t out[3][4] )
 {
-	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] +
-				in1[0][2] * in2[2][0];
-	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] +
-				in1[0][2] * in2[2][1];
-	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] +
-				in1[0][2] * in2[2][2];
-	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] +
-				in1[0][2] * in2[2][3] + in1[0][3];
-	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] +
-				in1[1][2] * in2[2][0];
-	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] +
-				in1[1][2] * in2[2][1];
-	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] +
-				in1[1][2] * in2[2][2];
-	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] +
-				in1[1][2] * in2[2][3] + in1[1][3];
-	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] +
-				in1[2][2] * in2[2][0];
-	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] +
-				in1[2][2] * in2[2][1];
-	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] +
-				in1[2][2] * in2[2][2];
-	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] +
-				in1[2][2] * in2[2][3] + in1[2][3];
+	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
+	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
+	out[0][2] = in1[0][0] * in2[0][2] + in1[0][1] * in2[1][2] + in1[0][2] * in2[2][2];
+	out[0][3] = in1[0][0] * in2[0][3] + in1[0][1] * in2[1][3] + in1[0][2] * in2[2][3] + in1[0][3];
+	out[1][0] = in1[1][0] * in2[0][0] + in1[1][1] * in2[1][0] + in1[1][2] * in2[2][0];
+	out[1][1] = in1[1][0] * in2[0][1] + in1[1][1] * in2[1][1] + in1[1][2] * in2[2][1];
+	out[1][2] = in1[1][0] * in2[0][2] + in1[1][1] * in2[1][2] + in1[1][2] * in2[2][2];
+	out[1][3] = in1[1][0] * in2[0][3] + in1[1][1] * in2[1][3] + in1[1][2] * in2[2][3] + in1[1][3];
+	out[2][0] = in1[2][0] * in2[0][0] + in1[2][1] * in2[1][0] + in1[2][2] * in2[2][0];
+	out[2][1] = in1[2][0] * in2[0][1] + in1[2][1] * in2[1][1] + in1[2][2] * in2[2][1];
+	out[2][2] = in1[2][0] * in2[0][2] + in1[2][1] * in2[1][2] + in1[2][2] * in2[2][2];
+	out[2][3] = in1[2][0] * in2[0][3] + in1[2][1] * in2[1][3] + in1[2][2] * in2[2][3] + in1[2][3];
 }
 
-// angles index are not the same as ROLL, PITCH, YAW
+// angles index are NOT the same as ROLL, PITCH, YAW
 
 /*
 ====================
@@ -133,19 +123,19 @@ AngleQuaternion
 
 ====================
 */
-void AngleQuaternion( float *angles, vec4_t quaternion )
+void AngleQuaternion( const Vector &angles, vec4_t quaternion )
 {
-	float angle;
-	float sr, sp, sy, cr, cp, cy;
+	vec_t angle;
+	vec_t sr, sp, sy, cr, cp, cy;
 
 	// FIXME: rescale the inputs to 1/2 angle
-	angle = angles[2] * 0.5;
+	angle = angles.z * 0.5;
 	sy = sin( angle );
 	cy = cos( angle );
-	angle = angles[1] * 0.5;
+	angle = angles.y * 0.5;
 	sp = sin( angle );
 	cp = cos( angle );
-	angle = angles[0] * 0.5;
+	angle = angles.x * 0.5;
 	sr = sin( angle );
 	cr = cos( angle );
 
@@ -161,14 +151,14 @@ QuaternionSlerp
 
 ====================
 */
-void QuaternionSlerp( vec4_t p, vec4_t q, float t, vec4_t qt )
+void QuaternionSlerp( const vec4_t p, vec4_t q, vec_t t, vec4_t qt )
 {
 	int i;
-	float omega, cosom, sinom, sclp, sclq;
+	vec_t omega, cosom, sinom, sclp, sclq;
 
 	// decide if one of the quaternions is backwards
-	float a = 0;
-	float b = 0;
+	vec_t a = 0.0f;
+	vec_t b = 0.0f;
 
 	for( i = 0; i < 4; i++ )
 	{
@@ -185,18 +175,18 @@ void QuaternionSlerp( vec4_t p, vec4_t q, float t, vec4_t qt )
 
 	cosom = p[0] * q[0] + p[1] * q[1] + p[2] * q[2] + p[3] * q[3];
 
-	if( ( 1.0 + cosom ) > 0.000001 )
+	if( ( 1.0f + cosom ) > 0.000001f )
 	{
-		if( ( 1.0 - cosom ) > 0.000001 )
+		if( ( 1.0f - cosom ) > 0.000001f )
 		{
 			omega = acos( cosom );
 			sinom = sin( omega );
-			sclp = sin( ( 1.0 - t ) * omega ) / sinom;
+			sclp = sin( ( 1.0f - t ) * omega ) / sinom;
 			sclq = sin( t * omega ) / sinom;
 		}
 		else
 		{
-			sclp = 1.0 - t;
+			sclp = 1.0f - t;
 			sclq = t;
 		}
 		for( i = 0; i < 4; i++ )
@@ -210,8 +200,8 @@ void QuaternionSlerp( vec4_t p, vec4_t q, float t, vec4_t qt )
 		qt[1] = q[0];
 		qt[2] = -q[3];
 		qt[3] = q[2];
-		sclp = sin( ( 1.0 - t ) * ( 0.5 * M_PI ) );
-		sclq = sin( t * ( 0.5 * M_PI ) );
+		sclp = sin( ( 1.0f - t ) * ( 0.5f * M_PI ) );
+		sclq = sin( t * ( 0.5f * M_PI ) );
 		for( i = 0; i < 3; i++ )
 		{
 			qt[i] = sclp * p[i] + sclq * qt[i];
@@ -225,19 +215,19 @@ QuaternionMatrix
 
 ====================
 */
-void QuaternionMatrix( vec4_t quaternion, float (*matrix)[4] )
+void QuaternionMatrix( vec4_t quaternion, vec_t matrix[3][4] )
 {
-	matrix[0][0] = 1.0 - 2.0 * quaternion[1] * quaternion[1] - 2.0 * quaternion[2] * quaternion[2];
-	matrix[1][0] = 2.0 * quaternion[0] * quaternion[1] + 2.0 * quaternion[3] * quaternion[2];
-	matrix[2][0] = 2.0 * quaternion[0] * quaternion[2] - 2.0 * quaternion[3] * quaternion[1];
+	matrix[0][0] = 1.0f - 2.0f * quaternion[1] * quaternion[1] - 2.0f * quaternion[2] * quaternion[2];
+	matrix[1][0] =        2.0f * quaternion[0] * quaternion[1] + 2.0f * quaternion[3] * quaternion[2];
+	matrix[2][0] =        2.0f * quaternion[0] * quaternion[2] - 2.0f * quaternion[3] * quaternion[1];
 
-	matrix[0][1] = 2.0 * quaternion[0] * quaternion[1] - 2.0 * quaternion[3] * quaternion[2];
-	matrix[1][1] = 1.0 - 2.0 * quaternion[0] * quaternion[0] - 2.0 * quaternion[2] * quaternion[2];
-	matrix[2][1] = 2.0 * quaternion[1] * quaternion[2] + 2.0 * quaternion[3] * quaternion[0];
+	matrix[0][1] =        2.0f * quaternion[0] * quaternion[1] - 2.0f * quaternion[3] * quaternion[2];
+	matrix[1][1] = 1.0f - 2.0f * quaternion[0] * quaternion[0] - 2.0f * quaternion[2] * quaternion[2];
+	matrix[2][1] =        2.0f * quaternion[1] * quaternion[2] + 2.0f * quaternion[3] * quaternion[0];
 
-	matrix[0][2] = 2.0 * quaternion[0] * quaternion[2] + 2.0 * quaternion[3] * quaternion[1];
-	matrix[1][2] = 2.0 * quaternion[1] * quaternion[2] - 2.0 * quaternion[3] * quaternion[0];
-	matrix[2][2] = 1.0 - 2.0 * quaternion[0] * quaternion[0] - 2.0 * quaternion[1] * quaternion[1];
+	matrix[0][2] =        2.0f * quaternion[0] * quaternion[2] + 2.0f * quaternion[3] * quaternion[1];
+	matrix[1][2] =        2.0f * quaternion[1] * quaternion[2] - 2.0f * quaternion[3] * quaternion[0];
+	matrix[2][2] = 1.0f - 2.0f * quaternion[0] * quaternion[0] - 2.0f * quaternion[1] * quaternion[1];
 }
 
 /*
@@ -246,7 +236,7 @@ MatrixCopy
 
 ====================
 */
-void MatrixCopy( float in[3][4], float out[3][4] )
+void MatrixCopy( vec_t in[3][4], vec_t out[3][4] )
 {
-	memcpy( out, in, sizeof( float ) * 3 * 4 );
+	memcpy( out, in, sizeof( vec_t ) * 3 * 4 );
 }

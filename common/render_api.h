@@ -178,7 +178,7 @@ typedef struct render_api_s
 	// Set renderer info (tell engine about changes)
 	void		(*R_SetCurrentEntity)( cl_entity_t *ent ); // tell engine about both currententity and currentmodel
 	void		(*R_SetCurrentModel)( model_t *mod );	// change currentmodel but leave currententity unchanged
-	void		(*GL_SetWorldviewProjectionMatrix)( const float *glmatrix ); // update viewprojection matrix (tracers uses it)
+	void		(*GL_SetWorldviewProjectionMatrix)( const float glmatrix[4][4] ); // update viewprojection matrix (tracers uses it)
 	void		(*R_StoreEfrags)( efrag_t **ppefrag, int framecount );// store efrags for static entities
 
 	// Texture tools

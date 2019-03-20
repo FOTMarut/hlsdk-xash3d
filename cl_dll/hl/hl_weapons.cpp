@@ -47,10 +47,10 @@ static globalvars_t Globals;
 
 static CBasePlayerWeapon *g_pWpns[32];
 
-float g_flApplyVel = 0.0;
+float g_flApplyVel = 0.0f;
 int g_irunninggausspred = 0;
 
-vec3_t previousorigin;
+Vector previousorigin;
 
 // HLDM Weapon placeholder entities.
 CGlock g_Glock;
@@ -288,7 +288,7 @@ Only produces random numbers to match the server ones.
 */
 Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecDirShooting, Vector vecSpread, float flDistance, int iBulletType, int iTracerFreq, int iDamage, entvars_t *pevAttacker, int shared_rand )
 {
-	float x = 0.0f, y = 0.0f, z;
+	float x = 0.0f, y = 0.0f;
 
 	for( ULONG iShot = 1; iShot <= cShots; iShot++ )
 	{
@@ -298,16 +298,16 @@ Vector CBaseEntity::FireBulletsPlayer ( ULONG cShots, Vector vecSrc, Vector vecD
 			do {
 					x = RANDOM_FLOAT( -0.5, 0.5 ) + RANDOM_FLOAT( -0.5, 0.5 );
 					y = RANDOM_FLOAT( -0.5, 0.5 ) + RANDOM_FLOAT( -0.5, 0.5 );
-					z = x * x + y * y;
-			} while( z > 1 );
+			} while( x * x + y * y > 1 );
 		}
 		else
 		{
 			//Use player's random seed.
 			// get circular gaussian spread
-			x = UTIL_SharedRandomFloat( shared_rand + iShot, -0.5, 0.5 ) + UTIL_SharedRandomFloat( shared_rand + ( 1 + iShot ) , -0.5, 0.5 );
-			y = UTIL_SharedRandomFloat( shared_rand + ( 2 + iShot ), -0.5, 0.5 ) + UTIL_SharedRandomFloat( shared_rand + ( 3 + iShot ), -0.5, 0.5 );
-			z = x * x + y * y;
+			x = UTIL_SharedRandomFloat( shared_rand +       iShot  , -0.5, 0.5 )
+			  + UTIL_SharedRandomFloat( shared_rand + ( 1 + iShot ), -0.5, 0.5 );
+			y = UTIL_SharedRandomFloat( shared_rand + ( 2 + iShot ), -0.5, 0.5 )
+			  + UTIL_SharedRandomFloat( shared_rand + ( 3 + iShot ), -0.5, 0.5 );
 		}			
 	}
 
@@ -380,9 +380,7 @@ void CBasePlayerWeapon::ItemPostFrame( void )
 
 	// catch all
 	if( ShouldWeaponIdle() )
-	{
 		WeaponIdle();
-	}
 }
 
 /*
@@ -412,9 +410,7 @@ void CBasePlayer::SelectItem( const char *pstr )
 	m_pActiveItem = pItem;
 
 	if( m_pActiveItem )
-	{
 		m_pActiveItem->Deploy();
-	}
 }
 
 /*
@@ -426,14 +422,10 @@ CBasePlayer::SelectLastItem
 void CBasePlayer::SelectLastItem( void )
 {
 	if( !m_pLastItem )
-	{
 		return;
-	}
 
 	if( m_pActiveItem && !m_pActiveItem->CanHolster() )
-	{
 		return;
-	}
 
 	if( m_pActiveItem )
 		m_pActiveItem->Holster();
@@ -493,16 +485,10 @@ UTIL_ParticleBox
 For debugging, draw a box around a player made out of particles
 =====================
 */
-void UTIL_ParticleBox( CBasePlayer *player, float *mins, float *maxs, float life, unsigned char r, unsigned char g, unsigned char b )
+void UTIL_ParticleBox( const CBasePlayer *player, const Vector &mins, const Vector &maxs, float life, unsigned char r, unsigned char g, unsigned char b )
 {
-	int i;
-	vec3_t mmin, mmax;
-
-	for( i = 0; i < 3; i++ )
-	{
-		mmin[i] = player->pev->origin[i] + mins[i];
-		mmax[i] = player->pev->origin[i] + maxs[i];
-	}
+	const Vector mmin = player->pev->origin + mins;
+	const Vector mmax = player->pev->origin + maxs;
 
 	gEngfuncs.pEfxAPI->R_ParticleBox( mmin, mmax, 5.0, 0, 255, 0 );
 }
@@ -519,7 +505,7 @@ void UTIL_ParticleBoxes( void )
 	int idx;
 	physent_t *pe;
 	cl_entity_t *player;
-	vec3_t mins, maxs;
+	Vector mins, maxs;
 
 	gEngfuncs.pEventAPI->EV_SetUpPlayerPrediction( false, true );
 
@@ -555,7 +541,7 @@ UTIL_ParticleLine
 For debugging, draw a line made out of particles
 =====================
 */
-void UTIL_ParticleLine( CBasePlayer *player, float *start, float *end, float life, unsigned char r, unsigned char g, unsigned char b )
+void UTIL_ParticleLine( CBasePlayer *player, const Vector &start, const Vector &end, float life, unsigned char r, unsigned char g, unsigned char b )
 {
 	gEngfuncs.pEfxAPI->R_ParticleLine( start, end, r, g, b, life );
 }
@@ -622,18 +608,12 @@ void HUD_InitClientWeapons( void )
 =====================
 HUD_GetLastOrg
 
-Retruns the last position that we stored for egon beam endpoint.
+Returns the last position that we stored for egon beam endpoint.
 =====================
 */
-void HUD_GetLastOrg( float *org )
+void HUD_GetLastOrg( Vector &org )
 {
-	int i;
-
-	// Return last origin
-	for( i = 0; i < 3; i++ )
-	{
-		org[i] = previousorigin[i];
-	}
+	org = previousorigin;
 }
 
 /*
@@ -645,13 +625,7 @@ Remember our exact predicted origin so we can draw the egon to the right positio
 */
 void HUD_SetLastOrg( void )
 {
-	int i;
-
-	// Offset final origin by view_offset
-	for( i = 0; i < 3; i++ )
-	{
-		previousorigin[i] = g_finalstate->playerstate.origin[i] + g_finalstate->client.view_ofs[i];
-	}
+	previousorigin = g_finalstate->playerstate.origin + g_finalstate->client.view_ofs;
 }
 
 /*

@@ -73,11 +73,11 @@ void	DLLEXPORT HUD_PlayerMove( playermove_t *ppmove, int server );
 void	DLLEXPORT HUD_PlayerMoveInit( playermove_t *ppmove );
 char	DLLEXPORT HUD_PlayerMoveTexture( char *name );
 int		DLLEXPORT HUD_ConnectionlessPacket( const netadr_t *net_from, const char *args, char *response_buffer, int *response_buffer_size );
-int		DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs );
+int		DLLEXPORT HUD_GetHullBounds( int hullnumber, vec3_t_out mins, vec3_t_out maxs );
 void	DLLEXPORT HUD_Frame( double time );
 void	DLLEXPORT HUD_VoiceStatus(int entindex, qboolean bTalking);
 void	DLLEXPORT HUD_DirectorMessage( int iSize, void *pbuf );
-void DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
+void	DLLEXPORT HUD_MobilityInterface( mobile_engfuncs_t *gpMobileEngfuncs );
 }
 
 /*
@@ -87,7 +87,7 @@ HUD_GetHullBounds
   Engine calls this to enumerate player collision hulls, for prediction.  Return 0 if the hullnumber doesn't exist.
 ================================
 */
-int DLLEXPORT HUD_GetHullBounds( int hullnumber, float *mins, float *maxs )
+int DLLEXPORT HUD_GetHullBounds( int hullnumber, vec3_t_out mins, vec3_t_out maxs )
 {
 	int iret = 0;
 

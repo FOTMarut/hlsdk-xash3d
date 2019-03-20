@@ -21,7 +21,7 @@ extern "C"
 {
 	void DLLEXPORT CAM_Think( void );
 	int DLLEXPORT CL_IsThirdPerson( void );
-	void DLLEXPORT CL_CameraOffset( float *ofs );
+	void DLLEXPORT CL_CameraOffset( vec3_t_out ofs );
 }
 
 extern cl_enginefunc_t gEngfuncs;
@@ -91,35 +91,35 @@ float MoveToward( float cur, float goal, float maxspeed )
 {
 	if( cur != goal )
 	{
-		if( fabs( cur - goal ) > 180.0 )
+		if( fabs( cur - goal ) > 180.0f )
 		{
 			if( cur < goal )
-				cur += 360.0;
+				cur += 360.0f;
 			else
-				cur -= 360.0;
+				cur -= 360.0f;
 		}
 
 		if( cur < goal )
 		{
-			if( cur < goal - 1.0 )
-				cur += ( goal - cur ) / 4.0;
+			if( cur < goal - 1.0f )
+				cur += ( goal - cur ) / 4.0f;
 			else
 				cur = goal;
 		}
 		else
 		{
-			if( cur > goal + 1.0 )
-				cur -= ( cur - goal ) / 4.0;
+			if( cur > goal + 1.0f )
+				cur -= ( cur - goal ) / 4.0f;
 			else
 				cur = goal;
 		}
 	}
 
 	// bring cur back into range
-	if( cur < 0 )
-		cur += 360.0;
-	else if( cur >= 360 )
-		cur -= 360;
+	if( cur < 0.0f )
+		cur += 360.0f;
+	else if( cur >= 360.0f )
+		cur -= 360.0f;
 
 	return cur;
 }
@@ -138,15 +138,15 @@ typedef struct
 	qboolean	monsterclip;
 } moveclip_t;
 
-extern trace_t SV_ClipMoveToEntity( edict_t *ent, vec3_t start, vec3_t mins, vec3_t maxs, vec3_t end );
+extern trace_t SV_ClipMoveToEntity( edict_t *ent, vec3_t_in start, vec3_t_out mins, vec3_t_out maxs, vec3_t_in end );
 
 void DLLEXPORT CAM_Think( void )
 {
-	vec3_t origin;
-	vec3_t ext, pnt, camForward, camRight, camUp;
+	Vector origin;
+	Vector ext, pnt, camForward, camRight, camUp;
 	moveclip_t	clip;
 	float dist;
-	vec3_t camAngles;
+	Vector camAngles;
 	float flSensitivity;
 #ifdef LATER
 	int i;
@@ -172,7 +172,7 @@ void DLLEXPORT CAM_Think( void )
 	if( cam_contain->value )
 	{
 		gEngfuncs.GetClientOrigin( origin );
-		ext[0] = ext[1] = ext[2] = 0.0;
+		ext.Clear();
 	}
 #endif
 	camAngles[PITCH] = cam_idealpitch->value;
@@ -319,10 +319,8 @@ void DLLEXPORT CAM_Think( void )
 	if( cam_contain->value )
 	{
 		// check new ideal
-		VectorCopy( origin, pnt );
+		pnt = origin - dist * camForward;
 		AngleVectors( camAngles, camForward, camRight, camUp );
-		for( i = 0; i < 3; i++ )
-			pnt[i] += -dist * camForward[i];
 
 		// check line from r_refdef.vieworg to pnt
 		memset( &clip, 0, sizeof(moveclip_t) );
@@ -353,7 +351,7 @@ void DLLEXPORT CAM_Think( void )
 	{
 		camAngles[YAW] = cam_idealyaw->value + viewangles[YAW];
 		camAngles[PITCH] = cam_idealpitch->value + viewangles[PITCH];
-		camAngles[2] = cam_idealdist->value;
+		camAngles[ROLL] = cam_idealdist->value;
 	}
 	else
 	{
@@ -363,10 +361,10 @@ void DLLEXPORT CAM_Think( void )
 		if( camAngles[PITCH] - viewangles[PITCH] != cam_idealpitch->value )
 			camAngles[PITCH] = MoveToward( camAngles[PITCH], cam_idealpitch->value + viewangles[PITCH], CAM_ANGLE_SPEED );
 
-		if( fabs( camAngles[2] - cam_idealdist->value ) < 2.0 )
-			camAngles[2] = cam_idealdist->value;
+		if( fabs( camAngles[ROLL] - cam_idealdist->value ) < 2.0 )
+			camAngles[ROLL] = cam_idealdist->value;
 		else
-			camAngles[2] += ( cam_idealdist->value - camAngles[2] ) / 4.0;
+			camAngles[ROLL] += ( cam_idealdist->value - camAngles[ROLL] ) / 4.0;
 	}
 #ifdef LATER
 	if( cam_contain->value )
@@ -375,14 +373,12 @@ void DLLEXPORT CAM_Think( void )
 		dist = camAngles[ROLL];
 		camAngles[ROLL] = 0;
 
-		VectorCopy( origin, pnt );
+		pnt = origin - dist * camForward;
 		AngleVectors( camAngles, camForward, camRight, camUp );
-		for( i = 0; i < 3; i++ )
-			pnt[i] += -dist * camForward[i];
 
 		// check line from r_refdef.vieworg to pnt
 		memset( &clip, 0, sizeof(moveclip_t) );
-		ext[0] = ext[1] = ext[2] = 0.0;
+		ext.Clear();
 		clip.trace = SV_ClipMoveToEntity( sv.edicts, r_refdef.vieworg, ext, ext, pnt );
 		if( clip.trace.fraction != 1.0 )
 			return;
@@ -645,7 +641,7 @@ int DLLEXPORT CL_IsThirdPerson( void )
 	return ( cam_thirdperson ? 1 : 0 ) || ( g_iUser1 && ( g_iUser2 == gEngfuncs.GetLocalPlayer()->index ) );
 }
 
-void DLLEXPORT CL_CameraOffset( float *ofs )
+void DLLEXPORT CL_CameraOffset( vec3_t_out ofs )
 {
 	VectorCopy( cam_ofs, ofs );
 }

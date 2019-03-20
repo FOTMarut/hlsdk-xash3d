@@ -29,9 +29,9 @@
 // Spectator Mode
 extern "C" 
 {
-	float vecNewViewAngles[3];
+	vec3_t vecNewViewAngles;
 	int iHasNewViewAngles;
-	float vecNewViewOrigin[3];
+	vec3_t vecNewViewOrigin;
 	int iHasNewViewOrigin;
 	int iIsSpectator;
 }
@@ -43,24 +43,24 @@ extern "C"
 extern "C" 
 {
 	int CL_IsThirdPerson( void );
-	void CL_CameraOffset( float *ofs );
+	void CL_CameraOffset( vec3_t_out ofs );
 
 	void DLLEXPORT V_CalcRefdef( ref_params_t *pparams );
 
-	void PM_ParticleLine( float *start, float *end, int pcolor, float life, float vert );
+	void PM_ParticleLine( vec3_t_in start, vec3_t_in end, int pcolor, float life, float vert );
 	int PM_GetVisEntInfo( int ent );
 	int PM_GetPhysEntInfo( int ent );
-	void InterpolateAngles( float * start, float * end, float * output, float frac );
-	void NormalizeAngles( float * angles );
-	float Distance( const float * v1, const float * v2 );
-	float AngleBetweenVectors(  const float * v1,  const float * v2 );
+	void InterpolateAngles( vec3_t_out start, vec3_t_out end, vec3_t_out output, float frac );
+	void NormalizeAngles( vec3_t_out angles );
+	float Distance( vec3_t_in v1, vec3_t_in v2 );
+	float AngleBetweenVectors( vec3_t_in v1, vec3_t_in v2 );
 
-	float vJumpOrigin[3];
-	float vJumpAngles[3];
+	vec3_t vJumpOrigin;
+	vec3_t vJumpAngles;
 }
 
-void V_DropPunchAngle( float frametime, float *ev_punchangle );
-void VectorAngles( const float *forward, float *angles );
+void V_DropPunchAngle( float frametime, Vector &ev_punchangle );
+void VectorAngles( const Vector &forward, Vector &angles );
 
 #include "r_studioint.h"
 #include "com_model.h"
@@ -79,19 +79,19 @@ extern cvar_t	*chase_active;
 extern cvar_t	*scr_ofsx, *scr_ofsy, *scr_ofsz;
 extern cvar_t	*cl_vsmoothing;
 extern cvar_t	*cl_viewbob;
-extern Vector   dead_viewangles;
+extern Vector	dead_viewangles;
 
 #define	CAM_MODE_RELAX		1
 #define CAM_MODE_FOCUS		2
 
-vec3_t v_origin, v_angles, v_cl_angles, v_sim_org, v_lastAngles;
+Vector v_origin, v_angles, v_cl_angles, v_sim_org, v_lastAngles;
 float v_frametime, v_lastDistance;	
 float v_cameraRelaxAngle = 5.0f;
 float v_cameraFocusAngle = 35.0f;
 int v_cameraMode = CAM_MODE_FOCUS;
 qboolean v_resetCamera = 1;
 
-vec3_t g_ev_punchangle;
+Vector g_ev_punchangle;
 
 cvar_t	*scr_ofsx;
 cvar_t	*scr_ofsy;
@@ -119,7 +119,7 @@ float	v_idlescale;  // used by TFC for concussion grenade effect
 
 //=============================================================================
 /*
-void V_NormalizeAngles( float *angles )
+void V_NormalizeAngles( Vector &angles )
 {
 	int i;
 
@@ -145,7 +145,7 @@ FIXME:  Use Quaternions to avoid discontinuities
 Frac is 0.0 to 1.0 ( i.e., should probably be clamped, but doesn't have to be )
 ===================
 
-void V_InterpolateAngles( float *start, float *end, float *output, float frac )
+void V_InterpolateAngles( Vector &start, Vector &end, Vector &output, float frac )
 {
 	int i;
 	float ang1, ang2;
@@ -224,12 +224,10 @@ V_CalcRoll
 Used by view and sv_user
 ===============
 */
-float V_CalcRoll( vec3_t angles, vec3_t velocity, float rollangle, float rollspeed )
+float V_CalcRoll( const Vector& angles, const Vector& velocity, float rollangle, float rollspeed )
 {
-	float sign;
-	float side;
-	float value;
-	vec3_t forward, right, up;
+	float sign, side;
+	Vector forward, right, up;
 
 	AngleVectors( angles, forward, right, up );
 
@@ -237,14 +235,13 @@ float V_CalcRoll( vec3_t angles, vec3_t velocity, float rollangle, float rollspe
 	sign = side < 0 ? -1 : 1;
 	side = fabs( side );
 
-	value = rollangle;
 	if( side < rollspeed )
 	{
-		side = side * value / rollspeed;
+		side = side * rollangle / rollspeed;
 	}
 	else
 	{
-		side = value;
+		side = rollangle;
 	}
 	return side * sign;
 }
@@ -393,10 +390,10 @@ void V_CalcIntermissionRefdef( ref_params_t *pparams )
 
 typedef struct 
 {
-	float Origins[ORIGIN_BACKUP][3];
+	vec3_t Origins[ORIGIN_BACKUP];
 	float OriginTime[ORIGIN_BACKUP];
 
-	float Angles[ORIGIN_BACKUP][3];
+	vec3_t Angles[ORIGIN_BACKUP];
 	float AngleTime[ORIGIN_BACKUP];
 
 	int CurrentOrigin;
@@ -662,7 +659,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 	}
 #endif
 	{
-		static float lastorg[3];
+		static vec3_t lastorg;
 		vec3_t delta;
 
 		VectorSubtract( pparams->simorg, lastorg, delta );
@@ -772,7 +769,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 	v_origin = pparams->vieworg;
 }
 
-void V_SmoothInterpolateAngles( float * startAngle, float * endAngle, float * finalAngle, float degreesPerSec )
+void V_SmoothInterpolateAngles( Vector& startAngle, Vector& endAngle, Vector& finalAngle, float degreesPerSec )
 {
 	float absd, frac, d, threshhold;
 
@@ -829,13 +826,11 @@ void V_SmoothInterpolateAngles( float * startAngle, float * endAngle, float * fi
 }
 
 // Get the origin of the Observer based around the target's position and angles
-void V_GetChaseOrigin( float * angles, float * origin, float distance, float * returnvec )
+void V_GetChaseOrigin( const Vector& angles, const Vector& origin, float distance, Vector& returnvec )
 {
-	vec3_t vecEnd;
-	vec3_t forward;
-	vec3_t vecStart;
+	Vector forward, vecEnd;
+	const Vector* vecStart = &origin;
 	pmtrace_t *trace;
-	int maxLoops = 8;
 
 	int ignoreent = -1;	// first, ignore no entity
 
@@ -846,15 +841,13 @@ void V_GetChaseOrigin( float * angles, float * origin, float distance, float * r
 
 	VectorScale( forward, -1, forward );
 
-	VectorCopy( origin, vecStart );
+	VectorMA( *vecStart, distance, forward, vecEnd );
 
-	VectorMA( vecStart, distance , forward, vecEnd );
-
-	while( maxLoops > 0 )
+	for( int maxLoops = 8; maxLoops > 0; --maxLoops )
 	{
-		trace = gEngfuncs.PM_TraceLine( vecStart, vecEnd, PM_TRACELINE_PHYSENTSONLY, 2, ignoreent );
+		trace = gEngfuncs.PM_TraceLine( *vecStart, vecEnd, PM_TRACELINE_PHYSENTSONLY, 2, ignoreent );
 
-		// WARNING! trace->ent is is the number in physent list not the normal entity number
+		// WARNING! trace->ent is the number in physent list, not the normal entity number
 
 		if( trace->ent <= 0)
 			break;	// we hit the world or nothing, stop trace
@@ -864,7 +857,7 @@ void V_GetChaseOrigin( float * angles, float * origin, float distance, float * r
 		if( ent == NULL )
 			break;
 
-		// hit non-player solid BSP , stop here
+		// hit non-player solid BSP, stop here
 		if( ent->curstate.solid == SOLID_BSP && !ent->player ) 
 			break;
 
@@ -876,10 +869,8 @@ void V_GetChaseOrigin( float * angles, float * origin, float distance, float * r
 		else
 		{
 			ignoreent = trace->ent;	// ignore last hit entity
-			VectorCopy( trace->endpos, vecStart );
+			vecStart = &trace->endpos;
 		}
-
-		maxLoops--;
 	}
 
 /*	if( ent )
@@ -892,9 +883,9 @@ void V_GetChaseOrigin( float * angles, float * origin, float distance, float * r
 	v_lastDistance = Distance( trace->endpos, origin );	// real distance without offset
 }
 
-/*void V_GetDeathCam( cl_entity_t * ent1, cl_entity_t * ent2, float * angle, float * origin )
+/*void V_GetDeathCam( cl_entity_t * ent1, cl_entity_t * ent2, Vector &angle, Vector &origin )
 {
-	float newAngle[3]; float newOrigin[3];
+	Vector newAngle, newOrigin;
 
 	float distance = 168.0f;
 
@@ -934,9 +925,9 @@ void V_GetChaseOrigin( float * angles, float * origin, float distance, float * r
 	VectorCopy( angle, v_lastAngles );
 }*/
 
-void V_GetSingleTargetCam( cl_entity_t * ent1, float * angle, float * origin )
+void V_GetSingleTargetCam( cl_entity_t * ent1, Vector& angle, Vector& origin )
 {
-	float newAngle[3]; float newOrigin[3];
+	vec3_t newAngle; vec3_t newOrigin;
 
 	int flags = gHUD.m_Spectator.m_iObserverFlags;
 
@@ -997,7 +988,7 @@ void V_GetSingleTargetCam( cl_entity_t * ent1, float * angle, float * origin )
 	V_GetChaseOrigin( angle, newOrigin, distance, origin );
 }
 
-float MaxAngleBetweenAngles( float *a1, float *a2 )
+float MaxAngleBetweenAngles( Vector &a1, Vector &a2 )
 {
 	float d, maxd = 0.0f;
 
@@ -1025,9 +1016,9 @@ float MaxAngleBetweenAngles( float *a1, float *a2 )
 	return maxd;
 }
 
-void V_GetDoubleTargetsCam( cl_entity_t *ent1, cl_entity_t *ent2, float *angle, float *origin )
+void V_GetDoubleTargetsCam( cl_entity_t *ent1, cl_entity_t *ent2, Vector& angle, Vector& origin )
 {
-	float newAngle[3], newOrigin[3], tempVec[3];
+	vec3_t newAngle, newOrigin, tempVec;
 
 	int flags = gHUD.m_Spectator.m_iObserverFlags;
 
@@ -1109,7 +1100,7 @@ void V_GetDoubleTargetsCam( cl_entity_t *ent1, cl_entity_t *ent2, float *angle, 
 	InterpolateAngles( newAngle, tempVec, newAngle, 0.5f ); */
 }
 
-void V_GetDirectedChasePosition(cl_entity_t *ent1, cl_entity_t *ent2,float *angle, float *origin)
+void V_GetDirectedChasePosition(cl_entity_t *ent1, cl_entity_t *ent2, Vector& angle, Vector& origin)
 {
 	if( v_resetCamera )
 	{
@@ -1132,7 +1123,7 @@ void V_GetDirectedChasePosition(cl_entity_t *ent1, cl_entity_t *ent2,float *angl
 		// second target disappeard somehow (dead)
 
 		// keep last good viewangle
-		float newOrigin[3];
+		vec3_t newOrigin;
 
 		int flags = gHUD.m_Spectator.m_iObserverFlags;
 
@@ -1163,7 +1154,7 @@ void V_GetDirectedChasePosition(cl_entity_t *ent1, cl_entity_t *ent2,float *angl
 	VectorCopy( angle, v_lastAngles );
 }
 
-void V_GetChasePos( int target, float *cl_angles, float *origin, float *angles )
+void V_GetChasePos( int target, Vector *cl_angles, Vector& origin, Vector& angles )
 {
 	cl_entity_t *ent = NULL;
 
@@ -1197,7 +1188,7 @@ void V_GetChasePos( int target, float *cl_angles, float *origin, float *angles )
 			angles[0] *= -1;
 		}
 		else
-			VectorCopy( cl_angles, angles );
+			VectorCopy( *cl_angles, angles );
 
 		VectorCopy( ent->origin, origin );
 
@@ -1214,7 +1205,7 @@ void V_ResetChaseCam()
 	v_resetCamera = true;
 }
 
-void V_GetInEyePos( int target, float *origin, float *angles )
+void V_GetInEyePos( int target, Vector& origin, Vector& angles )
 {
 	if( !target )
 	{
@@ -1247,7 +1238,7 @@ void V_GetInEyePos( int target, float *origin, float *angles )
 		origin[2] += 28; // DEFAULT_VIEWHEIGHT
 }
 
-void V_GetMapFreePosition( float *cl_angles, float *origin, float *angles )
+void V_GetMapFreePosition( const Vector& cl_angles, Vector& origin, Vector& angles )
 {
 	vec3_t forward;
 	vec3_t zScaledTarget;
@@ -1268,7 +1259,7 @@ void V_GetMapFreePosition( float *cl_angles, float *origin, float *angles )
 	VectorMA( zScaledTarget, -( 4096.0f / gHUD.m_Spectator.m_mapZoom ), forward, origin );
 }
 
-void V_GetMapChasePosition( int target, float *cl_angles, float *origin, float *angles )
+void V_GetMapChasePosition( int target, Vector& cl_angles, Vector& origin, Vector& angles )
 {
 	vec3_t forward;
 
@@ -1279,7 +1270,7 @@ void V_GetMapChasePosition( int target, float *cl_angles, float *origin, float *
 		if( gHUD.m_Spectator.m_autoDirector->value )
 		{
 			// this is done to get the angles made by director mode
-			V_GetChasePos( target, cl_angles, origin, angles );
+			V_GetChasePos( target, &cl_angles, origin, angles );
 			VectorCopy( ent->origin, origin );
 
 			// keep fix chase angle horizontal
@@ -1456,7 +1447,7 @@ void V_CalcSpectatorRefdef( ref_params_t * pparams )
 				V_GetChasePos( g_iUser2, NULL, v_origin, v_angles );
 				break;
 			case OBS_CHASE_FREE:
-				V_GetChasePos( g_iUser2, v_cl_angles, v_origin, v_angles );
+				V_GetChasePos( g_iUser2, &v_cl_angles, v_origin, v_angles );
 				break;
 			case OBS_ROAMING:
 				VectorCopy( v_cl_angles, v_angles );
@@ -1494,7 +1485,7 @@ void V_CalcSpectatorRefdef( ref_params_t * pparams )
 		switch( (int)gHUD.m_Spectator.m_pip->value )
 		{
 			case INSET_CHASE_FREE:
-				V_GetChasePos( g_iUser2, v_cl_angles, v_origin, v_angles );
+				V_GetChasePos( g_iUser2, &v_cl_angles, v_origin, v_angles );
 				break;	
 			case INSET_IN_EYE:
 				V_CalcNormalRefdef( pparams );
@@ -1517,7 +1508,7 @@ void V_CalcSpectatorRefdef( ref_params_t * pparams )
 
 	// write back new values into pparams
 	VectorCopy( v_cl_angles, pparams->cl_viewangles );
-	VectorCopy( v_angles, pparams->viewangles )
+	VectorCopy( v_angles, pparams->viewangles );
 	VectorCopy( v_origin, pparams->vieworg );
 }
 
@@ -1562,7 +1553,7 @@ V_DropPunchAngle
 
 =============
 */
-void V_DropPunchAngle( float frametime, float *ev_punchangle )
+void V_DropPunchAngle( float frametime, Vector &ev_punchangle )
 {
 	float len;
 

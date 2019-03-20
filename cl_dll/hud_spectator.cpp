@@ -31,20 +31,20 @@
 #endif
 
 extern "C" int		iJumpSpectator;
-extern "C" float	vJumpOrigin[3];
-extern "C" float	vJumpAngles[3]; 
+extern "C" vec3_t	vJumpOrigin;
+extern "C" vec3_t	vJumpAngles;
 
-extern void V_GetInEyePos( int entity, float * origin, float * angles );
+extern void V_GetInEyePos( int entity, Vector& origin, Vector& angles );
 extern void V_ResetChaseCam();
-extern void V_GetChasePos( int target, float * cl_angles, float * origin, float * angles );
-extern void VectorAngles( const float *forward, float *angles );
-extern void NormalizeAngles( float *angles );
+extern void V_GetChasePos( int target, Vector* cl_angles, Vector& origin, Vector& angles );
+extern void VectorAngles( const Vector &forward, Vector &angles );
+extern void NormalizeAngles( vec3_t_out angles );
 extern float * GetClientColor( int clientIndex );
 
-extern vec3_t v_origin;		// last view origin
-extern vec3_t v_angles;		// last view angle
-extern vec3_t v_cl_angles;	// last client/mouse angle
-extern vec3_t v_sim_org;	// last sim origin
+extern Vector v_origin;		// last view origin
+extern Vector v_angles;		// last view angle
+extern Vector v_cl_angles;	// last client/mouse angle
+extern Vector v_sim_org;	// last sim origin
 
 void SpectatorMode( void )
 {
@@ -152,34 +152,30 @@ int CHudSpectator::Init()
 //-----------------------------------------------------------------------------
 // UTIL_StringToVector originally from ..\dlls\util.cpp, slightly changed
 //-----------------------------------------------------------------------------
-void UTIL_StringToVector( float * pVector, const char *pString )
+void UTIL_StringToVector( Vector& pVector, const char *pString )
 {
-	char *pstr, *pfront, tempString[128];
-	int	j;
+	const char *pstr;
+	int	j = 0;
 
-	strcpy( tempString, pString );
-	pstr = pfront = tempString;
-
-	for( j = 0; j < 3; j++ )		
+	if( strnlen(pString, 128) < 128 )
 	{
-		pVector[j] = atof( pfront );
-
-		while( *pstr && *pstr != ' ' )
-			pstr++;
-		if( !( *pstr ) )
-			break;
-		pstr++;
-		pfront = pstr;
+		for( pstr = pString; j < 3; j++ )
+		{
+			char* nextstr;
+			pVector[j] = strtof( pstr, &nextstr );
+			if( nextstr == pstr )
+				break;
+			pstr = nextstr;
+			while (*pstr == ',' || *pstr == ' ')
+				++pstr;
+		}
 	}
 
-	if( j < 2 )
-	{
-		for( j = j + 1;j < 3; j++ )
-			pVector[j] = 0;
-	}
+	for( ; j < 3; j++ )
+		pVector[j] = 0.0f;
 }
 
-int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
+int UTIL_FindEntityInMap( const char *name, Vector& origin, Vector& angle )
 {
 	int			n, found = 0;
 	char			keyname[256];
@@ -230,12 +226,11 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 
 			strcpy( keyname, token );
 
-			// another hack to fix keynames with trailing spaces
-			n = strlen( keyname );
-			while( n && keyname[n - 1] == ' ' )
+			// fix keynames with trailing spaces
+			for ( n = strlen( keyname ) - 1; n >= 0; --n )
 			{
-				keyname[n - 1] = 0;
-				n--;
+				if (keyname[n] != ' ') break;
+				keyname[n] = 0;
 			}
 
 			// parse value	
@@ -256,7 +251,7 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 			{
 				if( !strcmp( token, name ) )
 				{
-					found = 1;	// thats our entity
+					found = 1;	// that's our entity
 				}
 			}
 
@@ -298,7 +293,7 @@ int UTIL_FindEntityInMap( const char *name, float *origin, float *angle )
 			return 1;
 	}
 
-	return 0;	// we search all entities, but didn't found the correct
+	return 0;	// we searched all entities, but didn't found the correct one
 }
 
 //-----------------------------------------------------------------------------
@@ -385,7 +380,7 @@ int CHudSpectator::Draw( float flTime )
 		VectorNormalize( right );
 		VectorScale( right, m_moveDelta, right );
 
-		VectorAdd( m_mapOrigin, right, m_mapOrigin )
+		VectorAdd( m_mapOrigin, right, m_mapOrigin );
 	}
 
 	// Only draw the icon names only if map mode is in Main Mode
@@ -766,7 +761,7 @@ void CHudSpectator::SetModes( int iNewMainMode, int iNewInsetMode )
 				g_iUser1 = OBS_ROAMING;
 				if( g_iUser2 )
 				{
-					V_GetChasePos( g_iUser2, v_cl_angles, vJumpOrigin, vJumpAngles );
+					V_GetChasePos( g_iUser2, &v_cl_angles, vJumpOrigin, vJumpAngles );
 					gEngfuncs.SetViewAngles( vJumpAngles );
 					iJumpSpectator = 1;
 				}
@@ -1247,7 +1242,7 @@ void CHudSpectator::DrawOverviewEntities()
 	}
 	else if( m_pip->value == INSET_CHASE_FREE || g_iUser1 == OBS_CHASE_FREE )
 	{
-		V_GetChasePos( g_iUser2, v_cl_angles, origin, angles );
+		V_GetChasePos( g_iUser2, &v_cl_angles, origin, angles );
 	}
 	else if( g_iUser1 == OBS_ROAMING )
 	{

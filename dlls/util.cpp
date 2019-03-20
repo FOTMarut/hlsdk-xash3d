@@ -860,7 +860,7 @@ void UTIL_SayText( const char *pText, CBaseEntity *pEntity )
 
 void UTIL_SayTextAll( const char *pText, CBaseEntity *pEntity )
 {
-	MESSAGE_BEGIN( MSG_ALL, gmsgSayText, NULL );
+	MESSAGE_BEGIN( MSG_ALL, gmsgSayText );
 		WRITE_BYTE( pEntity->entindex() );
 		WRITE_STRING( pText );
 	MESSAGE_END();
@@ -1331,33 +1331,33 @@ BOOL UTIL_TeamsMatch( const char *pTeamName1, const char *pTeamName2 )
 	return FALSE;
 }
 
-void UTIL_StringToVector( float *pVector, const char *pString )
+void UTIL_StringToVector( Vector& pVector, const char *pString )
 {
-	char *pstr, *pfront, tempString[128];
-	int j;
+	const char *pstr;
+	int	j = 0;
 
-	strcpy( tempString, pString );
-	pstr = pfront = tempString;
-
-	for( j = 0; j < 3; j++ )			// lifted from pr_edict.c
+	if( strnlen(pString, 128) < 128 ) // Avoid buffer overruns
 	{
-		pVector[j] = atof( pfront );
-
-		while( *pstr && *pstr != ' ' )
-			pstr++;
-		if( !( *pstr ) )
-			break;
-		pstr++;
-		pfront = pstr;
+		for( pstr = pString; j < 3; j++ )			// lifted from pr_edict.c
+		{
+			char* nextstr;
+			pVector[j] = strtof( pstr, &nextstr );
+			if( nextstr == pstr ) // invalid number
+				break;
+			pstr = nextstr;
+			while (*pstr == ',' || *pstr == ' ')
+				++pstr;
+		}
 	}
-	if( j < 2 )
+
+	if (j < 3)
 	{
 		/*
 		ALERT( at_error, "Bad field in entity!! %s:%s == \"%s\"\n",
 			pkvd->szClassName, pkvd->szKeyName, pkvd->szValue );
 		*/
-		for( j = j + 1;j < 3; j++ )
-			pVector[j] = 0;
+		for( ; j < 3; j++ )
+			pVector[j] = 0.0f;
 	}
 }
 
@@ -1865,13 +1865,13 @@ void CSave::WriteString( const char *pname, const int *stringId, int count )
 
 void CSave::WriteVector( const char *pname, const Vector &value )
 {
-	WriteVector( pname, &value.x, 1 );
+	WriteVector( pname, &value, 1 );
 }
 
-void CSave::WriteVector( const char *pname, const float *value, int count )
+void CSave::WriteVector( const char *pname, const Vector value[], int count )
 {
-	BufferHeader( pname, sizeof(float) * 3 * count );
-	BufferData( (const char *)value, sizeof(float) * 3 * count );
+	BufferHeader( pname, sizeof(Vector) * count );
+	BufferData( (const char *)value, sizeof(Vector) * count );
 }
 
 void CSave::WritePositionVector( const char *pname, const Vector &value )
@@ -1885,21 +1885,19 @@ void CSave::WritePositionVector( const char *pname, const Vector &value )
 	WriteVector( pname, value );
 }
 
-void CSave::WritePositionVector( const char *pname, const float *value, int count )
+void CSave::WritePositionVector( const char *pname, const Vector value[], int count )
 {
 	int i;
-	//Vector tmp, input;
 
-	BufferHeader( pname, sizeof(float) * 3 * count );
+	BufferHeader( pname, sizeof(Vector) * count );
 	for( i = 0; i < count; i++ )
 	{
-		Vector tmp( value[0], value[1], value[2] );
+		Vector tmp( value[i] );
 
 		if( m_pdata && m_pdata->fUseLandmark )
 			tmp = tmp - m_pdata->vecLandmarkOffset;
 
-		BufferData( (const char *)&tmp.x, sizeof(float) * 3 );
-		value += 3;
+		BufferData( (const char *)&tmp, sizeof(Vector) );
 	}
 }
 
@@ -1941,7 +1939,7 @@ void EntvarsKeyvalue( entvars_t *pev, KeyValueData *pkvd )
 				break;
 			case FIELD_POSITION_VECTOR:
 			case FIELD_VECTOR:
-				UTIL_StringToVector( (float *)( (char *)pev + pField->fieldOffset ), pkvd->szValue );
+				UTIL_StringToVector( *(Vector *)( (char *)pev + pField->fieldOffset ), pkvd->szValue );
 				break;
 			default:
 			case FIELD_EVARS:
@@ -2039,10 +2037,10 @@ int CSave::WriteFields( const char *pname, void *pBaseData, TYPEDESCRIPTION *pFi
 			WriteInt( pTest->fieldName, entityArray, pTest->fieldSize );
 			break;
 		case FIELD_POSITION_VECTOR:
-			WritePositionVector( pTest->fieldName, (float *)pOutputData, pTest->fieldSize );
+			WritePositionVector( pTest->fieldName, (Vector *)pOutputData, pTest->fieldSize );
 			break;
 		case FIELD_VECTOR:
-			WriteVector( pTest->fieldName, (float *)pOutputData, pTest->fieldSize );
+			WriteVector( pTest->fieldName, (Vector *)pOutputData, pTest->fieldSize );
 			break;
 		case FIELD_BOOLEAN:
 		case FIELD_INTEGER:
@@ -2245,27 +2243,29 @@ int CRestore::ReadField( void *pBaseData, TYPEDESCRIPTION *pFields, int fieldCou
 							*( (EOFFSET *)pOutputData ) = 0;
 						break;
 					case FIELD_VECTOR:
-						#ifdef __VFP_FP__
-						memcpy( pOutputData, pInputData, sizeof( Vector ) );
-						#else
-						( (float *)pOutputData )[0] = ( (float *)pInputData )[0];
-						( (float *)pOutputData )[1] = ( (float *)pInputData )[1];
-						( (float *)pOutputData )[2] = ( (float *)pInputData )[2];
-						#endif
+						*(Vector *)pOutputData = *(Vector *)pInputData;
+//						#ifdef __VFP_FP__
+//						memcpy( pOutputData, pInputData, sizeof( Vector ) );
+//						#else
+//						( (float *)pOutputData )[0] = ( (float *)pInputData )[0];
+//						( (float *)pOutputData )[1] = ( (float *)pInputData )[1];
+//						( (float *)pOutputData )[2] = ( (float *)pInputData )[2];
+//						#endif
 						break;
 					case FIELD_POSITION_VECTOR:
-						#ifdef  __VFP_FP__
-						{
-							Vector tmp;
-							memcpy( &tmp, pInputData, sizeof( Vector ) );
-							tmp = tmp + position;
-							memcpy( pOutputData, &tmp, sizeof( Vector ) );
-						}
-						#else
-						( (float *)pOutputData )[0] = ( (float *)pInputData )[0] + position.x;
-						( (float *)pOutputData )[1] = ( (float *)pInputData )[1] + position.y;
-						( (float *)pOutputData )[2] = ( (float *)pInputData )[2] + position.z;
-						#endif
+						*(Vector *)pOutputData = *(Vector *)pInputData + position;
+//						#ifdef  __VFP_FP__
+//						{
+//							Vector tmp;
+//							memcpy( &tmp, pInputData, sizeof( Vector ) );
+//							tmp = tmp + position;
+//							memcpy( pOutputData, &tmp, sizeof( Vector ) );
+//						}
+//						#else
+//						( (float *)pOutputData )[0] = ( (float *)pInputData )[0] + position.x;
+//						( (float *)pOutputData )[1] = ( (float *)pInputData )[1] + position.y;
+//						( (float *)pOutputData )[2] = ( (float *)pInputData )[2] + position.z;
+//						#endif
 						break;
 					case FIELD_BOOLEAN:
 					case FIELD_INTEGER:

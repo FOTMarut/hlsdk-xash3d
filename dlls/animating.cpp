@@ -241,7 +241,7 @@ int CBaseAnimating::GetBodygroup( int iGroup )
 	return ::GetBodygroup( GET_MODEL_PTR( ENT( pev ) ), pev, iGroup );
 }
 
-int CBaseAnimating::ExtractBbox( int sequence, float *mins, float *maxs )
+int CBaseAnimating::ExtractBbox( int sequence, Vector &mins, Vector &maxs )
 {
 	return ::ExtractBbox( GET_MODEL_PTR( ENT( pev ) ), sequence, mins, maxs );
 }

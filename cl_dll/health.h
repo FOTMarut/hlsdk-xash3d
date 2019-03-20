@@ -122,7 +122,7 @@ private:
 	int m_bitsDamage;
 	int DrawPain( float fTime );
 	int DrawDamage( float fTime );
-	void CalcDamageDirection( vec3_t vecFrom );
+	void CalcDamageDirection( const Vector& vecFrom );
 	void UpdateTiles( float fTime, long bits );
 };
 #endif // HEALTH_H

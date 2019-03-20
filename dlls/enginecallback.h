@@ -18,6 +18,7 @@
 #pragma once
 
 #include "event_flags.h"
+#include "eiface.h"
 
 // Fix warning in MSVC8
 #undef SERVER_EXECUTE
@@ -73,10 +74,11 @@ extern enginefuncs_t g_engfuncs;
 #define RANDOM_FLOAT	(*g_engfuncs.pfnRandomFloat)
 #define GETPLAYERAUTHID	(*g_engfuncs.pfnGetPlayerAuthId)
 
-inline void MESSAGE_BEGIN( int msg_dest, int msg_type, const float *pOrigin = NULL, edict_t *ed = NULL )
+inline void MESSAGE_BEGIN( int msg_dest, int msg_type, vec3_t_in pOrigin = NULL, edict_t *ed = NULL )
 {
 	(*g_engfuncs.pfnMessageBegin)(msg_dest, msg_type, pOrigin, ed);
 }
+
 #define MESSAGE_END		(*g_engfuncs.pfnMessageEnd)
 #define WRITE_BYTE		(*g_engfuncs.pfnWriteByte)
 #define WRITE_CHAR		(*g_engfuncs.pfnWriteChar)
