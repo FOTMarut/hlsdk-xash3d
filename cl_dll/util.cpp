@@ -33,7 +33,13 @@
 extern const vec3_t vec3_origin;
 
 #ifdef _MSC_VER
-const vec3_t vec3_origin;
+#	if _MSC_VER < 1400
+#		define strnlen(s,n) strlen(s)
+#	endif
+
+#	define strtof strtod
+#else
+#	include <stdint.h>
 #endif
 
 float Length( const Vector &v ) { return v.Length(); }

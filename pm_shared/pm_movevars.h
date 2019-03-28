@@ -10,6 +10,8 @@
 #if !defined( PM_MOVEVARSH )
 #define PM_MOVEVARSH
 
+#include "const.h"
+
 // movevars_t                  // Physics variables.
 typedef struct movevars_s movevars_t;
 

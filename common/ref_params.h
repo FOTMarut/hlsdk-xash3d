@@ -17,6 +17,8 @@
 #define REF_PARAMS_H
 
 #include "pm_movevars.h"
+#include "usercmd.h"
+#include "mathlib.h"
 
 typedef struct ref_params_s
 {

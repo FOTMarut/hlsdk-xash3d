@@ -10,20 +10,23 @@
 #pragma once
 
 #include "netadr.h"
+#include "net_api.h"
 
 class CHudServers
 {
 public:
-	typedef struct request_s
+	typedef //struct request_s request_t;
+	struct request_s
 	{
-		request_t	*next;
+		struct request_s	*next;
 		netadr_t		remote_address;
 		int			context;
 	} request_t;
 
-	typedef struct server_s
+	typedef //struct server_s server_t;
+	struct server_s
 	{
-		server_t		*next;
+		struct server_s		*next;
 		netadr_t		remote_address;
 		char			*info;
 		int			ping;

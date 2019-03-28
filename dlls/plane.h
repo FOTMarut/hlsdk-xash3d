@@ -18,6 +18,9 @@
 #ifndef PLANE_H
 #define PLANE_H
 
+#include "vector.h"
+#include "util.h"
+
 class CPlane
 {
 public:

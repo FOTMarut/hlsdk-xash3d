@@ -87,11 +87,11 @@ playermove_t *pmove = NULL;
 #define STEP_WADE		7		// wading in liquid
 #define STEP_LADDER		8		// climbing ladder
 
-#define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
-#define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
-#define DAMAGE_FOR_FALL_SPEED		(float) 100 / ( PLAYER_FATAL_FALL_SPEED - PLAYER_MAX_SAFE_FALL_SPEED )// damage per unit per second.
-#define PLAYER_MIN_BOUNCE_SPEED		200
-#define PLAYER_FALL_PUNCH_THRESHHOLD	(float)350 // won't punch player's screen/make scrape noise unless player falling at least this fast.
+#define PLAYER_FATAL_FALL_SPEED		1024.0f// approx 60 feet
+#define PLAYER_MAX_SAFE_FALL_SPEED	580.0f// approx 20 feet
+#define DAMAGE_FOR_FALL_SPEED		( 100.0f / ( PLAYER_FATAL_FALL_SPEED - PLAYER_MAX_SAFE_FALL_SPEED ) )// damage per unit per second.
+#define PLAYER_MIN_BOUNCE_SPEED		200.0f
+#define PLAYER_FALL_PUNCH_THRESHOLD	350.0f // won't punch player's screen/make scrape noise unless player falling at least this fast.
 
 #define PLAYER_LONGJUMP_SPEED		350 // how fast we longjump
 
@@ -107,7 +107,7 @@ playermove_t *pmove = NULL;
 // up / down
 #define	PITCH		0
 // left / right
-#define	YAW		1
+#define	YAW			1
 // fall over
 #define	ROLL		2 
 
@@ -115,12 +115,12 @@ playermove_t *pmove = NULL;
 
 #define	CONTENTS_CURRENT_0		-9
 #define	CONTENTS_CURRENT_90		-10
-#define	CONTENTS_CURRENT_180		-11
-#define	CONTENTS_CURRENT_270		-12
+#define	CONTENTS_CURRENT_180	-11
+#define	CONTENTS_CURRENT_270	-12
 #define	CONTENTS_CURRENT_UP		-13
-#define	CONTENTS_CURRENT_DOWN		-14
+#define	CONTENTS_CURRENT_DOWN	-14
 
-#define CONTENTS_TRANSLUCENT		-15
+#define CONTENTS_TRANSLUCENT	-15
 
 static vec3_t rgv3tStuckTable[54];
 static int rgStuckLast[MAX_CLIENTS][2];
@@ -728,12 +728,12 @@ void PM_CheckVelocity()
 	for( i = 0; i < 3; i++ )
 	{
 		// See if it's bogus.
-		if( isnan( pmove->velocity[i] ) )
+		if( IS_NAN( pmove->velocity[i] ) )
 		{
 			pmove->Con_Printf( "PM  Got a NaN velocity %i\n", i );
 			pmove->velocity[i] = 0;
 		}
-		if( isnan( pmove->origin[i] ) )
+		if( IS_NAN( pmove->origin[i] ) )
 		{
 			pmove->Con_Printf( "PM  Got a NaN origin on %i\n", i );
 			pmove->origin[i] = 0;
@@ -1289,7 +1289,7 @@ void PM_Friction( void )
 		friction *= pmove->friction;  // player friction?
 
 		// Bleed off some speed, but if we have less than the bleed
-		//  threshhold, bleed the theshold amount.
+		//  threshold, bleed the theshold amount.
 		control = ( speed < pmove->movevars->stopspeed ) ? pmove->movevars->stopspeed : speed;
 		// Add the amount to t'he drop amount.
 		drop += control * friction * pmove->frametime;
@@ -2683,7 +2683,7 @@ void PM_CheckWaterJump( void )
 
 void PM_CheckFalling( void )
 {
-	if( pmove->onground != -1 && !pmove->dead && pmove->flFallVelocity >= PLAYER_FALL_PUNCH_THRESHHOLD )
+	if( pmove->onground != -1 && !pmove->dead && pmove->flFallVelocity >= PLAYER_FALL_PUNCH_THRESHOLD )
 	{
 		float fvol = 0.5;
 

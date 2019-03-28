@@ -16,9 +16,8 @@
 #ifndef TALKMONSTER_H
 #define TALKMONSTER_H
 
-#ifndef MONSTERS_H
 #include "monsters.h"
-#endif
+#include "basemonster.h"
 
 //=========================================================
 // Talking monster base class

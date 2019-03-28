@@ -22,12 +22,18 @@
 typedef float vec_t;
 typedef vec_t vec2_t[2];
 #ifdef __cplusplus
-class Vector;
+//class Vector;
+extern "C++" {
+#include "../dlls/vector.h" // TODO: sort this out
+}
 typedef Vector vec3_t;
 #else
 typedef vec_t vec3_t[3];
 #endif
 typedef vec_t vec4_t[4];	// x,y,z,w
+
+typedef const vec_t vec3_t_in[3];
+typedef vec_t vec3_t_out[3];
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
@@ -35,17 +41,20 @@ typedef vec_t vec4_t[4];	// x,y,z,w
 
 extern const vec3_t vec3_origin;
 
-//extern	int nanmask;
-//#define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)
+#ifdef isfinite
 #define	IS_NAN(x) (!isfinite(x))
+#else
+#define	nanmask (255<<23)
+#define	IS_NAN(x) (((*(int *)&x)&nanmask)==nanmask)
+#endif
 
-static inline vec_t DotProduct( const vec_t a[3], const vec_t b[3] ) { return(a[0]*b[0]+a[1]*b[1]+a[2]*b[2]); }
-static inline vec_t DotProduct4d( const vec_t a[4], const vec_t b[4] ) { return(a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3]); }
+static __inline vec_t DotProduct( const vec_t a[3], const vec_t b[3] ) { return(a[0]*b[0]+a[1]*b[1]+a[2]*b[2]); }
+static __inline vec_t DotProduct4d( const vec_t a[4], const vec_t b[4] ) { return(a[0]*b[0]+a[1]*b[1]+a[2]*b[2]+a[3]*b[3]); }
 
-static inline void VectorSubtract( const vec_t a[3], const vec_t b[3], vec_t c[3]) {c[0]=a[0]-b[0];c[1]=a[1]-b[1];c[2]=a[2]-b[2];}
-static inline void VectorAdd( const vec_t a[3], const vec_t b[3], vec_t c[3]) {c[0]=a[0]+b[0];c[1]=a[1]+b[1];c[2]=a[2]+b[2];}
-static inline void VectorCopy( const vec_t a[3], vec_t b[3] ) { memcpy( b, a, sizeof(vec3_t)); }
-static inline void VectorClear( vec_t a[3] ) { a[0] = 0.0f; a[1] = 0.0f; a[2] = 0.0f; }
+static __inline void VectorSubtract( const vec_t a[3], const vec_t b[3], vec_t c[3]) {c[0]=a[0]-b[0];c[1]=a[1]-b[1];c[2]=a[2]-b[2];}
+static __inline void VectorAdd( const vec_t a[3], const vec_t b[3], vec_t c[3]) {c[0]=a[0]+b[0];c[1]=a[1]+b[1];c[2]=a[2]+b[2];}
+static __inline void VectorCopy( const vec_t a[3], vec_t b[3] ) { memcpy( b, a, 3 * sizeof(vec_t)); }
+static __inline void VectorClear( vec_t a[3] ) { a[0] = 0.0f; a[1] = 0.0f; a[2] = 0.0f; }
 
 void VectorMA (const vec_t veca[3], float scale, const vec_t vecb[3], vec_t vecc[3]);
 

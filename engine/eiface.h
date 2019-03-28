@@ -32,6 +32,8 @@
 #include "con_nprint.h"
 #include "progdefs.h"
 #include "const.h"
+#include "mathlib.h"
+#include "progdefs.h"
 //
 // Defines entity interface between engine and DLLs.
 // This header file included by engine files and DLL files.
@@ -99,9 +101,6 @@ typedef struct
 } CDStatus;
 		
 typedef unsigned int	CRC32_t;
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 // Engine hands this to DLLs for functionality callbacks
 typedef struct enginefuncs_s

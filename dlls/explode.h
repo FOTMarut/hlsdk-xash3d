@@ -16,6 +16,8 @@
 #ifndef EXPLODE_H
 #define EXPLODE_H
 
+#include "util.h"
+
 #define	SF_ENVEXPLOSION_NODAMAGE	( 1 << 0 ) // when set, ENV_EXPLOSION will not actually inflict damage
 #define	SF_ENVEXPLOSION_REPEATABLE	( 1 << 1 ) // can this entity be refired?
 #define SF_ENVEXPLOSION_NOFIREBALL	( 1 << 2 ) // don't draw the fireball

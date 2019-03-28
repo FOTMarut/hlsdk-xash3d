@@ -36,8 +36,8 @@ TODO:
 namespace vgui
 {
 
-enum  KeyCode;
-enum  MouseCode;
+//enum  KeyCode;
+//enum  MouseCode;
 class SurfaceBase;
 class FocusChangeSignal;
 class InputSignal;

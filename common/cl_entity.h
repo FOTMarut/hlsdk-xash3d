@@ -16,10 +16,10 @@
 #ifndef CL_ENTITY_H
 #define CL_ENTITY_H
 
-#include "com_model.h"
-
 typedef struct cl_entity_s cl_entity_t;
-typedef struct efrag_s efrag_t;
+//typedef struct efrag_s efrag_t;
+
+#include "com_model.h"
 
 struct efrag_s
 {

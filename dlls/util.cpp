@@ -24,13 +24,28 @@
 #include "util.h"
 #include "cbase.h"
 #include "saverestore.h"
-#include <time.h>
 #include "shake.h"
 #include "decals.h"
 #include "player.h"
 #include "weapons.h"
 #include "gamerules.h"
-#include <stdint.h>
+
+#include <time.h>
+#include <string.h>
+
+#ifdef _MSC_VER
+	typedef __int32 int32_t;
+	typedef unsigned __int32 uint32_t;
+
+#	if _MSC_VER < 1400
+#	define strnlen(s,n) strlen(s)
+#	endif
+
+#	define strtof strtod
+#else
+#	include <stdint.h>
+#endif
+
 
 float UTIL_WeaponTimeBase( void )
 {

@@ -39,6 +39,7 @@
 
 #include "com_model.h"
 #include "usercmd.h"
+#include "mathlib.h"
 
 
 // physent_t
@@ -83,9 +84,6 @@ typedef struct physent_s
 	vec3_t		vuser3;
 	vec3_t		vuser4;
 } physent_t;
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct playermove_s
 {

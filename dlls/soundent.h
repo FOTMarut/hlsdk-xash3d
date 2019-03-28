@@ -21,6 +21,10 @@
 #ifndef SOUNDENT_H
 #define SOUNDENT_H
 
+#include "util.h"
+#include "vector.h"
+#include "cbase.h"
+
 #define	MAX_WORLD_SOUNDS	64 // maximum number of sounds handled by the world at one time.
 
 #define bits_SOUND_NONE		0

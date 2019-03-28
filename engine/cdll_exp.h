@@ -16,8 +16,12 @@ GNU General Public License for more details.
 #ifndef CDLL_EXP_H
 #define CDLL_EXP_H
 
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
+#include "mathlib.h"
+#include "cdll_int.h"
+#include "ref_params.h"
+#include "studio_event.h"
+#include "r_studioint.h"
+#include "render_api.h"
 
 // NOTE: ordering is important!
 typedef struct cldll_func_s

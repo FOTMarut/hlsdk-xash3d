@@ -27,6 +27,8 @@
 #define HORNET_ORANGE_SPEED		(float)800
 #define	HORNET_BUZZ_VOLUME		(float)0.8
 
+#include "basemonster.h"
+
 extern int iHornetPuff;
 
 //=========================================================

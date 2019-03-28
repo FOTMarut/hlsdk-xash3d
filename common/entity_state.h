@@ -18,6 +18,8 @@
 
 #include "pm_info.h"
 #include "weaponinfo.h"
+#include "mathlib.h"
+#include "const.h"
 
 // For entityType below
 #define ENTITY_NORMAL		(1<<0)

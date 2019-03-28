@@ -77,14 +77,14 @@ public:
 	inline Vector( const Vector& v ): x( v.x ), y( v.y ), z( v.z ) { } 
 	inline Vector( vec_t rgfl[3] ): x( rgfl[0] ), y( rgfl[1] ), z( rgfl[2] ) { }
 
-	inline Vector& operator=( const Vector& v ) = default;
+	inline Vector& operator=( const Vector& v )	 { memcpy(this, v, sizeof(*this)); return *this; };
 //	inline Vector& operator=( const vec_t v[3] ) { return operator=( *reinterpret_cast<const Vector*>(v) ); };
 	inline Vector& operator=( const vec_t v[3] ) { memcpy(this, v, sizeof(*this)); return *this; };
 
 	// Operators
 	inline Vector operator-( void ) const				{ return Vector( -x, -y, -z ); }
-	inline int operator==( const Vector& v ) const		{ return x == v.x && y == v.y && z == v.z; }
-	inline int operator!=( const Vector& v ) const		{ return !( *this == v ); }
+	inline bool operator==( const Vector& v ) const		{ return x == v.x && y == v.y && z == v.z; }
+	inline bool operator!=( const Vector& v ) const		{ return !( *this == v ); }
 	inline Vector operator+( const Vector& v ) const	{ return Vector( x + v.x, y + v.y, z + v.z ); }
 	inline Vector operator-( const Vector& v ) const	{ return Vector( x - v.x, y - v.y, z - v.z ); }
 	inline Vector operator*( vec_t fl ) const			{ return Vector( x * fl, y * fl, z * fl ); }

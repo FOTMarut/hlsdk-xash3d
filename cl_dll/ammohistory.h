@@ -19,6 +19,9 @@
 #ifndef AMMOHISTORY_H
 #define AMMOHISTORY_H
 
+#include "ammo.h"
+#include "cdll_dll.h"
+
 // this is the max number of items in each bucket
 #define MAX_WEAPON_POSITIONS		MAX_WEAPON_SLOTS
 

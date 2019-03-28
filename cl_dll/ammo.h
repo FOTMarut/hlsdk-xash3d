@@ -16,6 +16,9 @@
 #ifndef __AMMO_H__
 #define __AMMO_H__
 
+#include "wrect.h"
+#include "cdll_int.h"
+
 #define MAX_WEAPON_NAME 128
 
 #define WEAPON_FLAGS_SELECTONEMPTY	1

@@ -16,8 +16,9 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
+#include "mathlib.h"
+#include "edict.h"
+#include "util.h"
 
 extern void respawn( entvars_t *pev, BOOL fCopyCorpse );
 extern BOOL ClientConnect( edict_t *pEntity, const char *pszName, const char *pszAddress, char szRejectReason[ 128 ] );

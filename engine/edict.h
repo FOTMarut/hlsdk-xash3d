@@ -12,15 +12,22 @@
 *   without written permission from Valve LLC.
 *
 ****/
+
+#ifndef CONST_H
+#include "const.h"
+#else
+
 #pragma once
 #ifndef EDICT_H
 #define EDICT_H
 
 #define MAX_ENT_LEAFS	48
 
+typedef struct edict_s edict_t;
+
 #include "progdefs.h"
 
-typedef struct edict_s
+struct edict_s
 {
 	qboolean		free;
 	int		serialnumber;
@@ -37,6 +44,8 @@ typedef struct edict_s
 	entvars_t		v;		// C exported fields from progs
 
 	// other fields from progs come immediately after
-} edict_t;
+};
 
 #endif//EDICT_H
+
+#endif // CONST_H

@@ -6,8 +6,11 @@
 //=============================================================================
 
 #pragma once
-#if !defined ( EV_HLDMH )
+#ifndef EV_HLDMH
 #define EV_HLDMH
+
+#include "pmtrace.h"
+#include "vector.h"
 
 // bullet types
 typedef	enum

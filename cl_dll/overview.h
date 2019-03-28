@@ -5,6 +5,10 @@
 // $NoKeywords: $
 //=============================================================================
 
+#ifndef HUD_H
+#include "hud.h"
+#else
+
 #pragma once
 #ifndef OVERVIEW_H
 #define OVERVIEW_H
@@ -26,3 +30,5 @@ private:
 	HSPRITE m_hsprViewcone;
 };
 #endif // OVERVIEW_H
+
+#endif // HUD_H

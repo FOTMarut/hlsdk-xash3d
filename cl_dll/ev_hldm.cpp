@@ -36,6 +36,7 @@
 
 #include "r_studioint.h"
 #include "com_model.h"
+#include "eiface.h"
 
 extern engine_studio_api_t IEngineStudio;
 
@@ -1315,8 +1316,6 @@ enum EGON_FIREMODE
 #define EGON_SOUND_OFF			"weapons/egon_off1.wav"
 #define EGON_SOUND_RUN			"weapons/egon_run3.wav"
 #define EGON_SOUND_STARTUP		"weapons/egon_windup2.wav"
-
-#define ARRAYSIZE(p)		( sizeof(p) /sizeof(p[0]) )
 
 BEAM *pBeam;
 BEAM *pBeam2;

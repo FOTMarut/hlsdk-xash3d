@@ -20,6 +20,10 @@ GNU General Public License for more details.
 #include "gameinfo.h"
 #include "wrect.h"
 #include "netadr.h"
+#include "const.h"
+#include "con_nprint.h"
+#include "ref_params.h"
+#include "cl_entity.h"
 
 typedef int		HIMAGE;		// handle to a graphic
 

@@ -18,7 +18,7 @@ GNU General Public License for more details.
 
 #include "bspfile.h"	// we need some declarations from it
 
-typedef struct efrag_s	efrag_t;
+typedef struct efrag_s efrag_t;
 
 #ifndef MATHLIB_H
 typedef vec_t		vec2_t[2];
@@ -431,5 +431,7 @@ struct msprite_s
 	int		synctype;
 	mspriteframedesc_t	frames[1];
 };
+
+#include "cl_entity.h"
 
 #endif//COM_MODEL_H

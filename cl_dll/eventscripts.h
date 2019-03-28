@@ -7,8 +7,11 @@
 
 // eventscripts.h
 #pragma once
-#if !defined ( EVENTSCRIPTSH )
+#ifndef EVENTSCRIPTSH
 #define EVENTSCRIPTSH
+
+#include "vector.h"
+#include "cl_util.h"
 
 // defaults for clientinfo messages
 #define	DEFAULT_VIEWHEIGHT	28

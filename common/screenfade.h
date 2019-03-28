@@ -16,6 +16,8 @@
 #ifndef SCREENFADE_H
 #define SCREENFADE_H
 
+#include "const.h"
+
 typedef struct screenfade_s
 {
 	float	fadeSpeed;			// How fast to fade (tics / second) (+ fade in, - fade out)

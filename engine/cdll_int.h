@@ -22,6 +22,8 @@
 #ifndef CDLL_INT_H
 #define CDLL_INT_H
 
+#include <math.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -40,6 +42,7 @@ extern "C" {
 #include "net_api.h"
 #include "triangleapi.h"
 #include "ivoicetweak.h"
+#include "mathlib.h"
 
 #define MAX_ALIAS_NAME	32
 
@@ -129,9 +132,6 @@ typedef struct hud_player_info_s
 
 	ulonglong_t	m_nSteamID;
 } hud_player_info_t;
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct cl_enginefuncs_s
 {

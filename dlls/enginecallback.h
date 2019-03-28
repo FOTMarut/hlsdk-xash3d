@@ -12,16 +12,12 @@
 *   without written permission from Valve LLC.
 *
 ****/
+#pragma once
 #ifndef ENGINECALLBACK_H
 #define ENGINECALLBACK_H
 
-#pragma once
-
 #include "event_flags.h"
 #include "eiface.h"
-
-// Fix warning in MSVC8
-#undef SERVER_EXECUTE
 
 // Must be provided by user of this code
 extern enginefuncs_t g_engfuncs;
@@ -60,7 +56,7 @@ extern enginefuncs_t g_engfuncs;
 #define TRACE_HULL		(*g_engfuncs.pfnTraceHull)
 #define GET_AIM_VECTOR	(*g_engfuncs.pfnGetAimVector)
 #define SERVER_COMMAND	(*g_engfuncs.pfnServerCommand)
-#define SERVER_EXECUTE	(*g_engfuncs.pfnServerExecute)
+#define SERVER_EXEC		(*g_engfuncs.pfnServerExecute)
 #define CLIENT_COMMAND	(*g_engfuncs.pfnClientCommand)
 #define PARTICLE_EFFECT	(*g_engfuncs.pfnParticleEffect)
 #define LIGHT_STYLE		(*g_engfuncs.pfnLightStyle)

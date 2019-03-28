@@ -17,6 +17,8 @@
 #ifndef SPECTATOR_H
 #define SPECTATOR_H
 
+#include "cbase.h"
+
 class CBaseSpectator : public CBaseEntity 
 {
 public:

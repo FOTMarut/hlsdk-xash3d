@@ -15,6 +15,9 @@
 #pragma once
 #ifndef CONST_H
 #define CONST_H
+
+#include "mathlib.h"
+
 //
 // Constants shared by the engine and dlls
 // This header file included by engine files and DLL files.
@@ -764,7 +767,7 @@ struct link_s
 	link_t	*prev, *next;
 };
 
-typedef struct edict_s edict_t;
+#include "edict.h"
 
 typedef struct
 {

@@ -18,6 +18,12 @@
 #pragma once
 #ifndef		NODES_H
 #define		NODES_H
+
+#include "vector.h"
+#include "const.h"
+#include "util.h"
+#include "cbase.h"
+
 //=========================================================
 // DEFINE
 //=========================================================

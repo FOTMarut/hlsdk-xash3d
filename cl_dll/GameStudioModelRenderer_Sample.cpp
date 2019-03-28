@@ -6,26 +6,17 @@
 //=============================================================================
 
 #include <assert.h>
-#include "hud.h"
-#include "cl_util.h"
-#include "const.h"
-#include "com_model.h"
-#include "studio.h"
-#include "entity_state.h"
-#include "cl_entity.h"
-#include "dlight.h"
-#include "triangleapi.h"
-
+#include <memory.h>
 #include <stdio.h>
 #include <string.h>
-#include <memory.h>
 #include <math.h>
 
-#include "studio_util.h"
+#include "util_vector.h"
 #include "r_studioint.h"
+#include "studio_util.h"
+#include "cl_util.h"
 
-#include "StudioModelRenderer.h"
-#include "GameStudioModelRenderer.h"
+#include "GameStudioModelRenderer_Sample.h"
 
 // Predicted values saved off in hl_weapons.cpp
 void Game_GetSequence( int *seq, int *gaitseq );
@@ -71,7 +62,7 @@ CGameStudioModelRenderer
 
 ====================
 */
-CGameStudioModelRenderer::CGameStudioModelRenderer( void )
+CGameStudioModelRenderer::CGameStudioModelRenderer( void ) : m_bLocal(false)
 {
 	// If you want to predict animations locally, set this to TRUE
 	// NOTE:  The animation code is somewhat broken, but gives you a sense for how
@@ -94,16 +85,16 @@ void CGameStudioModelRenderer::StudioSetupBones ( void )
 	mstudioseqdesc_t	*pseqdesc;
 	mstudioanim_t		*panim;
 
-	static float		pos[MAXSTUDIOBONES][3];
+	static Vector		pos[MAXSTUDIOBONES];
 	static vec4_t		q[MAXSTUDIOBONES];
 	float				bonematrix[3][4];
 
-	static float		pos2[MAXSTUDIOBONES][3];
+	static Vector		pos2[MAXSTUDIOBONES];
 	static vec4_t		q2[MAXSTUDIOBONES];
-	static float		pos3[MAXSTUDIOBONES][3];
-	static vec4_t		q3[MAXSTUDIOBONES];
-	static float		pos4[MAXSTUDIOBONES][3];
-	static vec4_t		q4[MAXSTUDIOBONES];
+	static Vector		pos3[MAXSTUDIOBONES];
+//	static vec4_t		q3[MAXSTUDIOBONES];
+	static Vector		pos4[MAXSTUDIOBONES];
+//	static vec4_t		q4[MAXSTUDIOBONES];
 
 	// Use default bone setup for nonplayers
 	if ( !m_pCurrentEntity->player )
@@ -183,7 +174,7 @@ void CGameStudioModelRenderer::StudioSetupBones ( void )
 		( m_pCurrentEntity->latched.prevsequence < m_pStudioHeader->numseq ))
 	{
 		// blend from last sequence
-		static float		pos1b[MAXSTUDIOBONES][3];
+		static Vector		pos1b[MAXSTUDIOBONES];
 		static vec4_t		q1b[MAXSTUDIOBONES];
 		float				s;
 

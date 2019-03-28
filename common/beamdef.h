@@ -17,6 +17,9 @@
 #define BEAMDEF_H
 
 #include "particledef.h"
+#include "mathlib.h"
+#include "com_model.h"
+#include "pmtrace.h"
 
 #define FBEAM_STARTENTITY		0x00000001
 #define FBEAM_ENDENTITY		0x00000002

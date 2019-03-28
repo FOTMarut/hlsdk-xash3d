@@ -322,6 +322,8 @@ void CProp::Precache( void )
 
 		PRECACHE_SOUND( "debris/bustceiling.wav" );
 		break;
+	default:
+		break;
 	}
 	MaterialSoundPrecache( m_Material );
 	if( m_iszGibModel )
@@ -487,6 +489,8 @@ void CProp::Die( void )
 		break;
 	case matCeilingTile:
 		EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "debris/bustceiling.wav", fvol, ATTN_NORM, 0, pitch );
+		break;
+	default:
 		break;
 	}
 
@@ -1070,7 +1074,7 @@ int CProp::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float fl
 	if( !( pev->spawnflags & SF_PROP_BREAKABLE ) )
 		return 0;
 	if( pev->health <= 0 )
-		return;
+		return 0;
 	// Breakables take double damage from the crowbar
 	if( bitsDamageType & DMG_CLUB )
 		flDamage *= 2;

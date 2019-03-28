@@ -22,6 +22,7 @@ GNU General Public License for more details.
 #include "ref_params.h"
 #include "studio.h"
 #include "beamdef.h"
+#include "mathlib.h"
 
 // changes for version 28
 // replace decal_t from software declaration to hardware (matched to normal HL)
@@ -159,9 +160,6 @@ typedef struct decallist_s
 
 	modelstate_t	studio_state;	// studio decals only
 } decallist_t;
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct render_api_s
 {

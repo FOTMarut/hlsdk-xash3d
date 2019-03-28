@@ -47,4 +47,4 @@ typedef struct weapon_data_s
 	float		fuser4;
 } weapon_data_t;
 
-#endif//WEAPONINFO_H
+#endif //WEAPONINFO_H

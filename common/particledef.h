@@ -16,6 +16,8 @@
 #ifndef PARTICLEDEF_H
 #define PARTICLEDEF_H
 
+#include "mathlib.h"
+
 typedef enum
 {
 	pt_static, 

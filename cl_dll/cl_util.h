@@ -20,11 +20,22 @@
 #include <math.h>
 #include "exportdef.h"
 #include "cvardef.h"
+#include "cl_dll.h"
+#include "hud.h"
 
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
+
+#ifdef	DEBUG
+void DBG_AssertFunction(BOOL fExpr, const char* szExpr, const char* szFile, int szLine, const char* szMessage);
+#define ASSERT(f)		DBG_AssertFunction(f, #f, __FILE__, __LINE__, NULL)
+#define ASSERTSZ(f, sz)	DBG_AssertFunction(f, #f, __FILE__, __LINE__, sz)
+#else	// !DEBUG
+#define ASSERT(f)
+#define ASSERTSZ(f, sz)
+#endif	// !DEBUG
 
 // Macros to hook function calls into the HUD object
 
@@ -41,8 +52,10 @@
 								gHUD.y.UserCmd_##x( ); \
 							}
 
-inline float CVAR_GET_FLOAT( const char *x ) {	return gEngfuncs.pfnGetCvarFloat( (char*)x ); }
-inline char* CVAR_GET_STRING( const char *x ) {	return gEngfuncs.pfnGetCvarString( (char*)x ); }
+#define CVAR_GET_FLOAT	(*gEngfuncs.pfnGetCvarFloat)
+#define CVAR_GET_STRING	(*gEngfuncs.pfnGetCvarString)
+//inline float CVAR_GET_FLOAT( const char *x ) {	return gEngfuncs.pfnGetCvarFloat( (char*)x ); }
+//inline char* CVAR_GET_STRING( const char *x ) {	return gEngfuncs.pfnGetCvarString( (char*)x ); }
 inline cvar_t *CVAR_CREATE( const char *cv, const char *val, const int flags ) {	return gEngfuncs.pfnRegisterVariable( (char*)cv, (char*)val, flags ); }
 
 #define SPR_Load ( *gEngfuncs.pfnSPR_Load )
@@ -109,7 +122,10 @@ inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b )
 inline int DrawConsoleString( int x, int y, const char *string )
 {
 	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudString( x, y, 9999, (char*)string, 255 * g_hud_text_color[0], 255 * g_hud_text_color[1], 255 * g_hud_text_color[2] );
+		return gHUD.DrawHudString( x, y, 9999, (char*)string,
+			static_cast<int>(255 * g_hud_text_color[0]),
+			static_cast<int>(255 * g_hud_text_color[1]),
+			static_cast<int>(255 * g_hud_text_color[2]) );
 	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) string );
 }
 

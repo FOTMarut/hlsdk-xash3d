@@ -16,6 +16,8 @@
 #ifndef QFONT_H
 #define QFONT_H
 
+#include "const.h"
+
 // Font stuff
 
 #define NUM_GLYPHS		256

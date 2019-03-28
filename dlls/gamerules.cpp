@@ -310,7 +310,7 @@ void CGameRules::RefreshSkillData ( void )
 CGameRules *InstallGameRules( void )
 {
 	SERVER_COMMAND( "exec game.cfg\n" );
-	SERVER_EXECUTE();
+	SERVER_EXEC();
 
 	if( !gpGlobals->deathmatch )
 	{

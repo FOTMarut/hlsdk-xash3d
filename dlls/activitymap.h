@@ -15,6 +15,10 @@
 #pragma once
 #ifndef ACTIVITYMAP_H
 #define ACTIVITYMAP_H
+
+#include <stddef.h>
+#include "activity.h"
+
 #define _A( a ) { a, #a }
 
 activity_map_t activity_map[] =

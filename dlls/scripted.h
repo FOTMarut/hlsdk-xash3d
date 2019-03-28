@@ -16,9 +16,8 @@
 #ifndef SCRIPTED_H
 #define SCRIPTED_H
 
-#ifndef SCRIPTEVENT_H
+#include "basemonster.h"
 #include "scriptevent.h"
-#endif
 
 #define SF_SCRIPT_WAITTILLSEEN		1
 #define SF_SCRIPT_EXITAGITATED		2

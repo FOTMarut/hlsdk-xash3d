@@ -18,7 +18,7 @@
 namespace vgui
 {
 
-enum MouseCode;
+//enum MouseCode;
 class IntChangeSignal;
 
 class VGUIAPI Slider2 : public Panel

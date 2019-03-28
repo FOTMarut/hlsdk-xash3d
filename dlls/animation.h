@@ -16,11 +16,10 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#define ACTIVITY_NOT_AVAILABLE		-1
-
-#ifndef MONSTEREVENT_H
 #include "monsterevent.h"
-#endif
+#include "progdefs.h"
+
+#define ACTIVITY_NOT_AVAILABLE		-1
 
 extern int IsSoundEvent( int eventNumber );
 

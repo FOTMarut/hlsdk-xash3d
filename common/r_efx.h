@@ -16,25 +16,19 @@
 #ifndef R_EFX_H
 #define R_EFX_H
 
+#include "mathlib.h"
+
 // particle_t
-#if !defined( PARTICLEDEFH )  
 #include "particledef.h"
-#endif
 
 // BEAM
-#if !defined( BEAMDEFH )
 #include "beamdef.h"
-#endif
 
 // dlight_t
-#if !defined ( DLIGHTH )
 #include "dlight.h"
-#endif
 
 // cl_entity_t
-#if !defined( CL_ENTITYH )
 #include "cl_entity.h"
-#endif
 
 /*
 // FOR REFERENCE, These are the built-in tracer colors.  Note, color 4 is the one
@@ -111,9 +105,6 @@ struct tempent_s
 	// baseline.renderamt	- starting fadeout intensity
 	// baseline.angles		- angle velocity
 };
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct efx_api_s
 {

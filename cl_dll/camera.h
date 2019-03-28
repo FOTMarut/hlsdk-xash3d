@@ -11,6 +11,8 @@
 #ifndef _CAMERA_H_
 #define _CAMERA_H_
 
+#include "vector.h"
+
 // pitch, yaw, dist
 extern vec3_t cam_ofs;
 // Using third person camera

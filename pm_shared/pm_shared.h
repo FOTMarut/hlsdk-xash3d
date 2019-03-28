@@ -16,6 +16,8 @@
 #ifndef PM_SHARED_H
 #define PM_SHARED_H
 
+#include "pm_defs.h"
+
 void PM_Init( playermove_t *ppmove );
 void PM_Move( playermove_t *ppmove, int server );
 char PM_FindTextureType( char *name );

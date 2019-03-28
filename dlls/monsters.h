@@ -14,9 +14,11 @@
 ****/
 #pragma once
 #ifndef MONSTERS_H
-#include "skill.h"
 #define MONSTERS_H
 
+#include "skill.h"
+#include "util.h"
+#include "basemonster.h"
 /*
 
 ===== monsters.h ========================================================

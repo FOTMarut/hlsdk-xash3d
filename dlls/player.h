@@ -17,12 +17,13 @@
 #define PLAYER_H
 
 #include "pm_materials.h"
+#include "basemonster.h"
 
-#define PLAYER_FATAL_FALL_SPEED		1024// approx 60 feet
-#define PLAYER_MAX_SAFE_FALL_SPEED	580// approx 20 feet
-#define DAMAGE_FOR_FALL_SPEED		(float) 100 / ( PLAYER_FATAL_FALL_SPEED - PLAYER_MAX_SAFE_FALL_SPEED )// damage per unit per second.
-#define PLAYER_MIN_BOUNCE_SPEED		200
-#define PLAYER_FALL_PUNCH_THRESHHOLD (float)350 // won't punch player's screen/make scrape noise unless player falling at least this fast.
+#define PLAYER_FATAL_FALL_SPEED		1024.0f// approx 60 feet
+#define PLAYER_MAX_SAFE_FALL_SPEED	580.0f// approx 20 feet
+#define DAMAGE_FOR_FALL_SPEED		( 100.0f / ( PLAYER_FATAL_FALL_SPEED - PLAYER_MAX_SAFE_FALL_SPEED ) )// damage per unit per second.
+#define PLAYER_MIN_BOUNCE_SPEED		200.0f
+#define PLAYER_FALL_PUNCH_THRESHOLD	350.0f // won't punch player's screen/make scrape noise unless player falling at least this fast.
 
 //
 // Player PHYSICS FLAGS bits
@@ -32,7 +33,7 @@
 #define PFLAG_ONTRAIN		( 1<<1 )
 #define PFLAG_ONBARNACLE	( 1<<2 )
 #define PFLAG_DUCKING		( 1<<3 )		// In the process of ducking, but totally squatted yet
-#define PFLAG_USING		( 1<<4 )		// Using a continuous entity
+#define PFLAG_USING			( 1<<4 )		// Using a continuous entity
 #define PFLAG_OBSERVER		( 1<<5 )		// player is locked in stationary cam mode. Spectators can move, observers can't.
 
 //

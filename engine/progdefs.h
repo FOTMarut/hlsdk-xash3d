@@ -12,11 +12,14 @@
 *   without written permission from Valve LLC.
 *
 ****/
+
+#ifndef CONST_H
+#include "const.h"
+#else
+
 #pragma once
 #ifndef PROGDEFS_H
 #define PROGDEFS_H
-
-typedef struct edict_s edict_t;
 
 typedef struct
 {	
@@ -220,3 +223,5 @@ typedef struct entvars_s
 #include "edict.h"
 
 #endif//PROGDEFS_H
+
+#endif // CONST_H

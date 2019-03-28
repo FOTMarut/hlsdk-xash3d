@@ -5,11 +5,16 @@
 // $NoKeywords: $
 //=============================================================================
 
+#ifndef HUD_H
+#include "hud.h"
+#else
+
 #pragma once
 #ifndef HUD_SPECTATOR_H
 #define HUD_SPECTATOR_H
 
 #include "cl_entity.h"
+#include "cdll_int.h"
 
 #define INSET_OFF			0
 #define	INSET_CHASE_FREE		1
@@ -124,3 +129,5 @@ private:
 	int		m_lastSecondaryObject;
 };
 #endif // SPECTATOR_H
+
+#endif // HUD_H

@@ -1563,6 +1563,8 @@ void CBasePlayerWeapon::PrintState( void )
 	ALERT( at_console, "m_iclip:  %i\n", m_iClip );
 }
 
+#ifndef CLIENT_DLL
+
 TYPEDESCRIPTION	CRpg::m_SaveData[] =
 {
 	DEFINE_FIELD( CRpg, m_fSpotActive, FIELD_INTEGER ),
@@ -1628,3 +1630,5 @@ TYPEDESCRIPTION	CSatchel::m_SaveData[] =
 };
 
 IMPLEMENT_SAVERESTORE( CSatchel, CBasePlayerWeapon )
+
+#endif //CLIENT_DLL

@@ -16,6 +16,8 @@
 #ifndef SHAKE_H
 #define SHAKE_H
 
+#include "const.h"
+
 // Screen / View effects
 
 // screen shake

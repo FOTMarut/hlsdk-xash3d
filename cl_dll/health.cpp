@@ -28,6 +28,7 @@
 #include "parsemsg.h"
 
 #include "mobility_int.h"
+#include "health.h"
 
 DECLARE_MESSAGE( m_Health, Health )
 DECLARE_MESSAGE( m_Health, Damage )

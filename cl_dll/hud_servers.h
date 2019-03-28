@@ -9,6 +9,8 @@
 #define HUD_SERVERSH
 #pragma once
 
+#include "net_api.h"
+
 #define NET_CALLBACK /* */
 
 // Dispatchers

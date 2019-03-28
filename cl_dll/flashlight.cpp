@@ -93,7 +93,7 @@ int CHudFlashlight::MsgFunc_Flashlight( const char *pszName,  int iSize, void *p
 
 int CHudFlashlight::Draw( float flTime )
 {
-	static bool show = ( gHUD.m_iHideHUDDisplay & ( HIDEHUD_FLASHLIGHT | HIDEHUD_ALL ) );
+	static bool show = 0 != ( gHUD.m_iHideHUDDisplay & ( HIDEHUD_FLASHLIGHT | HIDEHUD_ALL ) );
 	if( show != !( gHUD.m_iHideHUDDisplay & ( HIDEHUD_FLASHLIGHT | HIDEHUD_ALL ) ) )
 	{
 		show = !( gHUD.m_iHideHUDDisplay & ( HIDEHUD_FLASHLIGHT | HIDEHUD_ALL ) );

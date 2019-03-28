@@ -8,26 +8,16 @@
 // studio_model.cpp
 // routines for setting up to draw 3DStudio models
 
-#include "hud.h"
-#include "cl_util.h"
-#include "const.h"
-#include "com_model.h"
-#include "studio.h"
-#include "entity_state.h"
-#include "cl_entity.h"
-#include "dlight.h"
-#include "triangleapi.h"
-
 #include <stdio.h>
 #include <string.h>
 #include <memory.h>
 #include <math.h>
 
-#include "studio_util.h"
-#include "r_studioint.h"
-
 #include "StudioModelRenderer.h"
-#include "GameStudioModelRenderer.h"
+#include "r_studioint.h"
+#include "cl_dll.h"
+#include "studio_util.h"
+#include "cl_util.h"
 
 // Global engine <-> studio model rendering code interface
 engine_studio_api_t IEngineStudio;
@@ -529,7 +519,7 @@ void CStudioModelRenderer::StudioSetUpTransform( int trivial_accept )
 //		VectorCopy( m_vNormal, viewmatrix[2] );
 		memcpy( viewmatrix[0], m_vRight , sizeof(vec3_t) );
 		memcpy( viewmatrix[1], m_vUp    , sizeof(vec3_t) );
-		VectorInverse( viewmatrix[1] );
+		VectorInverse( *(Vector *) &viewmatrix[1] );
 		memcpy( viewmatrix[2], m_vNormal, sizeof(vec3_t) );
 
 
@@ -678,7 +668,7 @@ void CStudioModelRenderer::StudioFxTransform( cl_entity_t *ent, float transform[
 		if( gEngfuncs.pfnRandomLong( 0, 49 ) == 0 )
 		{
 			int axis = gEngfuncs.pfnRandomLong( 0, 1 ) * 2; // Choose between x & z
-			VectorScale( transform[axis], gEngfuncs.pfnRandomFloat( 1, 1.484 ), transform[axis] );
+			VectorScale( *(Vector *) &transform[axis], gEngfuncs.pfnRandomFloat( 1, 1.484 ), *(Vector *) &transform[axis] );
 		}
 		else if( gEngfuncs.pfnRandomLong( 0, 49 ) == 0 )
 		{

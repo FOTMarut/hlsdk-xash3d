@@ -17,11 +17,9 @@
 #define EVENT_API_H
 
 #include "pm_defs.h"
+#include "mathlib.h"
 
 #define EVENT_API_VERSION	1
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct event_api_s
 {

@@ -19,6 +19,8 @@
 #ifndef SKILL_H
 #define SKILL_H
 
+#include "util.h"
+
 typedef struct skilldata_s
 {
 	int iSkillLevel; // game skill level

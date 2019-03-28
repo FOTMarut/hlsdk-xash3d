@@ -6,8 +6,13 @@
 //=============================================================================
 
 #pragma once
-#if !defined ( STUDIOMODELRENDERER_H )
+#ifndef STUDIOMODELRENDERER_H
 #define STUDIOMODELRENDERER_H
+
+#include "entity_state.h"
+#include "studio.h"
+#include "cvardef.h"
+#include "com_model.h"
 
 /*
 ====================

@@ -21,6 +21,8 @@
 #include "activity.h"
 #include "enginecallback.h"
 #include "physcallback.h"
+#include "extdll.h"
+#include "cdll_dll.h"
 
 #include <string.h>
 #include <ctype.h>

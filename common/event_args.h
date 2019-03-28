@@ -16,6 +16,8 @@
 #ifndef EVENT_ARGS_H
 #define EVENT_ARGS_H
 
+#include "mathlib.h"
+
 // Event was invoked with stated origin
 #define FEVENT_ORIGIN	( 1<<0 )
 

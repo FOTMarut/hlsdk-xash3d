@@ -17,6 +17,11 @@ GNU General Public License for more details.
 #define PHYSINT_H
 
 #include "render_api.h"
+#include "mathlib.h"
+#include "eiface.h"
+#include "triangleapi.h"
+#include "con_nprint.h"
+#include "pm_defs.h"
 
 #define SV_PHYSICS_INTERFACE_VERSION		6
 
@@ -38,9 +43,6 @@ struct areanode_s
 	link_t		solid_edicts;
 	link_t		water_edicts;	// func water
 };
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct server_physics_api_s
 {

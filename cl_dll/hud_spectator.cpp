@@ -27,7 +27,13 @@
 #include "screenfade.h"
 
 #ifdef _MSC_VER
-#pragma warning(disable: 4244)
+#	pragma warning(disable: 4244)
+
+#	if _MSC_VER < 1400
+#		define strnlen(s,n) strlen(s)
+#	endif
+
+#	define strtof strtod
 #endif
 
 extern "C" int		iJumpSpectator;

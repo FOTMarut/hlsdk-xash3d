@@ -24,7 +24,13 @@
 #include "const.h"
 #include "entity_state.h"
 #include "r_efx.h"
-#include <stdint.h>
+
+#ifdef _MSC_VER
+	typedef __int32 int32_t;
+	typedef unsigned __int32 uint32_t;
+#else
+#	include <stdint.h>
+#endif
 
 // g_runfuncs is true if this is the first time we've "predicated" a particular movement/firing
 //  command.  If it is 1, then we should play events/sounds etc., otherwise, we just will be

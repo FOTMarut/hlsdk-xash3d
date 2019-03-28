@@ -12,9 +12,16 @@
 *   without written permission from Valve LLC.
 *
 ****/
+
+#ifndef HUD_H
+#include "hud.h"
+#else
+
 #pragma once
 #ifndef HEALTH_H
 #define HEALTH_H
+
+#include "cdll_int.h"
 
 #define DMG_IMAGE_LIFE		2	// seconds that image is up
 
@@ -52,6 +59,7 @@
 
 // time-based damage
 //mask off TF-specific stuff too
+#undef DMG_TIMEBASED
 #define DMG_TIMEBASED		(~(0xff003fff))	// mask for time-based damage
 
 #define DMG_DROWN			(1 << 14)	// Drowning
@@ -125,4 +133,9 @@ private:
 	void CalcDamageDirection( const Vector& vecFrom );
 	void UpdateTiles( float fTime, long bits );
 };
+
+#include "hud.h"
+
 #endif // HEALTH_H
+
+#endif // HUD_H

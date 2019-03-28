@@ -16,6 +16,9 @@
 #ifndef TRIANGLEAPI_H
 #define TRIANGLEAPI_H
 
+#include "mathlib.h"
+#include "com_model.h"
+
 typedef enum 
 {
 	TRI_FRONT = 0,
@@ -32,9 +35,6 @@ typedef enum
 #define TRI_TRIANGLE_STRIP	5
 #define TRI_QUAD_STRIP	6
 #define TRI_POINTS		7	// Xash3D added
-
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
 
 typedef struct triangleapi_s
 {

@@ -16,6 +16,9 @@
 #ifndef STUDIO_H
 #define STUDIO_H
 
+#include "mathlib.h"
+#include "const.h"
+
 /*
 ==============================================================================
 

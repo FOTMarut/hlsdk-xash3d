@@ -16,6 +16,8 @@
 #ifndef BASEMONSTER_H
 #define BASEMONSTER_H
 
+#include "cbase.h"
+
 //
 // generic Monster
 //

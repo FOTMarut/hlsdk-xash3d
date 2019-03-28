@@ -16,10 +16,11 @@
 #ifndef R_STUDIOINT_H
 #define R_STUDIOINT_H
 
-#define STUDIO_INTERFACE_VERSION 1
+#include "mathlib.h"
+#include "com_model.h"
+#include "cvardef.h"
 
-typedef const vec_t vec3_t_in[3];
-typedef vec_t vec3_t_out[3];
+#define STUDIO_INTERFACE_VERSION 1
 
 typedef struct engine_studio_api_s
 {

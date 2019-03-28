@@ -16,6 +16,13 @@
 #ifndef PM_TRACE_H
 #define PM_TRACE_H
 
+#include "mathlib.h"
+#include "const.h"
+
+#ifdef _MSC_VER
+#	pragma warning(disable: 4190)
+#endif
+
 typedef struct
 {
 	vec3_t	normal;

@@ -20,6 +20,7 @@
 #include "cl_util.h"
 #include "parsemsg.h"
 #include "r_efx.h"
+//#include "util.h"
 
 #define MAX_CLIENTS 32
 

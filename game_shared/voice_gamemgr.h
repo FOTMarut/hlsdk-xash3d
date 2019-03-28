@@ -10,6 +10,7 @@
 #pragma once
 
 #include "voice_common.h"
+#include "edict.h"
 
 class CGameRules;
 class CBasePlayer;
