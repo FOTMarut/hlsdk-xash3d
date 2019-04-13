@@ -94,10 +94,26 @@ inline void MESSAGE_BEGIN( int msg_dest, int msg_type, vec3_t_in pOrigin = NULL,
 #define ENGINE_FPRINTF	(*g_engfuncs.pfnEngineFprintf)
 #define ALLOC_PRIVATE	(*g_engfuncs.pfnPvAllocEntPrivateData)
 
-inline void *GET_PRIVATE( edict_t *pent )
+#if defined _MSC_VER && _MSC_VER < 1400
+template<typename T>
+#else
+template<typename T = void>
+#endif
+inline T *GET_PRIVATE( edict_t *pent )
 {
 	if( pent )
-		return pent->pvPrivateData;
+		return static_cast<T*>( pent->pvPrivateData );
+	return NULL;
+}
+#if defined _MSC_VER && _MSC_VER < 1400
+template<typename T>
+#else
+template<typename T = void>
+#endif
+inline const T *GET_PRIVATE( const edict_t *pent )
+{
+	if( pent )
+		return static_cast<T*>( pent->pvPrivateData );
 	return NULL;
 }
 

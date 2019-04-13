@@ -64,7 +64,7 @@ void DLLEXPORT Demo_ReadBuffer( int size, byte *buffer )
 {
 	byte *cur_data = buffer;
 
-	const int &type = *(int *)cur_data;
+	const int &type = *reinterpret_cast<int *>( cur_data );
 	cur_data += sizeof(int);
 
 	switch( type )

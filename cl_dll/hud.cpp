@@ -547,7 +547,7 @@ int CHud::MsgFunc_SetFOV( const char *pszName,  int iSize, void *pbuf )
 	else
 	{  
 		// set a new sensitivity that is proportional to the change from the FOV default
-		m_flMouseSensitivity = sensitivity->value * ((float)newfov / (float)def_fov) * CVAR_GET_FLOAT("zoom_sensitivity_ratio");
+		m_flMouseSensitivity = sensitivity->value * ( float(newfov) / float(def_fov) ) * CVAR_GET_FLOAT("zoom_sensitivity_ratio");
 	}
 
 	return 1;
@@ -562,7 +562,7 @@ void CHud::AddHudElem( CHudBase *phudelem )
 	if( !phudelem )
 		return;
 
-	pdl = (HUDLIST *)malloc( sizeof(HUDLIST) );
+	pdl = static_cast<HUDLIST *>( malloc( sizeof(HUDLIST) ) );
 	if( !pdl )
 		return;
 

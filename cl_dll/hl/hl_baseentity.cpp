@@ -294,7 +294,7 @@ Vector CBasePlayer::AutoaimDeflection( Vector &vecSrc, float flDist, float flDel
 void CBasePlayer::ResetAutoaim() { }
 void CBasePlayer::SetCustomDecalFrames( int nFrames ) { }
 int CBasePlayer::GetCustomDecalFrames( void ) { return -1; }
-void CBasePlayer::DropPlayerItem( char *pszItemName ) { }
+void CBasePlayer::DropPlayerItem( const char *pszItemName ) { }
 BOOL CBasePlayer::HasPlayerItem( CBasePlayerItem *pCheckItem ) { return FALSE; }
 BOOL CBasePlayer::SwitchWeapon( CBasePlayerItem *pWeapon )  { return FALSE; }
 Vector CBasePlayer::GetGunPosition( void ) { return g_vecZero; }
@@ -333,8 +333,8 @@ void CBasePlayerItem::AttachToPlayer ( CBasePlayer *pPlayer ) { }
 int CBasePlayerWeapon::AddDuplicate( CBasePlayerItem *pOriginal ) { return 0; }
 int CBasePlayerWeapon::AddToPlayer( CBasePlayer *pPlayer ) { return FALSE; }
 int CBasePlayerWeapon::UpdateClientData( CBasePlayer *pPlayer ) { return 0; }
-BOOL CBasePlayerWeapon::AddPrimaryAmmo( int iCount, char *szName, int iMaxClip, int iMaxCarry ) { return TRUE; }
-BOOL CBasePlayerWeapon::AddSecondaryAmmo( int iCount, char *szName, int iMax ) { return TRUE; }
+BOOL CBasePlayerWeapon::AddPrimaryAmmo( int iCount, const char *szName, int iMaxClip, int iMaxCarry ) { return TRUE; }
+BOOL CBasePlayerWeapon::AddSecondaryAmmo( int iCount, const char *szName, int iMax ) { return TRUE; }
 BOOL CBasePlayerWeapon::IsUseable( void ) { return TRUE; }
 int CBasePlayerWeapon::PrimaryAmmoIndex( void ) { return -1; }
 int CBasePlayerWeapon::SecondaryAmmoIndex( void ) { return -1; }

@@ -235,7 +235,7 @@ void CBaseDelay::SUB_UseTargets( CBaseEntity *pActivator, USE_TYPE useType, floa
 		pTemp->SetThink( &CBaseDelay::DelayThink );
 
 		// Save the useType
-		pTemp->pev->button = (int)useType;
+		pTemp->pev->button = static_cast<int>( useType );
 		pTemp->m_iszKillTarget = m_iszKillTarget;
 		pTemp->m_flDelay = 0; // prevent "recursion"
 		pTemp->pev->target = pev->target;
@@ -323,7 +323,7 @@ void CBaseDelay::DelayThink( void )
 	}
 
 	// The use type is cached (and stashed) in pev->button
-	SUB_UseTargets( pActivator, (USE_TYPE)pev->button, 0 );
+	SUB_UseTargets( pActivator, static_cast<USE_TYPE>( pev->button ), 0 );
 	REMOVE_ENTITY( ENT( pev ) );
 }
 

@@ -386,7 +386,7 @@ int CSquadMonster::CheckEnemy( CBaseEntity *pEnemy )
 	iUpdatedLKP = CBaseMonster::CheckEnemy( m_hEnemy );
 
 	// communicate with squad members about the enemy IF this individual has the same enemy as the squad leader.
-	if( InSquad() && (CBaseEntity *)m_hEnemy == MySquadLeader()->m_hEnemy )
+	if( InSquad() && static_cast<CBaseEntity *>( m_hEnemy ) == MySquadLeader()->m_hEnemy )
 	{
 		if( iUpdatedLKP )
 		{

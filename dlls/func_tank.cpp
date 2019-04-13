@@ -191,7 +191,7 @@ void CFuncTank::Spawn( void )
 
 	if( m_fireRate <= 0 )
 		m_fireRate = 1;
-	if( m_spread > (int)MAX_FIRING_SPREADS )
+	if( m_spread > MAX_FIRING_SPREADS )
 		m_spread = 0;
 
 	pev->oldorigin = pev->origin;
@@ -288,7 +288,7 @@ void CFuncTank::KeyValue( KeyValueData *pkvd )
 	}
 	else if( FStrEq( pkvd->szKeyName, "bullet" ) )
 	{
-		m_bulletType = (TANKBULLET)atoi( pkvd->szValue );
+		m_bulletType = static_cast<TANKBULLET>( atoi( pkvd->szValue ) );
 		pkvd->fHandled = TRUE;
 	}
 	else if( FStrEq( pkvd->szKeyName, "bullet_damage" ) )
@@ -411,7 +411,7 @@ void CFuncTank::ControllerPostFrame( void )
 		
 		// HACKHACK -- make some noise (that the AI can hear)
 		if( m_pController && m_pController->IsPlayer() )
-			( (CBasePlayer *)m_pController )->m_iWeaponVolume = LOUD_GUN_VOLUME;
+			static_cast<CBasePlayer *>( m_pController )->m_iWeaponVolume = LOUD_GUN_VOLUME;
 
 		m_flNextAttack = gpGlobals->time + ( 1 / m_fireRate );
 	}
@@ -432,7 +432,7 @@ void CFuncTank::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE use
 		}
 		else if( !m_pController && useType != USE_OFF )
 		{
-			StartControl( (CBasePlayer*)pActivator );
+			StartControl( static_cast<CBasePlayer*>( pActivator ) );
 		}
 		else
 		{
@@ -645,7 +645,12 @@ void CFuncTank::Fire( const Vector &barrelEnd, const Vector &forward, entvars_t 
 		{
 			CSprite *pSprite = CSprite::SpriteCreate( STRING( m_iszSpriteSmoke ), barrelEnd, TRUE );
 			pSprite->AnimateAndDie( RANDOM_FLOAT( 15.0, 20.0 ) );
-			pSprite->SetTransparency( kRenderTransAlpha, (int)pev->rendercolor.x, (int)pev->rendercolor.y, (int)pev->rendercolor.z, 255, kRenderFxNone );
+			pSprite->SetTransparency( kRenderTransAlpha,
+				static_cast<int>( pev->rendercolor.x ),
+				static_cast<int>( pev->rendercolor.y ),
+				static_cast<int>( pev->rendercolor.z ),
+				255,
+				kRenderFxNone );
 			pSprite->pev->velocity.z = RANDOM_FLOAT( 40, 80 );
 			pSprite->SetScale( m_spriteScale );
 		}
@@ -715,7 +720,7 @@ void CFuncTankGun::Fire( const Vector &barrelEnd, const Vector &forward, entvars
 		// FireBullets needs gpGlobals->v_up, etc.
 		UTIL_MakeAimVectors( pev->angles );
 
-		int bulletCount = (int)( ( gpGlobals->time - m_fireLast ) * m_fireRate );
+		int bulletCount = static_cast<int>( ( gpGlobals->time - m_fireLast ) * m_fireRate );
 		if( bulletCount > 0 )
 		{
 			for( i = 0; i < bulletCount; i++ )
@@ -809,7 +814,7 @@ CLaser *CFuncTankLaser::GetLaser( void )
 		// Found the landmark
 		if( FClassnameIs( pentLaser, "env_laser" ) )
 		{
-			m_pLaser = (CLaser *)CBaseEntity::Instance( pentLaser );
+			m_pLaser = static_cast<CLaser *>( CBaseEntity::Instance( pentLaser ) );
 			break;
 		}
 		else
@@ -837,7 +842,7 @@ void CFuncTankLaser::Fire( const Vector &barrelEnd, const Vector &forward, entva
 		// TankTrace needs gpGlobals->v_up, etc.
 		UTIL_MakeAimVectors( pev->angles );
 
-		int bulletCount = (int)( ( gpGlobals->time - m_fireLast ) * m_fireRate );
+		int bulletCount = static_cast<int>( ( gpGlobals->time - m_fireLast ) * m_fireRate );
 		if( bulletCount )
 		{
 			for( i = 0; i < bulletCount; i++ )
@@ -887,7 +892,7 @@ void CFuncTankRocket::Fire( const Vector &barrelEnd, const Vector &forward, entv
 
 	if( m_fireLast != 0 )
 	{
-		int bulletCount = (int)( ( gpGlobals->time - m_fireLast ) * m_fireRate );
+		int bulletCount = static_cast<int>( ( gpGlobals->time - m_fireLast ) * m_fireRate );
 		if( bulletCount > 0 )
 		{
 			for( i = 0; i < bulletCount; i++ )
@@ -925,7 +930,7 @@ void CFuncTankMortar::Fire( const Vector &barrelEnd, const Vector &forward, entv
 {
 	if( m_fireLast != 0 )
 	{
-		int bulletCount = (int)( ( gpGlobals->time - m_fireLast ) * m_fireRate );
+		int bulletCount = static_cast<int>( ( gpGlobals->time - m_fireLast ) * m_fireRate );
 		// Only create 1 explosion
 		if( bulletCount > 0 )
 		{
@@ -1001,7 +1006,7 @@ void CFuncTankControls::Think( void )
 		return;
 	}
 
-	m_pTank = (CFuncTank*)Instance( pTarget );
+	m_pTank = static_cast<CFuncTank*>( Instance( pTarget ) );
 }
 
 void CFuncTankControls::Spawn( void )

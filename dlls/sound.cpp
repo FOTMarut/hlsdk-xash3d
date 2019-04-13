@@ -448,7 +448,7 @@ void CAmbientGeneric::InitModulationParms( void )
 {
 	int pitchinc;
 
-	m_dpv.volrun = (int)( pev->health * 10 );	// 0 - 100
+	m_dpv.volrun = static_cast<int>( pev->health * 10.0f );	// 0 - 100
 	if( m_dpv.volrun > 100 )
 		m_dpv.volrun = 100;
 	if( m_dpv.volrun < 0 )
@@ -553,7 +553,7 @@ void CAmbientGeneric::ToggleUse( CBaseEntity *pActivator, CBaseEntity *pCaller, 
 		if( fraction < 0.0 )
 			fraction = 0.01;
 
-		m_dpv.pitch = (int)( fraction * 255 );
+		m_dpv.pitch = static_cast<int>( fraction * 255.0f );
 
 		UTIL_EmitAmbientSound( ENT( pev ), pev->origin, szSoundFile, 0, 0, SND_CHANGE_PITCH, m_dpv.pitch );
 		return;
@@ -948,7 +948,7 @@ void CEnvSound::Think( void )
 			//CLIENT_COMMAND( pentPlayer, "room_type %f", m_flRoomtype );
 
 			MESSAGE_BEGIN( MSG_ONE, SVC_ROOMTYPE, NULL, pentPlayer );		// use the magic #1 for "one client"
-				WRITE_SHORT( (short)m_flRoomtype );					// sequence number
+				WRITE_SHORT( static_cast<short>( m_flRoomtype ) );					// sequence number
 			MESSAGE_END();
 
 			// crank up nextthink rate for new active sound entity
@@ -1016,7 +1016,7 @@ void USENTENCEG_InitLRU( unsigned char *plru, int count )
 		count = CSENTENCE_LRU_MAX;
 
 	for( i = 0; i < count; i++ )
-		plru[i] = (unsigned char)i;
+		plru[i] = static_cast<unsigned char>( i );
 
 	// randomize array
 	for( i = 0; i < ( count * 4 ); i++ )

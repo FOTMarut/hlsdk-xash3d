@@ -90,26 +90,28 @@ typedef void(CBaseEntity::*ENTITYFUNCPTR)( CBaseEntity *pOther );
 typedef void(CBaseEntity::*USEPTR)( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 
 // For CLASSIFY
-#define	CLASS_NONE			0
+#define	CLASS_NONE				0
 #define CLASS_MACHINE			1
 #define CLASS_PLAYER			2
 #define	CLASS_HUMAN_PASSIVE		3
-#define CLASS_HUMAN_MILITARY		4
-#define CLASS_ALIEN_MILITARY		5
+#define CLASS_HUMAN_MILITARY	4
+#define CLASS_ALIEN_MILITARY	5
 #define CLASS_ALIEN_PASSIVE		6
 #define CLASS_ALIEN_MONSTER		7
 #define CLASS_ALIEN_PREY		8
-#define CLASS_ALIEN_PREDATOR		9
+#define CLASS_ALIEN_PREDATOR	9
 #define CLASS_INSECT			10
 #define CLASS_PLAYER_ALLY		11
-#define CLASS_PLAYER_BIOWEAPON		12 // hornets and snarks.launched by players
-#define CLASS_ALIEN_BIOWEAPON		13 // hornets and snarks.launched by the alien menace
+#define CLASS_PLAYER_BIOWEAPON	12 // hornets and snarks.launched by players
+#define CLASS_ALIEN_BIOWEAPON	13 // hornets and snarks.launched by the alien menace
 #define	CLASS_BARNACLE			99 // special because no one pays attention to it, and it eats a wide cross-section of creatures.
 
 class CBaseEntity;
-class CBaseMonster;
 class CBasePlayerItem;
 class CSquadMonster;
+class CCineMonster;
+class CSound;
+class CBaseMonster;
 
 #define	SF_NORESPAWN	( 1 << 30 )// !!!set this bit on guns and stuff that should never respawn.
 
@@ -123,14 +125,17 @@ private:
 	int m_serialnumber;
 public:
 	edict_t *Get( void );
+	const edict_t *Get( void ) const;
 	edict_t *Set( edict_t *pent );
 
-	operator int ();
+	operator int () const;
 
 	operator CBaseEntity *();
+	operator const CBaseEntity *() const;
 
 	CBaseEntity *operator = ( CBaseEntity *pEntity );
 	CBaseEntity *operator ->();
+	const CBaseEntity *operator ->() const;
 };
 
 //
@@ -221,7 +226,7 @@ public:
 	// allow engine to allocate instance data
 	void *operator new( size_t stAllocateBlock, entvars_t *pev )
 	{
-		return (void *)ALLOC_PRIVATE( ENT( pev ), stAllocateBlock );
+		return ALLOC_PRIVATE( ENT( pev ), stAllocateBlock );
 	};
 
 	// don't use this.
@@ -257,11 +262,17 @@ public:
 	{
 		if( !pent )
 			pent = ENT( 0 );
-		CBaseEntity *pEnt = (CBaseEntity *)GET_PRIVATE( pent ); 
-		return pEnt; 
+		return GET_PRIVATE<CBaseEntity>( pent ); 
+	}
+	static const CBaseEntity *Instance( const edict_t *pent )
+	{
+		if( !pent )
+			pent = ENT( 0 );
+		return GET_PRIVATE<CBaseEntity>( pent ); 
 	}
 
 	static CBaseEntity *Instance( entvars_t *pev ) { return Instance( ENT( pev ) ); }
+	static const CBaseEntity *Instance( const entvars_t *pev ) { return Instance( ENT( pev ) ); }
 	static CBaseEntity *Instance( int eoffset) { return Instance( ENT( eoffset) ); }
 
 	CBaseMonster *GetMonsterPointer( entvars_t *pevMonster ) 
@@ -652,10 +663,6 @@ public:
 #define GIB_NEVER			1// never gib, no matter how much death damage is done ( freezing, etc )
 #define GIB_ALWAYS			2// always gib ( Houndeye Shock, Barnacle Bite )
 
-class CBaseMonster;
-class CCineMonster;
-class CSound;
-
 #include "basemonster.h"
 
 const char *ButtonSound( int sound );				// get string of button sound number
@@ -724,7 +731,7 @@ template <class T> T * GetClassPtr( entvars_t *pev )
 		pev = VARS( CREATE_ENTITY() );
 
 	// get the private data
-	T* a = static_cast<T*>( GET_PRIVATE( ENT( pev ) ) );
+	T* a = GET_PRIVATE<T>( ENT( pev ) );
 
 	if( a == NULL ) 
 	{

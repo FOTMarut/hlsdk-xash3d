@@ -112,7 +112,7 @@ void CItem::ItemTouch( CBaseEntity *pOther )
 		return;
 	}
 
-	CBasePlayer *pPlayer = (CBasePlayer *)pOther;
+	CBasePlayer *pPlayer = static_cast<CBasePlayer *>( pOther );
 
 	// ok, a player is touching this item, but can he have it?
 	if( !g_pGameRules->CanHaveItem( pPlayer, this ) )
@@ -237,8 +237,8 @@ class CItemBattery : public CItem
 
 			// Suit reports new power level
 			// For some reason this wasn't working in release build -- round it.
-			pct = (int)( (float)( pPlayer->pev->armorvalue * 100.0 ) * ( 1.0 / MAX_NORMAL_BATTERY ) + 0.5 );
-			pct = ( pct / 5 );
+			pct = static_cast<int>( pPlayer->pev->armorvalue * 100.0f * ( 1.0f / MAX_NORMAL_BATTERY ) + 0.5f );
+			pct = pct / 5;
 			if( pct > 0 )
 				pct--;
 

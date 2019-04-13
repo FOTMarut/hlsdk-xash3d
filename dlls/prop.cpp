@@ -33,26 +33,6 @@
 #define SF_PROP_RESPAWN		8 // enable autorespawn
 #define SF_PROP_BREAKABLE	16 // enable break/explode
 #define SF_PROP_FIXED		32 // don't move untill touch
-typedef enum
-{
-	expRandom,
-	expDirected
-}Explosions;
-
-typedef enum
-{
-	matGlass = 0,
-	matWood,
-	matMetal,
-	matFlesh,
-	matCinderBlock,
-	matCeilingTile,
-	matComputer,
-	matUnbreakableGlass,
-	matRocks,
-	matNone,
-	matLastMaterial
-}Materials;
 
 //extern "C" void AngleVectors( const vec3_t angles, vec3_t forward, vec3_t right, vec3_t up);
 Vector UTIL_AngleVectorsF( const Vector &angles )
@@ -1062,7 +1042,7 @@ int CProp::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, float fl
 {
 	Vector r = ( pevInflictor->origin - pev->origin );
 	if( ( !m_attacker || ( pev->velocity.Length() < 700 ) )
-		 && ( (CBaseEntity*)GET_PRIVATE( ENT( pevAttacker ) ) )->IsPlayer() )
+		 && ( GET_PRIVATE<CBaseEntity>( ENT( pevAttacker ) ) )->IsPlayer() )
 		m_attacker = ENT( pevAttacker );
 	DeployThink();
 

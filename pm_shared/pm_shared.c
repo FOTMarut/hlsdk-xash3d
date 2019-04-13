@@ -21,7 +21,7 @@
 #include "pm_shared.h"
 #include "pm_movevars.h"
 #include "pm_debug.h"
-//#include <stdio.h>  // NULL
+#include <stdio.h>  // NULL
 #include <math.h>   // sqrt
 #include <string.h> // strcpy
 #include <stdlib.h> // atoi
@@ -59,7 +59,7 @@ playermove_t *pmove = NULL;
 #define STUCK_MOVEDOWN		-1
 #define VEC_HULL_MIN		-36
 #define VEC_HULL_MAX		36
-#define VEC_VIEW		28
+#define VEC_VIEW			28
 #define	STOP_EPSILON		0.1
 
 #define CTEXTURESMAX		512			// max number of textures loaded
@@ -78,14 +78,14 @@ playermove_t *pmove = NULL;
 #define CHAR_TEX_FLESH		'F'
 
 #define STEP_CONCRETE		0		// default step sound
-#define STEP_METAL		1		// metal floor
-#define STEP_DIRT		2		// dirt, sand, rock
-#define STEP_VENT		3		// ventillation duct
-#define STEP_GRATE		4		// metal grating
-#define STEP_TILE		5		// floor tiles
-#define STEP_SLOSH		6		// shallow liquid puddle
-#define STEP_WADE		7		// wading in liquid
-#define STEP_LADDER		8		// climbing ladder
+#define STEP_METAL			1		// metal floor
+#define STEP_DIRT			2		// dirt, sand, rock
+#define STEP_VENT			3		// ventillation duct
+#define STEP_GRATE			4		// metal grating
+#define STEP_TILE			5		// floor tiles
+#define STEP_SLOSH			6		// shallow liquid puddle
+#define STEP_WADE			7		// wading in liquid
+#define STEP_LADDER			8		// climbing ladder
 
 #define PLAYER_FATAL_FALL_SPEED		1024.0f// approx 60 feet
 #define PLAYER_MAX_SAFE_FALL_SPEED	580.0f// approx 20 feet
@@ -132,38 +132,65 @@ static char grgchTextureType[CTEXTURESMAX];
 
 int g_onladder = 0;
 
-void PM_SwapTextures( int i, int j )
+//void PM_SwapTextures( int i, int j )
+//{
+//	char chTemp;
+//	char szTemp[CBTEXTURENAMEMAX];
+//
+//	strcpy( szTemp, grgszTextureName[i] );
+//	chTemp = grgchTextureType[i];
+//	
+//	strcpy( grgszTextureName[i], grgszTextureName[j] );
+//	grgchTextureType[i] = grgchTextureType[j];
+//
+//	strcpy( grgszTextureName[j], szTemp );
+//	grgchTextureType[j] = chTemp;
+//}
+
+// Sort texture names with insertion sort
+//
+void PM_SortTextures( void )
 {
+	int i, j, cur_idx;
+	int indexes[gcTextures];
 	char chTemp;
 	char szTemp[CBTEXTURENAMEMAX];
 
-	strcpy( szTemp, grgszTextureName[i] );
-	chTemp = grgchTextureType[i];
-	
-	strcpy( grgszTextureName[i], grgszTextureName[j] );
-	grgchTextureType[i] = grgchTextureType[j];
+	for( i = 0; i < gcTextures; ++i )
+		indexes[i] = i;
 
-	strcpy( grgszTextureName[j], szTemp );
-	grgchTextureType[j] = chTemp;
-}
-
-void PM_SortTextures( void )
-{
-	// Bubble sort, yuck, but this only occurs at startup and it's only 512 elements...
-	//
-	int i, j;
-
-	for( i = 0; i < gcTextures; i++ )
+	// Generate permutation array (insertion sort)
+	for( i = 1; i < gcTextures; ++i )
 	{
-		for( j = i + 1; j < gcTextures; j++ )
+		for( j = i; stricmp( grgszTextureName[ indexes[j - 1] ], grgszTextureName[ indexes[j] ] ) > 0 && j > 0; --j )
 		{
-			if( stricmp( grgszTextureName[i], grgszTextureName[j] ) > 0 )
-			{
-				// Swap
-				//
-				PM_SwapTextures( i, j );
-			}
+			// Swap
+			//
+			int temp = indexes[j - 1];
+			indexes[j - 1] = indexes[j];
+			indexes[j] = temp;
 		}
+	}
+
+	// Apply permutation
+	for ( cur_idx = 0; cur_idx < gcTextures - 1; ++cur_idx )
+	{
+		int i = cur_idx, j = indexes[cur_idx];
+		if (i == j) continue;
+
+		chTemp = grgchTextureType[cur_idx];
+		strcpy( szTemp, grgszTextureName[cur_idx] );
+		do
+		{
+			grgchTextureType[i] = grgchTextureType[j];
+			strcpy( grgszTextureName[i], grgszTextureName[j] );
+			indexes[i] = i;
+			i = j;
+			j = indexes[j];
+		} while ( j != cur_idx );
+		grgchTextureType[i] = chTemp;
+		strcpy( grgszTextureName[i], szTemp );
+		indexes[i] = i;
 	}
 }
 
@@ -236,7 +263,7 @@ void PM_InitTextureTypes()
 	bTextureTypeInit = true;
 }
 
-char PM_FindTextureType( char *name )
+char PM_FindTextureType( const char *name )
 {
 	int left, right, pivot;
 	int val;
@@ -246,6 +273,7 @@ char PM_FindTextureType( char *name )
 	left = 0;
 	right = gcTextures - 1;
 
+	// Binary search, grgszTextureName is sorted
 	while( left <= right )
 	{
 		pivot = ( left + right ) / 2;
@@ -514,12 +542,12 @@ int PM_MapTextureTypeStepType( char chTextureType )
 
 /*
 ====================
-PM_CatagorizeTextureType
+PM_CategorizeTextureType
 
 Determine texture info for the texture we are standing on.
 ====================
 */
-void PM_CatagorizeTextureType( void )
+void PM_CategorizeTextureType( void )
 {
 	vec3_t start, end;
 	const char *pTextureName;
@@ -528,7 +556,7 @@ void PM_CatagorizeTextureType( void )
 	VectorCopy( pmove->origin, end );
 
 	// Straight down
-	end[2] -= 64;
+	end[2] -= 64.0f;
 
 	// Fill in default values, just in case.
 	pmove->sztexturename[0] = '\0';
@@ -555,7 +583,6 @@ void PM_CatagorizeTextureType( void )
 
 void PM_UpdateStepSound( void )
 {
-	int fWalking;
 	float fvol;
 	vec3_t knee;
 	vec3_t feet;
@@ -564,8 +591,9 @@ void PM_UpdateStepSound( void )
 	float speed;
 	float velrun;
 	float velwalk;
-	float flduck;
-	int fLadder;
+	qboolean fWalking;
+	qboolean fLadder;
+	qboolean fDucking;
 	int step;
 
 	if( pmove->flTimeStepSound > 0 )
@@ -574,61 +602,58 @@ void PM_UpdateStepSound( void )
 	if( pmove->flags & FL_FROZEN )
 		return;
 
-	PM_CatagorizeTextureType();
+	PM_CategorizeTextureType();
 
 	speed = Length( pmove->velocity );
 
 	// determine if we are on a ladder
-	fLadder = ( pmove->movetype == MOVETYPE_FLY );// IsOnLadder();
+	fLadder  = ( pmove->movetype == MOVETYPE_FLY );// IsOnLadder();
+	fDucking = ( ( pmove->flags & FL_DUCKING ) != 0 );
 
 	// UNDONE: need defined numbers for run, walk, crouch, crouch run velocities!!!!	
-	if( ( pmove->flags & FL_DUCKING) || fLadder )
+	if( fDucking || fLadder )
 	{
-		velwalk = 60;		// These constants should be based on cl_movespeedkey * cl_forwardspeed somehow
-		velrun = 80;		// UNDONE: Move walking to server
-		flduck = 100;
+		velwalk = 60.0f;	// These constants should be based on cl_movespeedkey * cl_forwardspeed somehow
+		velrun = 80.0f;		// UNDONE: Move walking to server
 	}
 	else
 	{
-		velwalk = 120;
-		velrun = 210;
-		flduck = 0;
+		velwalk = 120.0f;
+		velrun = 210.0f;
 	}
 
 	// If we're on a ladder or on the ground, and we're moving fast enough,
 	//  play step sound.  Also, if pmove->flTimeStepSound is zero, get the new
 	//  sound right away - we just started moving in new level.
-	if( ( fLadder || ( pmove->onground != -1 ) ) && ( Length( pmove->velocity ) > 0.0 ) && ( speed >= velwalk || !pmove->flTimeStepSound ) )
+	if( ( fLadder || ( pmove->onground != -1 ) ) && ( Length( pmove->velocity ) > 0.0f ) && ( speed >= velwalk || !pmove->flTimeStepSound ) )
 	{
 		fWalking = speed < velrun;		
 
-		//VectorCopy( pmove->origin, center );
-		VectorCopy( pmove->origin, knee );
-		VectorCopy( pmove->origin, feet );
-
 		height = pmove->player_maxs[pmove->usehull][2] - pmove->player_mins[pmove->usehull][2];
 
-		knee[2] = pmove->origin[2] - 0.3 * height;
-		feet[2] = pmove->origin[2] - 0.5 * height;
+		knee[0] = feet[0] = pmove->origin[0];
+		knee[1] = feet[1] = pmove->origin[1];
+		knee[2]           = pmove->origin[2] - 0.3f * height;
+		feet[2]           = pmove->origin[2] - 0.5f * height;
 
 		// find out what we're stepping in or on...
 		if( fLadder )
 		{
 			step = STEP_LADDER;
-			fvol = 0.35;
+			fvol = 0.35f;
 			pmove->flTimeStepSound = 350;
 		}
 		else if( pmove->PM_PointContents( knee, NULL ) == CONTENTS_WATER )
 		{
 			step = STEP_WADE;
-			fvol = 0.65;
+			fvol = 0.65f;
 			pmove->flTimeStepSound = 600;
 		}
 		else if( pmove->PM_PointContents( feet, NULL ) == CONTENTS_WATER )
 		{
 			step = STEP_SLOSH;
-			fvol = fWalking ? 0.2 : 0.5;
-			pmove->flTimeStepSound = fWalking ? 400 : 300;		
+			fvol = fWalking ? 0.2f : 0.5f;
+			pmove->flTimeStepSound = fWalking ? 400 : 300;
 		}
 		else
 		{
@@ -640,44 +665,37 @@ void PM_UpdateStepSound( void )
 			{
 			default:
 			case CHAR_TEX_CONCRETE:						
-				fvol = fWalking ? 0.2 : 0.5;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.2f : 0.5f;
 				break;
 			case CHAR_TEX_METAL:	
-				fvol = fWalking ? 0.2 : 0.5;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.2f : 0.5f;
 				break;
 			case CHAR_TEX_DIRT:	
-				fvol = fWalking ? 0.25 : 0.55;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.25f : 0.55f;
 				break;
 			case CHAR_TEX_VENT:	
-				fvol = fWalking ? 0.4 : 0.7;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.4f : 0.7f;
 				break;
 			case CHAR_TEX_GRATE:
-				fvol = fWalking ? 0.2 : 0.5;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.2f : 0.5f;
 				break;
 			case CHAR_TEX_TILE:	
-				fvol = fWalking ? 0.2 : 0.5;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.2f : 0.5f;
 				break;
 			case CHAR_TEX_SLOSH:
-				fvol = fWalking ? 0.2 : 0.5;
-				pmove->flTimeStepSound = fWalking ? 400 : 300;
+				fvol = fWalking ? 0.2f : 0.5f;
 				break;
 			}
+			pmove->flTimeStepSound = fWalking ? 400 : 300;
 		}
 
-		pmove->flTimeStepSound += flduck; // slower step time if ducking
+		if( fDucking || fLadder )
+			pmove->flTimeStepSound += 100.0f; // slower step time if ducking
 
 		// play the sound
 		// 35% volume if ducking
-		if( pmove->flags & FL_DUCKING )
-		{
-			fvol *= 0.35;
-		}
+		if( fDucking )
+			fvol *= 0.35f;
 
 		PM_PlayStepSound( step, fvol );
 	}
@@ -1756,10 +1774,10 @@ int PM_CheckStuck( void )
 	if( pmove->cmd.buttons & ( IN_JUMP | IN_DUCK | IN_ATTACK ) && ( pmove->physents[hitent].player != 0 ) )
 	{
 		float x, y, z;
-		float xystep = 8.0;
-		float zstep = 18.0;
-		float xyminmax = xystep;
-		float zminmax = 4 * zstep;
+		const float xystep = 8.0f;
+		const float zstep = 18.0f;
+		const float xyminmax = xystep;
+		const float zminmax = 4 * zstep;
 
 		for( z = 0; z <= zminmax; z += zstep )
 		{

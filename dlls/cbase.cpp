@@ -131,7 +131,7 @@ int GetEntityAPI2( DLL_FUNCTIONS *pFunctionTable, int *interfaceVersion )
 
 int DispatchSpawn( edict_t *pent )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pent );
 
 	if( pEntity )
 	{
@@ -144,7 +144,7 @@ int DispatchSpawn( edict_t *pent )
 		// Try to get the pointer again, in case the spawn function deleted the entity.
 		// UNDONE: Spawn() should really return a code to ask that the entity be deleted, but
 		// that would touch too much code for me to do that right now.
-		pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+		pEntity = GET_PRIVATE<CBaseEntity>( pent );
 
 		if( pEntity )
 		{
@@ -193,7 +193,7 @@ void DispatchKeyValue( edict_t *pentKeyvalue, KeyValueData *pkvd )
 		return;
 
 	// Get the actualy entity object
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pentKeyvalue );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pentKeyvalue );
 
 	if( !pEntity )
 		return;
@@ -210,8 +210,8 @@ void DispatchTouch( edict_t *pentTouched, edict_t *pentOther )
 	if( gTouchDisabled )
 		return;
 
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pentTouched );
-	CBaseEntity *pOther = (CBaseEntity *)GET_PRIVATE( pentOther );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pentTouched );
+	CBaseEntity *pOther = GET_PRIVATE<CBaseEntity>( pentOther );
 
 	if( pEntity && pOther && ! ( ( pEntity->pev->flags | pOther->pev->flags ) & FL_KILLME ) )
 		pEntity->Touch( pOther );
@@ -219,16 +219,16 @@ void DispatchTouch( edict_t *pentTouched, edict_t *pentOther )
 
 void DispatchUse( edict_t *pentUsed, edict_t *pentOther )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pentUsed );
-	CBaseEntity *pOther = (CBaseEntity *)GET_PRIVATE( pentOther );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pentUsed );
+	CBaseEntity *pOther = GET_PRIVATE<CBaseEntity>( pentOther );
 
 	if( pEntity && !( pEntity->pev->flags & FL_KILLME ) )
-		pEntity->Use( pOther, pOther, USE_TOGGLE, 0 );
+		pEntity->Use( pOther, pOther, USE_TOGGLE, 0.0f );
 }
 
 void DispatchThink( edict_t *pent )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pent );
 	if( pEntity )
 	{
 		if( FBitSet( pEntity->pev->flags, FL_DORMANT ) )
@@ -240,8 +240,8 @@ void DispatchThink( edict_t *pent )
 
 void DispatchBlocked( edict_t *pentBlocked, edict_t *pentOther )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pentBlocked );
-	CBaseEntity *pOther = (CBaseEntity *)GET_PRIVATE( pentOther );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pentBlocked );
+	CBaseEntity *pOther = GET_PRIVATE<CBaseEntity>( pentOther );
 
 	if( pEntity )
 		pEntity->Blocked( pOther );
@@ -249,7 +249,7 @@ void DispatchBlocked( edict_t *pentBlocked, edict_t *pentOther )
 
 void DispatchSave( edict_t *pent, SAVERESTOREDATA *pSaveData )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pent );
 
 	if( pEntity && pSaveData )
 	{
@@ -299,7 +299,7 @@ CBaseEntity *FindGlobalEntity( string_t classname, string_t globalname )
 
 int DispatchRestore( edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pent );
 
 	if( pEntity && pSaveData )
 	{
@@ -361,7 +361,7 @@ int DispatchRestore( edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity
 		}
 
 		// Again, could be deleted, get the pointer again.
-		pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+		pEntity = GET_PRIVATE<CBaseEntity>( pent );
 #if 0
 		if( pEntity && pEntity->pev->globalname && globalEntity ) 
 		{
@@ -406,7 +406,7 @@ int DispatchRestore( edict_t *pent, SAVERESTOREDATA *pSaveData, int globalEntity
 
 void DispatchObjectCollsionBox( edict_t *pent )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pent );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pent );
 	if( pEntity )
 	{
 		pEntity->SetObjectCollisionBox();
@@ -427,15 +427,20 @@ void SaveReadFields( SAVERESTOREDATA *pSaveData, const char *pname, void *pBaseD
 	restoreHelper.ReadFields( pname, pBaseData, pFields, fieldCount );
 }
 
-edict_t *EHANDLE::Get( void ) 
+edict_t *EHANDLE::Get( void )
 { 
 	if( m_pent )
-	{
 		if( m_pent->serialnumber == m_serialnumber )
 			return m_pent; 
-		else
-			return NULL;
-	}
+
+	return NULL; 
+}
+const edict_t *EHANDLE::Get( void ) const
+{ 
+	if( m_pent )
+		if( m_pent->serialnumber == m_serialnumber )
+			return m_pent; 
+
 	return NULL; 
 }
 
@@ -454,9 +459,13 @@ edict_t *EHANDLE::Set( edict_t *pent )
 	return pent; 
 }
 
-EHANDLE::operator CBaseEntity *() 
+EHANDLE::operator CBaseEntity *()
 { 
-	return (CBaseEntity *)GET_PRIVATE( Get() ); 
+	return GET_PRIVATE<CBaseEntity>( Get() );
+}
+EHANDLE::operator const CBaseEntity *() const
+{
+	return GET_PRIVATE<const CBaseEntity>( Get() );
 }
 
 CBaseEntity *EHANDLE::operator = ( CBaseEntity *pEntity )
@@ -475,14 +484,18 @@ CBaseEntity *EHANDLE::operator = ( CBaseEntity *pEntity )
 	return pEntity;
 }
 
-EHANDLE::operator int ()
+EHANDLE::operator int () const
 {
 	return Get() != NULL;
 }
 
 CBaseEntity * EHANDLE::operator -> ()
 {
-	return (CBaseEntity *)GET_PRIVATE( Get() ); 
+	return GET_PRIVATE<CBaseEntity>( Get() );
+}
+const CBaseEntity * EHANDLE::operator -> () const
+{
+	return GET_PRIVATE<const CBaseEntity>( Get() );
 }
 
 // give health
@@ -533,19 +546,19 @@ int CBaseEntity::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, fl
 	// figure momentum add (don't let hurt brushes or other triggers move player)
 	if( ( !FNullEnt( pevInflictor ) ) && (pev->movetype == MOVETYPE_WALK || pev->movetype == MOVETYPE_STEP ) && ( pevAttacker->solid != SOLID_TRIGGER ) )
 	{
-		Vector vecDir = pev->origin - ( pevInflictor->absmin + pevInflictor->absmax ) * 0.5;
+		Vector vecDir = pev->origin - ( pevInflictor->absmin + pevInflictor->absmax ) * 0.5f;
 		vecDir = vecDir.Normalize();
 
-		float flForce = flDamage * ( ( 32 * 32 * 72.0 ) / ( pev->size.x * pev->size.y * pev->size.z ) ) * 5;
+		float flForce = flDamage * ( ( 32 * 32 * 72.0f ) / ( pev->size.x * pev->size.y * pev->size.z ) ) * 5.0f;
 
-		if( flForce > 1000.0 )
-			flForce = 1000.0;
+		if( flForce > 1000.0f )
+			flForce = 1000.0f;
 		pev->velocity = pev->velocity + vecDir * flForce;
 	}
 
 	// do the damage
 	pev->health -= flDamage;
-	if( pev->health <= 0 )
+	if( pev->health <= 0.0f )
 	{
 		Killed( pevAttacker, GIB_NORMAL );
 		return 0;
@@ -623,20 +636,20 @@ void SetObjectCollisionBox( entvars_t *pev )
 		float max, v;
 		int i;
 
-		max = 0;
+		max = 0.0f;
 		for( i = 0; i < 3; i++ )
 		{
-			v = fabs( ( pev->mins )[i] );
+			v = fabs( pev->mins[i] );
 			if( v > max )
 				max = v;
-			v = fabs( ( pev->maxs )[i] );
+			v = fabs( pev->maxs[i] );
 			if( v > max )
 				max = v;
 		}
 		for( i = 0; i < 3; i++ )
 		{
-			( pev->absmin )[i] = ( pev->origin )[i] - max;
-			( pev->absmax )[i] = ( pev->origin )[i] + max;
+			pev->absmin[i] = pev->origin[i] - max;
+			pev->absmax[i] = pev->origin[i] + max;
 		}
 	}
 	else
@@ -645,12 +658,12 @@ void SetObjectCollisionBox( entvars_t *pev )
 		pev->absmax = pev->origin + pev->maxs;
 	}
 
-	pev->absmin.x -= 1;
-	pev->absmin.y -= 1;
-	pev->absmin.z -= 1;
-	pev->absmax.x += 1;
-	pev->absmax.y += 1;
-	pev->absmax.z += 1;
+	pev->absmin.x -= 1.0f;
+	pev->absmin.y -= 1.0f;
+	pev->absmin.z -= 1.0f;
+	pev->absmax.x += 1.0f;
+	pev->absmax.y += 1.0f;
+	pev->absmax.z += 1.0f;
 }
 
 void CBaseEntity::SetObjectCollisionBox( void )
@@ -681,7 +694,7 @@ void CBaseEntity::MakeDormant( void )
 	// Don't draw
 	SetBits( pev->effects, EF_NODRAW );
 	// Don't think
-	pev->nextthink = 0;
+	pev->nextthink = 0.0f;
 	// Relink
 	UTIL_SetOrigin( pev, pev->origin );
 }
@@ -694,30 +707,30 @@ int CBaseEntity::IsDormant( void )
 BOOL CBaseEntity::IsInWorld( void )
 {
 	// position 
-	if( pev->origin.x >= 4096 )
+	if( pev->origin.x >= 4096.0f )
 		return FALSE;
-	if( pev->origin.y >= 4096 )
+	if( pev->origin.y >= 4096.0f )
 		return FALSE;
-	if( pev->origin.z >= 4096 )
+	if( pev->origin.z >= 4096.0f )
 		return FALSE;
-	if( pev->origin.x <= -4096 )
+	if( pev->origin.x <= -4096.0f )
 		return FALSE;
-	if( pev->origin.y <= -4096 )
+	if( pev->origin.y <= -4096.0f )
 		return FALSE;
-	if( pev->origin.z <= -4096 )
+	if( pev->origin.z <= -4096.0f )
 		return FALSE;
 	// speed
-	if( pev->velocity.x >= 2000 )
+	if( pev->velocity.x >= 2000.0f )
 		return FALSE;
-	if( pev->velocity.y >= 2000 )
+	if( pev->velocity.y >= 2000.0f )
 		return FALSE;
-	if( pev->velocity.z >= 2000 )
+	if( pev->velocity.z >= 2000.0f )
 		return FALSE;
-	if( pev->velocity.x <= -2000 )
+	if( pev->velocity.x <= -2000.0f )
 		return FALSE;
-	if( pev->velocity.y <= -2000 )
+	if( pev->velocity.y <= -2000.0f )
 		return FALSE;
-	if( pev->velocity.z <= -2000 )
+	if( pev->velocity.z <= -2000.0f )
 		return FALSE;
 
 	return TRUE;

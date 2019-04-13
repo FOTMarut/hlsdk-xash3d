@@ -213,7 +213,7 @@ int UTIL_SharedRandomLong( unsigned int seed, int low, int high )
 {
 	unsigned int range;
 
-	U_Srand( (int)seed + low + high );
+	U_Srand( static_cast<int>( seed ) + low + high );
 
 	range = high - low + 1;
 	if( !( range - 1 ) )
@@ -246,12 +246,12 @@ float UTIL_SharedRandomFloat( unsigned int seed, float low, float high )
 	memcpy(&low_as_int, &low, sizeof(low));
 	memcpy(&high_as_int, &high, sizeof(high));
 
-	U_Srand( (uint32_t)seed + low_as_int + high_as_int );
+	U_Srand( static_cast<uint32_t>( seed ) + low_as_int + high_as_int );
 
 	U_Random();
 	U_Random();
 
-	range = (int)( high - low );
+	range = static_cast<int>( high - low );
 	if( !range )
 	{
 		return low;
@@ -263,7 +263,7 @@ float UTIL_SharedRandomFloat( unsigned int seed, float low, float high )
 
 		tensixrand = U_Random() & 65535;
 
-		offset = (float)tensixrand / 65536.0;
+		offset = float( tensixrand ) / 65536.0f;
 
 		return ( low + offset * range );
 	}

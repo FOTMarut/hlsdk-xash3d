@@ -34,7 +34,7 @@ typedef vec_t		vec4_t[4];
 #define STUDIO_RENDER	1
 #define STUDIO_EVENTS	2
 
-#define ZISCALE		((float)0x8000)
+#define ZISCALE		(0x8000 * 1.0f)
 
 #define MIPLEVELS		4
 #define VERTEXSIZE		7

@@ -27,11 +27,11 @@
 #include "saverestore.h"
 #include "trains.h"			// trigger_camera has train functionality
 #include "gamerules.h"
-
-#define	SF_TRIGGER_PUSH_START_OFF	2//spawnflag that makes trigger_push spawn turned OFF
-#define SF_TRIGGER_HURT_TARGETONCE	1// Only fire hurt target once
-#define	SF_TRIGGER_HURT_START_OFF	2//spawnflag that makes trigger_push spawn turned OFF
-#define	SF_TRIGGER_HURT_NO_CLIENTS	8//spawnflag that makes trigger_push spawn turned OFF
+ 
+#define	SF_TRIGGER_PUSH_START_OFF		2//spawnflag that makes trigger_push spawn turned OFF
+#define	SF_TRIGGER_HURT_TARGETONCE		1// Only fire hurt target once
+#define	SF_TRIGGER_HURT_START_OFF		2//spawnflag that makes trigger_push spawn turned OFF
+#define	SF_TRIGGER_HURT_NO_CLIENTS		8//spawnflag that makes trigger_push spawn turned OFF
 #define SF_TRIGGER_HURT_CLIENTONLYFIRE	16// trigger hurt will only fire its target if it is hurting a client
 #define SF_TRIGGER_HURT_CLIENTONLYTOUCH 32// only clients may touch this trigger.
 
@@ -87,7 +87,7 @@ void CFrictionModifier::KeyValue( KeyValueData *pkvd )
 {
 	if( FStrEq(pkvd->szKeyName, "modifier" ) )
 	{
-		m_frictionFraction = atof( pkvd->szValue ) / 100.0;
+		m_frictionFraction = atof( pkvd->szValue ) / 100.0f;
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -163,7 +163,7 @@ void CAutoTrigger::Spawn( void )
 
 void CAutoTrigger::Precache( void )
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CAutoTrigger::Think( void )
@@ -233,7 +233,7 @@ void CTriggerRelay::Spawn( void )
 
 void CTriggerRelay::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	SUB_UseTargets( this, triggerType, 0 );
+	SUB_UseTargets( this, triggerType, 0.0f );
 	if( pev->spawnflags & SF_RELAY_FIREONCE )
 		UTIL_Remove( this );
 }
@@ -333,26 +333,18 @@ void CMultiManager::Spawn( void )
 	SetUse( &CMultiManager::ManagerUse );
 	SetThink( &CMultiManager::ManagerThink );
 
-	// Sort targets
-	// Quick and dirty bubble sort
-	int swapped = 1;
-
-	while( swapped )
+	// Sort targets (insertion sort)
+	for( int i = 1; i < m_cTargets; i++ )
 	{
-		swapped = 0;
-		for( int i = 1; i < m_cTargets; i++ )
+		for( int j = i; ( m_flTargetDelay[j] < m_flTargetDelay[j-1] ) && ( j > 0 ); --j )
 		{
-			if( m_flTargetDelay[i] < m_flTargetDelay[i - 1] )
-			{
-				// Swap out of order elements
-				int name = m_iTargetName[i];
-				float delay = m_flTargetDelay[i];
-				m_iTargetName[i] = m_iTargetName[i - 1];
-				m_flTargetDelay[i] = m_flTargetDelay[i - 1];
-				m_iTargetName[i - 1] = name;
-				m_flTargetDelay[i - 1] = delay;
-				swapped = 1;
-			}
+			// Swap out of order elements
+			int name = m_iTargetName[j];
+			float delay = m_flTargetDelay[j];
+			m_iTargetName[j] = m_iTargetName[j - 1];
+			m_flTargetDelay[j] = m_flTargetDelay[j - 1];
+			m_iTargetName[j - 1] = name;
+			m_flTargetDelay[j - 1] = delay;
 		}
 	}
 }
@@ -544,7 +536,7 @@ void CBaseTrigger::KeyValue( KeyValueData *pkvd )
 	}
 	else if( FStrEq( pkvd->szKeyName, "count" ) )
 	{
-		m_cTriggersLeft = (int)atof( pkvd->szValue );
+		m_cTriggersLeft = static_cast<int>( atof( pkvd->szValue ) );
 		pkvd->fHandled = TRUE;
 	}
 	else if( FStrEq( pkvd->szKeyName, "damagetype" ) )
@@ -702,7 +694,7 @@ void PlayCDTrack( int iTrack )
 // only plays for ONE client, so only use in single play!
 void CTriggerCDAudio::PlayTrack( void )
 {
-	PlayCDTrack( (int)pev->health );
+	PlayCDTrack( static_cast<int>( pev->health ) );
 
 	SetTouch( NULL );
 	UTIL_Remove( this );
@@ -767,7 +759,7 @@ void CTargetCDAudio::Think( void )
 
 void CTargetCDAudio::Play( void ) 
 {
-	PlayCDTrack( (int)pev->health );
+	PlayCDTrack( static_cast<int>( pev->health ) );
 	UTIL_Remove( this );
 }
 
@@ -1607,9 +1599,9 @@ int CChangeLevel::ChangeList( LEVELLIST *pLevelList, int maxList )
 		pentChangelevel = FIND_ENTITY_BY_STRING( pentChangelevel, "classname", "trigger_changelevel" );
 	}
 
-	if( gpGlobals->pSaveData && ( (SAVERESTOREDATA *)gpGlobals->pSaveData)->pTable )
+	if( gpGlobals->pSaveData && ( gpGlobals->pSaveData)->pTable )
 	{
-		CSave saveHelper( (SAVERESTOREDATA *)gpGlobals->pSaveData );
+		CSave saveHelper( gpGlobals->pSaveData );
 
 		for( i = 0; i < count; i++ )
 		{
@@ -2231,7 +2223,7 @@ void CTriggerCamera::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYP
 
 	if( FBitSet( pev->spawnflags, SF_CAMERA_PLAYER_TAKECONTROL ) )
 	{
-		( (CBasePlayer *)pActivator )->EnableControl( FALSE );
+		( static_cast<CBasePlayer *>( pActivator ) )->EnableControl( FALSE );
 	}
 
 	if( m_sPath )
@@ -2288,7 +2280,7 @@ void CTriggerCamera::FollowTarget()
 		if( m_hPlayer->IsAlive() )
 		{
 			SET_VIEW( m_hPlayer->edict(), m_hPlayer->edict() );
-			( (CBasePlayer *)( (CBaseEntity *)m_hPlayer ) )->EnableControl( TRUE );
+			static_cast<CBasePlayer *>( static_cast<CBaseEntity *>( m_hPlayer ) )->EnableControl( TRUE );
 		}
 		SUB_UseTargets( this, USE_TOGGLE, 0 );
 		pev->avelocity = Vector( 0, 0, 0 );

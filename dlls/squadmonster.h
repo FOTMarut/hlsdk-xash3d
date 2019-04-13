@@ -81,7 +81,7 @@ public:
 	// squad functions still left in base class
 	CSquadMonster *MySquadLeader()
 	{
-		CSquadMonster *pSquadLeader = (CSquadMonster *)( (CBaseEntity *)m_hSquadLeader );
+		CSquadMonster *pSquadLeader = static_cast<CSquadMonster *>( static_cast<CBaseEntity *>( m_hSquadLeader ) );
 		if( pSquadLeader != NULL )
 			return pSquadLeader;
 		return this;
@@ -91,7 +91,7 @@ public:
 		if( i >= MAX_SQUAD_MEMBERS - 1 )
 			return this;
 		else
-			return (CSquadMonster *)( (CBaseEntity *)m_hSquadMember[i] );
+			return static_cast<CSquadMonster *>( static_cast<CBaseEntity *>( m_hSquadMember[i] ) );
 	}
 	int InSquad( void ) { return m_hSquadLeader != 0; }
 	int IsLeader( void ) { return m_hSquadLeader == this; }

@@ -69,7 +69,7 @@ void CHud::Think( void )
 	else
 	{
 		// set a new sensitivity that is proportional to the change from the FOV default
-		m_flMouseSensitivity = sensitivity->value * ((float)newfov / (float)default_fov->value) * CVAR_GET_FLOAT("zoom_sensitivity_ratio");
+		m_flMouseSensitivity = sensitivity->value * ( float(newfov) / float(default_fov->value) ) * CVAR_GET_FLOAT("zoom_sensitivity_ratio");
 	}
 
 	// think about default fov
@@ -87,7 +87,7 @@ int CHud::Redraw( float flTime, int intermission )
 {
 	m_fOldTime = m_flTime;	// save time of previous redraw
 	m_flTime = flTime;
-	m_flTimeDelta = (double)m_flTime - m_fOldTime;
+	m_flTimeDelta = double(m_flTime) - double(m_fOldTime);
 	static float m_flShotTime = 0;
 
 	// Clock was reset, reset delta
@@ -149,7 +149,7 @@ int CHud::Redraw( float flTime, int intermission )
 		y = SPR_Height( m_hsprLogo, 0 ) / 2;
 
 		// Draw the logo at 20 fps
-		int iFrame = (int)( flTime * 20 ) % MAX_LOGO_FRAMES;
+		int iFrame = static_cast<int>( flTime * 20.0f ) % MAX_LOGO_FRAMES;
 		i = grgLogoFrame[iFrame] - 1;
 
 		SPR_DrawAdditive( i, x, y, NULL );
@@ -182,10 +182,10 @@ int CHud::Redraw( float flTime, int intermission )
 
 void ScaleColors( int &r, int &g, int &b, int a )
 {
-	float x = (float)a / 255;
-	r = (int)( r * x );
-	g = (int)( g * x );
-	b = (int)( b * x );
+	float x = float( a ) / 255;
+	r = static_cast<int>( r * x );
+	g = static_cast<int>( g * x );
+	b = static_cast<int>( b * x );
 }
 
 const unsigned char colors[8][3] =
@@ -205,7 +205,7 @@ int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r,
 	if( hud_textmode->value == 2 )
 	{
 		gEngfuncs.pfnDrawSetTextColor( r / 255.0, g / 255.0, b / 255.0 );
-		return gEngfuncs.pfnDrawConsoleString( xpos, ypos, (char*) szIt );
+		return gEngfuncs.pfnDrawConsoleString( xpos, ypos, szIt );
 	}
 
 	// xash3d: reset unicode state
@@ -214,7 +214,7 @@ int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r,
 	// draw the string until we hit the null character or a newline character
 	for( ; *szIt != 0 && *szIt != '\n'; szIt++ )
 	{
-		int w = gHUD.m_scrinfo.charWidths[(unsigned char)'M'];
+		int w = gHUD.m_scrinfo.charWidths[static_cast<unsigned char>( 'M' )];
 		if( xpos + w  > iMaxX )
 			return xpos;
 		if( ( *szIt == '^' ) && ( *( szIt + 1 ) >= '0') && ( *( szIt + 1 ) <= '7') )
@@ -226,7 +226,7 @@ int CHud::DrawHudString( int xpos, int ypos, int iMaxX, const char *szIt, int r,
 			if( !*(++szIt) )
 				return xpos;
 		}
-		int c = (unsigned int)(unsigned char)*szIt;
+		int c = static_cast<unsigned char>( *szIt );
 
 		xpos += TextMessageDrawChar( xpos, ypos, c, r, g, b );
 	}
@@ -244,7 +244,7 @@ int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g
 		// draw the string until we hit the null character or a newline character
 		for( ; *szIt != 0 && *szIt != '\n'; szIt++ )
 		{
-			int w = gHUD.m_scrinfo.charWidths[(unsigned char)'M'];
+			int w = gHUD.m_scrinfo.charWidths[static_cast<unsigned char>( 'M' )];
 			if( xpos + w  > iMaxX )
 				return xpos;
 			if( ( *szIt == '^' ) && ( *( szIt + 1 ) >= '0') && ( *( szIt + 1 ) <= '7') )
@@ -256,7 +256,7 @@ int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g
 				if( !*(++szIt) )
 					return xpos;
 			}
-			int c = (unsigned int)(unsigned char)*szIt;
+			int c = static_cast<unsigned char>( *szIt );
 			xpos += gEngfuncs.pfnVGUI2DrawCharacterAdditive( xpos, ypos, c, r, g, b, 0 );
 		}
 		return xpos;
@@ -272,7 +272,7 @@ int CHud::DrawHudStringLen( const char *szIt )
 	int l = 0;
 	for( ; *szIt != 0 && *szIt != '\n'; szIt++ )
 	{
-		l += gHUD.m_scrinfo.charWidths[(unsigned char)*szIt];
+		l += gHUD.m_scrinfo.charWidths[static_cast<unsigned char>( *szIt )];
 	}
 	return l;
 }
@@ -289,7 +289,7 @@ int CHud::DrawHudStringReverse( int xpos, int ypos, int iMinX, const char *szStr
 {
 	// find the end of the string
 	for( const char *szIt = szString; *szIt != 0; szIt++ )
-		xpos -= gHUD.m_scrinfo.charWidths[(unsigned char)*szIt];
+		xpos -= gHUD.m_scrinfo.charWidths[static_cast<unsigned char>( *szIt )];
 	if( xpos < iMinX )
 		xpos = iMinX;
 	DrawHudString( xpos, ypos, gHUD.m_scrinfo.iWidth, szString, r, g, b );

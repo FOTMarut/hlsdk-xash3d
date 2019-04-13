@@ -58,13 +58,13 @@ void CBasePlayer::Observer_FindNextPlayer( bool bReverse )
 		if( pEnt == this )
 			continue;
 		// Don't spec observers or players who haven't picked a class yet
-		if( ( (CBasePlayer*)pEnt )->IsObserver() || ( pEnt->pev->effects & EF_NODRAW ) )
+		if( ( static_cast<CBasePlayer*>( pEnt ) )->IsObserver() || ( pEnt->pev->effects & EF_NODRAW ) )
 			continue;
 
 		// MOD AUTHORS: Add checks on target here.
 		m_hObserverTarget = pEnt;
 		break;
-	}while( iCurrent != iStart );
+	} while( iCurrent != iStart );
 
 	// Did we find a target?
 	if( m_hObserverTarget )
@@ -147,7 +147,7 @@ void CBasePlayer::Observer_CheckTarget()
 		}
 	}
 
-	CBasePlayer* target = (CBasePlayer*)( UTIL_PlayerByIndex( ENTINDEX( m_hObserverTarget->edict() ) ) );
+	CBasePlayer* target = static_cast<CBasePlayer*>( UTIL_PlayerByIndex( ENTINDEX( m_hObserverTarget->edict() ) ) );
 
 	if( !target )
 	{
@@ -172,7 +172,7 @@ void CBasePlayer::Observer_CheckProperties()
 	// try to find a traget if we have no current one
 	if( pev->iuser1 == OBS_IN_EYE && m_hObserverTarget != 0 )
 	{
-		CBasePlayer* target = (CBasePlayer*)( UTIL_PlayerByIndex( ENTINDEX( m_hObserverTarget->edict() ) ) );
+		CBasePlayer* target = static_cast<CBasePlayer*>( UTIL_PlayerByIndex( ENTINDEX( m_hObserverTarget->edict() ) ) );
 
 		if( !target )
 			return;
@@ -232,7 +232,7 @@ void CBasePlayer::Observer_SetMode( int iMode )
 
 		if( ( pEnt == this ) || ( pEnt == NULL ) )
 			m_hObserverTarget = 0;
-		else if( ( (CBasePlayer*)pEnt )->IsObserver() || ( pEnt->pev->effects & EF_NODRAW ) )
+		else if( ( static_cast<CBasePlayer*>( pEnt ) )->IsObserver() || ( pEnt->pev->effects & EF_NODRAW ) )
 			m_hObserverTarget = 0;
 	}
 

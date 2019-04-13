@@ -1,6 +1,6 @@
 //========= Copyright (c) 1996-2002, Valve LLC, All rights reserved. ============
 //
-// Purpose: 
+// Purpose:
 //
 // $NoKeywords: $
 //=============================================================================
@@ -26,7 +26,7 @@
 #include "hltv.h"
 
 // Spectator Mode
-extern "C" 
+extern "C"
 {
 	vec3_t vecNewViewAngles;
 	int iHasNewViewAngles;
@@ -39,7 +39,7 @@ extern "C"
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
 #endif
 
-extern "C" 
+extern "C"
 {
 	int CL_IsThirdPerson( void );
 	void CL_CameraOffset( vec3_t_out ofs );
@@ -84,7 +84,7 @@ extern Vector	dead_viewangles;
 #define CAM_MODE_FOCUS		2
 
 Vector v_origin, v_angles, v_cl_angles, v_sim_org, v_lastAngles;
-float v_frametime, v_lastDistance;	
+float v_frametime, v_lastDistance;
 float v_cameraRelaxAngle = 5.0f;
 float v_cameraFocusAngle = 35.0f;
 int v_cameraMode = CAM_MODE_FOCUS;
@@ -187,13 +187,13 @@ float V_CalcBob( ref_params_t *pparams )
 		 pparams->time == lasttime )
 	{
 		// just use old value
-		return bob;	
+		return bob;
 	}
 
 	lasttime = pparams->time;
 
 	bobtime += pparams->frametime;
-	cycle = bobtime - (int)( bobtime / cl_bobcycle->value ) * cl_bobcycle->value;
+	cycle = bobtime - static_cast<int>( bobtime / cl_bobcycle->value ) * cl_bobcycle->value;
 	cycle /= cl_bobcycle->value;
 
 	if( cycle < cl_bobup->value )
@@ -268,11 +268,11 @@ mlook and mouse, or klook and keyboard, pitch drifting is constantly stopped.
 ===============
 */
 
-/* 
-============================================================================== 
-						VIEW RENDERING 
-============================================================================== 
-*/ 
+/*
+==============================================================================
+						VIEW RENDERING
+==============================================================================
+*/
 
 /*
 ==================
@@ -280,7 +280,7 @@ V_CalcGunAngle
 ==================
 */
 void V_CalcGunAngle( ref_params_t *pparams )
-{	
+{
 	cl_entity_t *viewent;
 
 	viewent = gEngfuncs.GetViewModel();
@@ -335,7 +335,7 @@ void V_CalcViewRoll( ref_params_t *pparams )
 
 	if( pparams->health <= 0 && ( pparams->viewheight[2] != 0 ) )
 	{
-		// only roll the view if the player is dead and the viewheight[2] is nonzero 
+		// only roll the view if the player is dead and the viewheight[2] is nonzero
 		// this is so deadcam in multiplayer will work.
 		pparams->viewangles[ROLL] = 80;	// dead view angle
 		return;
@@ -387,7 +387,7 @@ void V_CalcIntermissionRefdef( ref_params_t *pparams )
 #define ORIGIN_BACKUP 64
 #define ORIGIN_MASK ( ORIGIN_BACKUP - 1 )
 
-typedef struct 
+typedef struct
 {
 	vec3_t Origins[ORIGIN_BACKUP];
 	float OriginTime[ORIGIN_BACKUP];
@@ -461,7 +461,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 	pparams->vieworg[1] += 1.0 / 32;
 	pparams->vieworg[2] += 1.0 / 32;
 
-	// Check for problems around water, move the viewer artificially if necessary 
+	// Check for problems around water, move the viewer artificially if necessary
 	// -- this prevents drawing errors in GL due to waves
 
 	waterOffset = 0;
@@ -487,11 +487,11 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 		{
 			waterEntity = 0;	// Don't need this in software
 		}
-	
+
 		VectorCopy( pparams->vieworg, point );
 
 		// Eyes are above water, make sure we're above the waves
-		if( pparams->waterlevel == 2 )	
+		if( pparams->waterlevel == 2 )
 		{
 			point[2] -= waterDist;
 			for( i = 0; i < waterDist; i++ )
@@ -579,7 +579,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 	V_CalcGunAngle( pparams );
 
 	// Use predicted origin as view origin.
-	VectorCopy( pparams->simorg, view->origin );      
+	VectorCopy( pparams->simorg, view->origin );
 	view->origin[2] += waterOffset;
 	VectorAdd( view->origin, pparams->viewheight, view->origin );
 
@@ -602,7 +602,7 @@ void V_CalcNormalRefdef( ref_params_t *pparams )
 
 	// pushing the view origin down off of the same X/Z plane as the ent's origin will give the
 	// gun a very nice 'shifting' effect when the player looks up/down. If there is a problem
-	// with view model distortion, this may be a cause. (SJB). 
+	// with view model distortion, this may be a cause. (SJB).
 	view->origin[2] -= 1;
 
 	// fudge position around to keep amount of weapon visible
@@ -857,7 +857,7 @@ void V_GetChaseOrigin( const Vector& angles, const Vector& origin, float distanc
 			break;
 
 		// hit non-player solid BSP, stop here
-		if( ent->curstate.solid == SOLID_BSP && !ent->player ) 
+		if( ent->curstate.solid == SOLID_BSP && !ent->player )
 			break;
 
 		// if close enought to end pos, stop, otherwise continue trace
@@ -918,7 +918,7 @@ void V_GetChaseOrigin( const Vector& angles, const Vector& origin, float distanc
 
 	// and smooth view
 	V_SmoothInterpolateAngles( v_lastAngles, newAngle, angle, 120.0f );
-	
+
 	V_GetChaseOrigin( angle, newOrigin, distance, origin );
 
 	VectorCopy( angle, v_lastAngles );
@@ -939,9 +939,9 @@ void V_GetSingleTargetCam( cl_entity_t * ent1, Vector& angle, Vector& origin )
 
 	// go away in final scenes or if player just died
 	if( flags & DRC_FLAG_FINAL )
-		distance *= 2.0f;	
+		distance *= 2.0f;
 	else if( deadPlayer )
-		distance *= 1.5f;	
+		distance *= 1.5f;
 
 	// let v_lastDistance float smoothly away
 	v_lastDistance += v_frametime * 32.0f;	// move unit per seconds back
@@ -953,7 +953,7 @@ void V_GetSingleTargetCam( cl_entity_t * ent1, Vector& angle, Vector& origin )
 
 	if( ent1->player )
 	{
-		if( deadPlayer )  
+		if( deadPlayer )
 			newOrigin[2] += 2;	//laying on ground
 		else
 			newOrigin[2] += 17; // head level of living player
@@ -973,9 +973,9 @@ void V_GetSingleTargetCam( cl_entity_t * ent1, Vector& angle, Vector& origin )
 
 	// if final scene (bomb), show from real high pos
 	if( flags & DRC_FLAG_FINAL )
-		newAngle[0] = 22.5f; 
+		newAngle[0] = 22.5f;
 
-	// choose side of object/player			
+	// choose side of object/player
 	if( flags & DRC_FLAG_SIDE )
 		newAngle[1] += 22.5f;
 	else
@@ -1002,7 +1002,7 @@ float MaxAngleBetweenAngles( Vector &a1, Vector &a2 )
 			d -= 360;
 		}
 		else if( d < -180 )
-		{	
+		{
 			d += 360;
 		}
 
@@ -1027,7 +1027,7 @@ void V_GetDoubleTargetsCam( cl_entity_t *ent1, cl_entity_t *ent2, Vector& angle,
 
 	// go away in final scenes or if player just died
 	if( flags & DRC_FLAG_FINAL )
-		distance *= 2.0f;	
+		distance *= 2.0f;
 
 	// let v_lastDistance float smoothly away
 	v_lastDistance += v_frametime * 32.0f;	// move unit per seconds back
@@ -1106,8 +1106,7 @@ void V_GetDirectedChasePosition(cl_entity_t *ent1, cl_entity_t *ent2, Vector& an
 		v_lastDistance = 4096.0f;
 		// v_cameraMode = CAM_MODE_FOCUS;
 	}
-
-	if( ( ent2 == (cl_entity_t*)0xFFFFFFFF ) || ( ent1->player && ( ent1->curstate.solid == SOLID_NOT ) ) )
+	if( ( ent2 == reinterpret_cast<cl_entity_t*>( -1 ) ) || ( ent1->player && ( ent1->curstate.solid == SOLID_NOT ) ) )
 	{
 		// we have no second target or player just died
 		V_GetSingleTargetCam( ent1, angle, origin );
@@ -1132,10 +1131,10 @@ void V_GetDirectedChasePosition(cl_entity_t *ent1, cl_entity_t *ent2, Vector& an
 
 		// go away in final scenes or if player just died
 		if( flags & DRC_FLAG_FINAL )
-			distance *= 2.0f;	
+			distance *= 2.0f;
 
 		// let v_lastDistance float smoothly away
-		v_lastDistance+= v_frametime * 32.0f;	// move unit per seconds back
+		v_lastDistance += v_frametime * 32.0f;	// move unit per seconds back
 
 		if( distance > v_lastDistance )
 			distance = v_lastDistance;
@@ -1157,11 +1156,11 @@ void V_GetChasePos( int target, Vector *cl_angles, Vector& origin, Vector& angle
 {
 	cl_entity_t *ent = NULL;
 
-	if( target ) 
+	if( target )
 	{
 		ent = gEngfuncs.GetEntityByIndex( target );
 	}
-	
+
 	if( !ent )
 	{
 		// just copy a save in-map position
@@ -1173,11 +1172,9 @@ void V_GetChasePos( int target, Vector *cl_angles, Vector& origin, Vector& angle
 	if( gHUD.m_Spectator.m_autoDirector->value )
 	{
 		if( g_iUser3 )
-			V_GetDirectedChasePosition( ent, gEngfuncs.GetEntityByIndex( g_iUser3 ),
-				angles, origin );
+			V_GetDirectedChasePosition( ent, gEngfuncs.GetEntityByIndex( g_iUser3 ), angles, origin );
 		else
-			V_GetDirectedChasePosition( ent, (cl_entity_t*)0xFFFFFFFF,
-				angles, origin );
+			V_GetDirectedChasePosition( ent, reinterpret_cast<cl_entity_t*>( -1 ), angles, origin );
 	}
 	else
 	{
@@ -1196,7 +1193,7 @@ void V_GetChasePos( int target, Vector *cl_angles, Vector& origin, Vector& angle
 		V_GetChaseOrigin( angles, origin, cl_chasedist->value, origin );
 	}
 
-	v_resetCamera = false;	
+	v_resetCamera = false;
 }
 
 void V_ResetChaseCam()
@@ -1298,7 +1295,7 @@ void V_GetMapChasePosition( int target, Vector& cl_angles, Vector& origin, Vecto
 
 	VectorNormalize( forward );
 
-	VectorMA( origin, -1536, forward, origin ); 
+	VectorMA( origin, -1536, forward, origin );
 }
 
 int V_FindViewModelByWeaponModel( int weaponindex )
@@ -1419,7 +1416,7 @@ void V_CalcSpectatorRefdef( ref_params_t * pparams )
 				gunModel->model = IEngineStudio.GetModelByIndex( lastViewModelIndex );
 				gunModel->curstate.modelindex = lastViewModelIndex;
 				gunModel->curstate.frame = 0;
-				gunModel->curstate.colormap = 0; 
+				gunModel->curstate.colormap = 0;
 				gunModel->index = g_iUser2;
 			}
 			else
@@ -1481,11 +1478,11 @@ void V_CalcSpectatorRefdef( ref_params_t * pparams )
 		pparams->nextView = 0;	// on further view
 
 		// override some settings in certain modes
-		switch( (int)gHUD.m_Spectator.m_pip->value )
+		switch( static_cast<int>( gHUD.m_Spectator.m_pip->value ) )
 		{
 			case INSET_CHASE_FREE:
 				V_GetChasePos( g_iUser2, &v_cl_angles, v_origin, v_angles );
-				break;	
+				break;
 			case INSET_IN_EYE:
 				V_CalcNormalRefdef( pparams );
 				break;
@@ -1516,11 +1513,11 @@ void DLLEXPORT V_CalcRefdef( ref_params_t *pparams )
 	// intermission / finale rendering
 	if( pparams->intermission )
 	{
-		V_CalcIntermissionRefdef( pparams );	
+		V_CalcIntermissionRefdef( pparams );
 	}
 	else if( pparams->spectator || g_iUser1 )	// g_iUser true if in spectator mode
 	{
-		V_CalcSpectatorRefdef( pparams );	
+		V_CalcSpectatorRefdef( pparams );
 	}
 	else if( !pparams->paused )
 	{

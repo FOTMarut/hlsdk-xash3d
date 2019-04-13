@@ -358,7 +358,7 @@ void CNihilanth::UpdateOnRemove()
 
 	for( int i = 0; i < N_SPHERES; i++ )
 	{
-		if( CBaseEntity* pSphere = (CBaseEntity *)m_hSphere[i] )
+		if( CBaseEntity* pSphere = static_cast<CBaseEntity *>( m_hSphere[i] ) )
 		{
 			UTIL_Remove( pSphere );
 			m_hSphere[i] = 0;
@@ -550,7 +550,7 @@ void CNihilanth::DyingThink( void )
 	MESSAGE_END();
 
 	GetAttachment( 0, vecSrc, vecAngles ); 
-	CNihilanthHVR *pEntity = (CNihilanthHVR *)Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() );
+	CNihilanthHVR *pEntity = static_cast<CNihilanthHVR *>( Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() ) );
 	pEntity->pev->velocity = Vector( RANDOM_FLOAT( -0.7, 0.7 ), RANDOM_FLOAT( -0.7, 0.7 ), 1.0 ) * 600.0;
 	pEntity->GreenBallInit();
 
@@ -618,7 +618,7 @@ void CNihilanth::ShootBalls( void )
 				// vecDir = ( m_posTarget - vecSrc ).Normalize();
 				vecDir = ( m_posTarget - pev->origin ).Normalize();
 				vecSrc = vecSrc + vecDir * ( gpGlobals->time - m_flShootTime );
-				pEntity = (CNihilanthHVR *)Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() );
+				pEntity = static_cast<CNihilanthHVR *>( Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() ) );
 				pEntity->pev->velocity = vecDir * 200.0; 
 				pEntity->ZapInit( m_hEnemy );
 
@@ -627,7 +627,7 @@ void CNihilanth::ShootBalls( void )
 				// vecDir = ( m_posTarget - vecSrc ).Normalize();
 				vecDir = ( m_posTarget - pev->origin ).Normalize();
 				vecSrc = vecSrc + vecDir * ( gpGlobals->time - m_flShootTime );
-				pEntity = (CNihilanthHVR *)Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() );
+				pEntity = static_cast<CNihilanthHVR *>( Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() ) );
 				pEntity->pev->velocity = vecDir * 200.0; 
 				pEntity->ZapInit( m_hEnemy );
 			}
@@ -982,7 +982,7 @@ BOOL CNihilanth::AbsorbSphere( void )
 	{
 		if( m_hSphere[i] != 0 )
 		{
-			CNihilanthHVR *pSphere = (CNihilanthHVR *)( (CBaseEntity *)m_hSphere[i] );
+			CNihilanthHVR *pSphere = static_cast<CNihilanthHVR *>( static_cast<CBaseEntity *>( m_hSphere[i] ) );
 			pSphere->AbsorbInit();
 			m_hSphere[i] = NULL;
 			m_iActiveSpheres--;
@@ -1013,7 +1013,7 @@ BOOL CNihilanth::EmitSphere( void )
 		return FALSE;
 
 	Vector vecSrc = m_hRecharger->pev->origin;
-	CNihilanthHVR *pEntity = (CNihilanthHVR *)Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() );
+	CNihilanthHVR *pEntity = static_cast<CNihilanthHVR *>( Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() ) );
 	pEntity->pev->velocity = pev->origin - vecSrc;
 	pEntity->CircleInit( this );
 
@@ -1114,7 +1114,7 @@ void CNihilanth::HandleAnimEvent( MonsterEvent_t *pEvent )
 
 				Vector vecSrc, vecAngles;
 				GetAttachment( 2, vecSrc, vecAngles ); 
-				CNihilanthHVR *pEntity = (CNihilanthHVR *)Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() );
+				CNihilanthHVR *pEntity = static_cast<CNihilanthHVR *>( Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() ) );
 				pEntity->pev->velocity = pev->origin - vecSrc;
 				pEntity->TeleportInit( this, m_hEnemy, pTrigger, pTouch );
 			}
@@ -1182,7 +1182,7 @@ void CNihilanth::HandleAnimEvent( MonsterEvent_t *pEvent )
 		{
 			Vector vecSrc, vecAngles;
 			GetAttachment( 2, vecSrc, vecAngles ); 
-			CNihilanthHVR *pEntity = (CNihilanthHVR *)Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() );
+			CNihilanthHVR *pEntity = static_cast<CNihilanthHVR *>( Create( "nihilanth_energy_ball", vecSrc, pev->angles, edict() ) );
 			pEntity->pev->velocity = pev->origin - vecSrc;
 			pEntity->ZapInit( m_hEnemy );
 		}
@@ -1415,7 +1415,7 @@ void CNihilanthHVR::HoverThink( void )
 */
 	}
 
-	pev->frame = ( (int)pev->frame + 1 ) % m_nFrames;
+	pev->frame = ( static_cast<int>( pev->frame ) + 1 ) % m_nFrames;
 }
 
 void CNihilanthHVR::ZapInit( CBaseEntity *pEnemy )
@@ -1500,7 +1500,7 @@ void CNihilanthHVR::ZapThink( void )
 		return;
 	}
 
-	pev->frame = (int)( pev->frame + 1 ) % 11;
+	pev->frame = ( static_cast<int>( pev->frame ) + 1 ) % 11;
 
 	MESSAGE_BEGIN( MSG_BROADCAST, SVC_TEMPENTITY );
 		WRITE_BYTE( TE_ELIGHT );
@@ -1619,7 +1619,7 @@ void CNihilanthHVR::TeleportThink( void )
 		WRITE_COORD( 256 ); // decay
 	MESSAGE_END();
 
-	pev->frame = (int)( pev->frame + 1 ) % 20;
+	pev->frame = ( static_cast<int>( pev->frame ) + 1 ) % 20;
 }
 
 void CNihilanthHVR::AbsorbInit( void )

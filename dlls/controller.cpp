@@ -306,7 +306,7 @@ void CController::HandleAnimEvent( MonsterEvent_t *pEvent )
 				WRITE_COORD( 32 ); // decay
 			MESSAGE_END();
 
-			CBaseMonster *pBall = (CBaseMonster*)Create( "controller_head_ball", vecStart, pev->angles, edict() );
+			CBaseMonster *pBall = static_cast<CBaseMonster*>( Create( "controller_head_ball", vecStart, pev->angles, edict() ) );
 
 			pBall->pev->velocity = Vector( 0, 0, 32 );
 			pBall->m_hEnemy = m_hEnemy;
@@ -647,7 +647,7 @@ void CController::RunTask( Task_t *pTask )
 				vecDir = vecDir + Vector( RANDOM_FLOAT( -delta, delta ), RANDOM_FLOAT( -delta, delta ), RANDOM_FLOAT( -delta, delta ) ) * gSkillData.controllerSpeedBall;
 
 				vecSrc = vecSrc + vecDir * ( gpGlobals->time - m_flShootTime );
-				CBaseMonster *pBall = (CBaseMonster*)Create( "controller_energy_ball", vecSrc, pev->angles, edict() );
+				CBaseMonster *pBall = static_cast<CBaseMonster*>( Create( "controller_energy_ball", vecSrc, pev->angles, edict() ) );
 				pBall->pev->velocity = vecDir;
 			}
 			m_flShootTime += 0.2;
@@ -1340,7 +1340,7 @@ void CControllerZapBall::AnimateThink( void )
 {
 	pev->nextthink = gpGlobals->time + 0.1;
 
-	pev->frame = ( (int)pev->frame + 1 ) % 11;
+	pev->frame = ( static_cast<int>( pev->frame ) + 1 ) % 11;
 
 	if( gpGlobals->time - pev->dmgtime > 5 || pev->velocity.Length() < 10 )
 	{

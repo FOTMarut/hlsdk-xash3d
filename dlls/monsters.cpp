@@ -2496,7 +2496,7 @@ float CBaseMonster::ChangeYaw( int yawSpeed )
 	ideal = pev->ideal_yaw;
 	if( current != ideal )
 	{
-		speed = (float)yawSpeed * gpGlobals->frametime * 10;
+		speed = float( yawSpeed ) * gpGlobals->frametime * 10;
 		move = ideal - current;
 
 		if( ideal > current )
@@ -2835,12 +2835,12 @@ void CBaseMonster::ReportAIState( void )
 	static const char *pStateNames[] = { "None", "Idle", "Combat", "Alert", "Hunt", "Prone", "Scripted", "Dead" };
 
 	ALERT( level, "%s: ", STRING(pev->classname) );
-	if( (size_t)m_MonsterState < ARRAYSIZE( pStateNames ) )
+	if( m_MonsterState < ARRAYSIZE( pStateNames ) )
 		ALERT( level, "State: %s, ", pStateNames[m_MonsterState] );
 	int i = 0;
 	while( activity_map[i].type != 0 )
 	{
-		if( activity_map[i].type == (int)m_Activity )
+		if( activity_map[i].type == m_Activity )
 		{
 			ALERT( level, "Activity %s, ", activity_map[i].name );
 			break;

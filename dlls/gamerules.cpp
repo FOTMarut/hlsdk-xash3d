@@ -112,9 +112,7 @@ BOOL CGameRules::CanHavePlayerItem( CBasePlayer *pPlayer, CBasePlayerItem *pWeap
 //=========================================================
 void CGameRules::RefreshSkillData ( void )
 {
-	int iSkill;
-
-	iSkill = (int)CVAR_GET_FLOAT( "skill" );
+	int iSkill = static_cast<int>( CVAR_GET_FLOAT( "skill" ) );
 	g_iSkillLevel = iSkill;
 
 	if( iSkill < 1 )

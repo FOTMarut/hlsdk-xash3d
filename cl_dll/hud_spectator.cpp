@@ -270,7 +270,7 @@ int UTIL_FindEntityInMap( const char *name, Vector& origin, Vector& angle )
 					angle[0] = 0.0f;
 					angle[1] = y;
 				}
-				else if( (int)y == -1 )
+				else if( static_cast<int>( y ) == -1 )
 				{
 					angle[0] = -90.0f;
 					angle[1] = 0.0f;;
@@ -854,7 +854,7 @@ bool CHudSpectator::ParseOverviewFile()
 
 	sprintf( filename, "overviews/%s.txt", levelname );
 
-	pfile = (char *)gEngfuncs.COM_LoadFile( filename, 5, NULL );
+	pfile = reinterpret_cast<char *>( gEngfuncs.COM_LoadFile( filename, 5, NULL ) );
 
 	if( !pfile )
 	{
@@ -991,8 +991,8 @@ void CHudSpectator::DrawOverviewLayer()
 	float screenaspect, xs, ys, xStep, yStep, x, y, z;
 	int ix, iy, i, xTiles, yTiles, frame;
 
-	qboolean	hasMapImage = m_MapSprite?TRUE:FALSE;
-	model_t *   dummySprite = (model_t *)gEngfuncs.GetSpritePointer( m_hsprUnkownMap);
+	qboolean hasMapImage = m_MapSprite?TRUE:FALSE;
+	const model_t * dummySprite = gEngfuncs.GetSpritePointer( m_hsprUnkownMap);
 
 	if ( hasMapImage)
 	{
@@ -1106,21 +1106,21 @@ void CHudSpectator::DrawOverviewLayer()
 
 void CHudSpectator::DrawOverviewEntities()
 {
-	int			i, ir, ig, ib;
-	model_t *hSpriteModel;
+	int				i, ir, ig, ib;
+	const model_t	*hSpriteModel;
 	vec3_t			origin, angles, point, forward, right, left, up, world, screen, offset;
 	float			x, y, z, r, g, b, sizeScale = 4.0f;
 	cl_entity_t *	ent;
-	float rmatrix[3][4];	// transformation matrix
+	matrix3x4 		rmatrix;	// transformation matrix
 
 	float			zScale = ( 90.0f - v_angles[0] ) / 90.0f;
 
 	z = m_OverviewData.layersHeights[0] * zScale;
 	// get yellow/brown HUD color
 	UnpackRGB( ir, ig, ib, RGB_YELLOWISH );
-	r = (float)ir / 255.0f;
-	g = (float)ig / 255.0f;
-	b = (float)ib / 255.0f;
+	r = float( ir ) / 255.0f;
+	g = float( ig ) / 255.0f;
+	b = float( ib ) / 255.0f;
 
 	gEngfuncs.pTriAPI->CullFace( TRI_NONE );
 
@@ -1133,7 +1133,7 @@ void CHudSpectator::DrawOverviewEntities()
 		if( !m_OverviewEntities[i].hSprite )
 			continue;
 
-		hSpriteModel = (model_t *)gEngfuncs.GetSpritePointer( m_OverviewEntities[i].hSprite );
+		hSpriteModel = gEngfuncs.GetSpritePointer( m_OverviewEntities[i].hSprite );
 		ent = m_OverviewEntities[i].entity;
 
 		gEngfuncs.pTriAPI->SpriteTexture( hSpriteModel, 0 );
@@ -1184,7 +1184,7 @@ void CHudSpectator::DrawOverviewEntities()
 
 		gEngfuncs.pTriAPI->RenderMode( kRenderTransAdd );
 
-		hSpriteModel = (model_t *)gEngfuncs.GetSpritePointer( m_hsprBeam );
+		hSpriteModel = gEngfuncs.GetSpritePointer( m_hsprBeam );
 		gEngfuncs.pTriAPI->SpriteTexture( hSpriteModel, 0 );
 
 		gEngfuncs.pTriAPI->Color4f( r, g, b, 0.3 );
@@ -1265,7 +1265,7 @@ void CHudSpectator::DrawOverviewEntities()
 
 	angles[0] = 0; // always show horizontal camera sprite
 
-	hSpriteModel = (model_t *)gEngfuncs.GetSpritePointer( m_hsprCamera );
+	hSpriteModel = gEngfuncs.GetSpritePointer( m_hsprCamera );
 	gEngfuncs.pTriAPI->RenderMode( kRenderTransAdd );
 	gEngfuncs.pTriAPI->SpriteTexture( hSpriteModel, 0 );
 
@@ -1398,7 +1398,7 @@ bool CHudSpectator::AddOverviewEntityToList( HSPRITE sprite, cl_entity_t *ent, d
 void CHudSpectator::CheckSettings()
 {
 	// disallow same inset mode as main mode:
-	m_pip->value = (int)m_pip->value;
+	m_pip->value = static_cast<int>( m_pip->value );
 	
 	if( ( g_iUser1 < OBS_MAP_FREE ) && ( m_pip->value == INSET_CHASE_FREE || m_pip->value == INSET_IN_EYE ) )
 	{
@@ -1459,7 +1459,7 @@ void CHudSpectator::CheckSettings()
 
 int CHudSpectator::ToggleInset( bool allowOff )
 {
-	int newInsetMode = (int)m_pip->value + 1;
+	int newInsetMode = static_cast<int>( m_pip->value ) + 1;
 
 	if( g_iUser1 < OBS_MAP_FREE )
 	{

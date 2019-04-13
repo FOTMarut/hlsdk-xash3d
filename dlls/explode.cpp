@@ -143,7 +143,7 @@ void CEnvExplosion::Spawn( void )
 		flSpriteScale = 10;
 	}
 
-	m_spriteScale = (int)flSpriteScale;
+	m_spriteScale = static_cast<int>( flSpriteScale );
 }
 
 void CEnvExplosion::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
@@ -191,7 +191,7 @@ void CEnvExplosion::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE
 			WRITE_COORD( pev->origin.y );
 			WRITE_COORD( pev->origin.z );
 			WRITE_SHORT( g_sModelIndexFireball );
-			WRITE_BYTE( (BYTE)m_spriteScale ); // scale * 10
+			WRITE_BYTE( static_cast<BYTE>( m_spriteScale ) ); // scale * 10
 			WRITE_BYTE( 15 ); // framerate
 			WRITE_BYTE( TE_EXPLFLAG_NONE );
 		MESSAGE_END();
@@ -241,7 +241,7 @@ void CEnvExplosion::Smoke( void )
 			WRITE_COORD( pev->origin.y );
 			WRITE_COORD( pev->origin.z );
 			WRITE_SHORT( g_sModelIndexSmoke );
-			WRITE_BYTE( (BYTE)m_spriteScale ); // scale * 10
+			WRITE_BYTE( static_cast<BYTE>( m_spriteScale ) ); // scale * 10
 			WRITE_BYTE( 12 ); // framerate
 		MESSAGE_END();
 	}

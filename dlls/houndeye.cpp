@@ -33,7 +33,7 @@ extern CGraph WorldGraph;
 // squad member increases the BASE damage by 110%, per the spec.
 #define HOUNDEYE_MAX_SQUAD_SIZE			4
 #define	HOUNDEYE_MAX_ATTACK_RADIUS		384
-#define	HOUNDEYE_SQUAD_BONUS			(float)1.1
+#define	HOUNDEYE_SQUAD_BONUS			1.1f
 
 #define HOUNDEYE_EYE_FRAMES 4 // how many different switchable maps for the eye
 

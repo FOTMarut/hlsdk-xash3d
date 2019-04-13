@@ -36,7 +36,7 @@ public:
 	virtual int _StudioDrawPlayer( int flags, entity_state_t *pplayer );
 
 	// Apply special effects to transform matrix
-	virtual void StudioFxTransform( cl_entity_t *ent, float transform[3][4] );
+	virtual void StudioFxTransform( cl_entity_t *ent, matrix3x4 transform );
 
 private:
 	// For local player, in third person, we need to store real render data and then

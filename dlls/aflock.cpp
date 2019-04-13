@@ -278,14 +278,12 @@ void CFlockingFlyer::MakeSound( void )
 //=========================================================
 void CFlockingFlyer::Killed( entvars_t *pevAttacker, int iGib )
 {
-	CFlockingFlyer *pSquad;
-
-	pSquad = (CFlockingFlyer *)m_pSquadLeader;
+	CFlockingFlyer *pSquad = static_cast<CFlockingFlyer *>( m_pSquadLeader );
 
 	while( pSquad )
 	{
 		pSquad->m_flAlertTime = gpGlobals->time + 15;
-		pSquad = (CFlockingFlyer *)pSquad->m_pSquadNext;
+		pSquad = static_cast<CFlockingFlyer *>( pSquad->m_pSquadNext );
 	}
 
 	if( m_pSquadLeader )
@@ -442,7 +440,7 @@ void CFlockingFlyer::FormFlock( void )
 				if( FClassnameIs ( pRecruit->pev, "monster_flyer" ) )
 				{
 					squadCount++;
-					SquadAdd( (CFlockingFlyer *)pRecruit );
+					SquadAdd( static_cast<CFlockingFlyer *>( pRecruit ) );
 				}
 			}
 		}

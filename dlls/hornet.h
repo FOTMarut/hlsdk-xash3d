@@ -23,9 +23,9 @@
 //=========================================================
 #define HORNET_TYPE_RED			0
 #define HORNET_TYPE_ORANGE		1
-#define HORNET_RED_SPEED		(float)600
-#define HORNET_ORANGE_SPEED		(float)800
-#define	HORNET_BUZZ_VOLUME		(float)0.8
+#define HORNET_RED_SPEED		600.0f
+#define HORNET_ORANGE_SPEED		800.0f
+#define	HORNET_BUZZ_VOLUME		0.8f
 
 #include "basemonster.h"
 

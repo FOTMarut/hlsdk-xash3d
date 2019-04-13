@@ -139,8 +139,8 @@ void CBubbling::FizzThink( void )
 {
 	MESSAGE_BEGIN( MSG_PAS, SVC_TEMPENTITY, VecBModelOrigin( pev ) );
 		WRITE_BYTE( TE_FIZZ );
-		WRITE_SHORT( (short)ENTINDEX( edict() ) );
-		WRITE_SHORT( (short)m_bubbleModel );
+		WRITE_SHORT( static_cast<short>( ENTINDEX( edict() ) ) );
+		WRITE_SHORT( static_cast<short>( m_bubbleModel ) );
 		WRITE_BYTE( m_density );
 	MESSAGE_END();
 
@@ -694,14 +694,14 @@ void CLightning::StrikeThink( void )
 
 			WRITE_SHORT( m_spriteTexture );
 			WRITE_BYTE( m_frameStart ); // framestart
-			WRITE_BYTE( (int)pev->framerate ); // framerate
-			WRITE_BYTE( (int)( m_life * 10.0 ) ); // life
+			WRITE_BYTE( static_cast<int>( pev->framerate ) ); // framerate
+			WRITE_BYTE( static_cast<int>( m_life * 10.0f ) ); // life
 			WRITE_BYTE( m_boltWidth );  // width
 			WRITE_BYTE( m_noiseAmplitude );   // noise
-			WRITE_BYTE( (int)pev->rendercolor.x );   // r, g, b
-			WRITE_BYTE( (int)pev->rendercolor.y );   // r, g, b
-			WRITE_BYTE( (int)pev->rendercolor.z );   // r, g, b
-			WRITE_BYTE( (int)pev->renderamt );	// brightness
+			WRITE_BYTE( static_cast<int>( pev->rendercolor.x ) );   // r, g, b
+			WRITE_BYTE( static_cast<int>( pev->rendercolor.y ) );   // r, g, b
+			WRITE_BYTE( static_cast<int>( pev->rendercolor.z ) );   // r, g, b
+			WRITE_BYTE( static_cast<int>( pev->renderamt ) );	// brightness
 			WRITE_BYTE( m_speed );		// speed
 		MESSAGE_END();
 		DoSparks( pStart->pev->origin, pEnd->pev->origin );
@@ -756,14 +756,14 @@ void CLightning::Zap( const Vector &vecSrc, const Vector &vecDest )
 		WRITE_COORD( vecDest.z );
 		WRITE_SHORT( m_spriteTexture );
 		WRITE_BYTE( m_frameStart ); // framestart
-		WRITE_BYTE( (int)pev->framerate ); // framerate
-		WRITE_BYTE( (int)( m_life * 10.0) ); // life
+		WRITE_BYTE( static_cast<int>( pev->framerate ) ); // framerate
+		WRITE_BYTE( static_cast<int>( m_life * 10.0) ); // life
 		WRITE_BYTE( m_boltWidth );  // width
 		WRITE_BYTE( m_noiseAmplitude );   // noise
-		WRITE_BYTE( (int)pev->rendercolor.x );   // r, g, b
-		WRITE_BYTE( (int)pev->rendercolor.y );   // r, g, b
-		WRITE_BYTE( (int)pev->rendercolor.z );   // r, g, b
-		WRITE_BYTE( (int)pev->renderamt );	// brightness
+		WRITE_BYTE( static_cast<int>( pev->rendercolor.x ) );   // r, g, b
+		WRITE_BYTE( static_cast<int>( pev->rendercolor.y ) );   // r, g, b
+		WRITE_BYTE( static_cast<int>( pev->rendercolor.z ) );   // r, g, b
+		WRITE_BYTE( static_cast<int>( pev->renderamt ) );	// brightness
 		WRITE_BYTE( m_speed );		// speed
 	MESSAGE_END();
 #else
@@ -944,7 +944,12 @@ void CLaser::Spawn( void )
 		m_pSprite = NULL;
 
 	if( m_pSprite )
-		m_pSprite->SetTransparency( kRenderGlow, (int)pev->rendercolor.x, (int)pev->rendercolor.y, (int)pev->rendercolor.z, (int)pev->renderamt, (int)pev->renderfx );
+		m_pSprite->SetTransparency( kRenderGlow,
+		static_cast<int>( pev->rendercolor.x ),
+		static_cast<int>( pev->rendercolor.y ),
+		static_cast<int>( pev->rendercolor.z ),
+		static_cast<int>( pev->renderamt ),
+		static_cast<int>( pev->renderfx ) );
 
 	if( pev->targetname && !( pev->spawnflags & SF_BEAM_STARTON ) )
 		TurnOff();
@@ -968,7 +973,7 @@ void CLaser::KeyValue( KeyValueData *pkvd )
 	}
 	else if( FStrEq( pkvd->szKeyName, "width" ) )
 	{
-		SetWidth( (int)atof( pkvd->szValue ) );
+		SetWidth( static_cast<int>( atof( pkvd->szValue ) ) );
 		pkvd->fHandled = TRUE;
 	}
 	else if( FStrEq( pkvd->szKeyName, "NoiseAmplitude" ) )
@@ -1103,7 +1108,7 @@ void CGlow::Spawn( void )
 	PRECACHE_MODEL( STRING( pev->model ) );
 	SET_MODEL( ENT( pev ), STRING( pev->model ) );
 
-	m_maxFrame = (float) MODEL_FRAMES( pev->modelindex ) - 1;
+	m_maxFrame = float( MODEL_FRAMES( pev->modelindex ) - 1 );
 	if( m_maxFrame > 1.0 && pev->framerate != 0 )
 		pev->nextthink	= gpGlobals->time + 0.1;
 
@@ -1144,7 +1149,7 @@ void CSprite::Spawn( void )
 	Precache();
 	SET_MODEL( ENT( pev ), STRING( pev->model ) );
 
-	m_maxFrame = (float) MODEL_FRAMES( pev->modelindex ) - 1;
+	m_maxFrame = float( MODEL_FRAMES( pev->modelindex ) - 1 );
 	if( pev->targetname && !( pev->spawnflags & SF_SPRITE_STARTON ) )
 		TurnOff();
 	else
@@ -1307,7 +1312,7 @@ public:
 
 	int m_iGibs;
 	int m_iGibCapacity;
-	int m_iGibMaterial;
+	Materials m_iGibMaterial;
 	int m_iGibModelIndex;
 	float m_flGibVelocity;
 	float m_flVariance;
@@ -1516,7 +1521,7 @@ void CEnvShooter::KeyValue( KeyValueData *pkvd )
 void CEnvShooter::Precache( void )
 {
 	m_iGibModelIndex = PRECACHE_MODEL( STRING( pev->model ) );
-	CBreakable::MaterialSoundPrecache( (Materials)m_iGibMaterial );
+	CBreakable::MaterialSoundPrecache( m_iGibMaterial );
 }
 
 CGib *CEnvShooter::CreateGib( void )
@@ -1584,9 +1589,9 @@ void CTestEffect::TestThink( void )
 		TraceResult tr;
 
 		Vector vecSrc = pev->origin;
-		Vector vecDir = Vector( RANDOM_FLOAT( -1.0, 1.0 ), RANDOM_FLOAT( -1.0, 1.0 ),RANDOM_FLOAT( -1.0, 1.0 ) );
+		Vector vecDir = Vector( RANDOM_FLOAT( -1.0f, 1.0f ), RANDOM_FLOAT( -1.0f, 1.0f ),RANDOM_FLOAT( -1.0f, 1.0f ) );
 		vecDir = vecDir.Normalize();
-		UTIL_TraceLine( vecSrc, vecSrc + vecDir * 128, ignore_monsters, ENT( pev ), &tr );
+		UTIL_TraceLine( vecSrc, vecSrc + vecDir * 128.0f, ignore_monsters, ENT( pev ), &tr );
 
 		pbeam->PointsInit( vecSrc, tr.vecEndPos );
 		// pbeam->SetColor( 80, 100, 255 );
@@ -1614,15 +1619,15 @@ void CTestEffect::TestThink( void )
 #endif
 	}
 
-	if( t < 3.0 )
+	if( t < 3.0f )
 	{
 		for( i = 0; i < m_iBeam; i++ )
 		{
-			t = ( gpGlobals->time - m_flBeamTime[i] ) / ( 3 + m_flStartTime - m_flBeamTime[i] );
-			m_pBeam[i]->SetBrightness( (int)( 255 * t ) );
+			t = ( gpGlobals->time - m_flBeamTime[i] ) / ( 3.0f + m_flStartTime - m_flBeamTime[i] );
+			m_pBeam[i]->SetBrightness( static_cast<int>( 255.0f * t ) );
 			// m_pBeam[i]->SetScrollRate( 20 * t );
 		}
-		pev->nextthink = gpGlobals->time + 0.1;
+		pev->nextthink = gpGlobals->time + 0.1f;
 	}
 	else
 	{
@@ -1640,7 +1645,7 @@ void CTestEffect::TestThink( void )
 void CTestEffect::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	SetThink( &CTestEffect::TestThink );
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 	m_flStartTime = gpGlobals->time;
 }
 
@@ -1740,7 +1745,7 @@ Vector CBlood::BloodPosition( CBaseEntity *pActivator )
 		else
 			pPlayer = g_engfuncs.pfnPEntityOfEntIndex( 1 );
 		if( pPlayer )
-			return( pPlayer->v.origin + pPlayer->v.view_ofs ) + Vector( RANDOM_FLOAT( -10, 10 ), RANDOM_FLOAT( -10, 10 ), RANDOM_FLOAT( -10, 10 ) );
+			return( pPlayer->v.origin + pPlayer->v.view_ofs ) + Vector( RANDOM_FLOAT( -10.0f, 10.0f ), RANDOM_FLOAT( -10.0f, 10.0f ), RANDOM_FLOAT( -10.0f, 10.0f ) );
 	}
 
 	return pev->origin;
@@ -1749,9 +1754,9 @@ Vector CBlood::BloodPosition( CBaseEntity *pActivator )
 void CBlood::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
 	if( pev->spawnflags & SF_BLOOD_STREAM )
-		UTIL_BloodStream( BloodPosition( pActivator ), Direction(), ( Color() == BLOOD_COLOR_RED ) ? 70 : Color(), (int)BloodAmount() );
+		UTIL_BloodStream( BloodPosition( pActivator ), Direction(), ( Color() == BLOOD_COLOR_RED ) ? 70 : Color(), static_cast<int>( BloodAmount() ) );
 	else
-		UTIL_BloodDrips( BloodPosition( pActivator ), Direction(), Color(), (int)BloodAmount() );
+		UTIL_BloodDrips( BloodPosition( pActivator ), Direction(), Color(), static_cast<int>( BloodAmount() ) );
 
 	if( pev->spawnflags & SF_BLOOD_DECAL )
 	{
@@ -1759,8 +1764,8 @@ void CBlood::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useTyp
 		Vector start = BloodPosition( pActivator );
 		TraceResult tr;
 
-		UTIL_TraceLine( start, start + forward * BloodAmount() * 2, ignore_monsters, NULL, &tr );
-		if( tr.flFraction != 1.0 )
+		UTIL_TraceLine( start, start + forward * BloodAmount() * 2.0f, ignore_monsters, NULL, &tr );
+		if( tr.flFraction != 1.0f )
 			UTIL_BloodDecalTrace( &tr, Color() );
 	}
 }
@@ -1947,12 +1952,12 @@ void CFade::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType
 	{
 		if( pActivator->IsNetClient() )
 		{
-			UTIL_ScreenFade( pActivator, pev->rendercolor, Duration(), HoldTime(), (int)pev->renderamt, fadeFlags );
+			UTIL_ScreenFade( pActivator, pev->rendercolor, Duration(), HoldTime(), static_cast<int>( pev->renderamt ), fadeFlags );
 		}
 	}
 	else
 	{
-		UTIL_ScreenFadeAll( pev->rendercolor, Duration(), HoldTime(), (int)pev->renderamt, fadeFlags );
+		UTIL_ScreenFadeAll( pev->rendercolor, Duration(), HoldTime(), static_cast<int>( pev->renderamt ), fadeFlags );
 	}
 	SUB_UseTargets( this, USE_TOGGLE, 0 );
 }

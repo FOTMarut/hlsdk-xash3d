@@ -45,14 +45,15 @@ int CHudTextMessage::Init( void )
 char *CHudTextMessage::LocaliseTextString( const char *msg, char *dst_buffer, int buffer_size )
 {
 	char *dst = dst_buffer;
-	for( char *src = (char*)msg; *src != 0 && ( buffer_size - 1 ) > 0; buffer_size-- )
+	for( const char *src = msg; *src != 0 && ( buffer_size - 1 ) > 0; buffer_size-- )
 	{
 		if( *src == '#' )
 		{
 			// cut msg name out of string
 			static char word_buf[255];
-			char *wdst = word_buf, *word_start = src;
-			int wordbuf_size = (int)sizeof(word_buf);
+			char *wdst = word_buf;
+			const char *word_start = src;
+			int wordbuf_size = sizeof(word_buf);
 			for( ++src; ( ( *src >= 'A' && *src <= 'z' ) || ( *src >= '0' && *src <= '9' ) ) && ( wordbuf_size - 1 ) > 0; wdst++, src++, wordbuf_size-- )
 			{
 				*wdst = *src;
@@ -70,7 +71,7 @@ char *CHudTextMessage::LocaliseTextString( const char *msg, char *dst_buffer, in
 			}
 
 			// copy string into message over the msg name
-			for( char *wsrc = (char*)clmsg->pMessage; *wsrc != 0 && ( buffer_size - 1 ) > 0; wsrc++, dst++, buffer_size-- )
+			for( const char *wsrc = clmsg->pMessage; *wsrc != 0 && ( buffer_size - 1 ) > 0; wsrc++, dst++, buffer_size-- )
 			{
 				*dst = *wsrc;
 			}

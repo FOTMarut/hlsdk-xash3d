@@ -107,7 +107,7 @@ void AngleVectorsTranspose( const vec3_t angles, vec3_t forward, vec3_t right, v
 	}
 }
 
-void AngleMatrix( const vec3_t angles, float matrix[3][4] )
+void AngleMatrix( const vec3_t angles, matrix3x4 matrix )
 {
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
@@ -137,7 +137,7 @@ void AngleMatrix( const vec3_t angles, float matrix[3][4] )
 	matrix[2][3] = 0.0;
 }
 
-void AngleIMatrix( const vec3_t angles, float matrix[3][4] )
+void AngleIMatrix( const vec3_t angles, matrix3x4 matrix )
 {
 	float angle;
 	float sr, sp, sy, cr, cp, cy;
@@ -244,7 +244,7 @@ float AngleBetweenVectors( const vec3_t v1, const vec3_t v2 )
 	return angle;
 }
 
-void VectorTransform( const vec3_t in1, float in2[3][4], vec3_t out )
+void VectorTransform( const vec3_t in1, matrix3x4 in2, vec3_t out )
 {
 	out[0] = DotProduct( in1, in2[0] ) + in2[0][3];
 	out[1] = DotProduct( in1, in2[1] ) + in2[1][3];

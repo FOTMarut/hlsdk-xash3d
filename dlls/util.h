@@ -26,23 +26,25 @@
 
 #include <string.h>
 #include <ctype.h>
+#include <stddef.h>
 inline void MESSAGE_BEGIN( int msg_dest, int msg_type, vec3_t_in pOrigin, entvars_t *ent );
 
 extern globalvars_t				*gpGlobals;
 
 // Use this instead of ALLOC_STRING on constant strings
-#define STRING(offset)		(const char *)(gpGlobals->pStringBase + (int)offset)
+#define STRING(offset)		static_cast<const char *>(gpGlobals->pStringBase + static_cast<int>( offset ))
 
 #if !defined XASH_64BIT || defined(CLIENT_DLL)
-#define MAKE_STRING(str)	((int)(long int)str - (int)(long int)STRING(0))
+//#define MAKE_STRING(str)	((int)(long int)str - (int)(long int)STRING(0))
+#define MAKE_STRING(str)	static_cast<int>(static_cast<const char *>(str) - static_cast<const char *>(STRING(0)))
 #else
 static inline int MAKE_STRING(const char *szValue)
 {
-	long long ptrdiff = szValue - STRING(0);
+	ptrdiff_t ptrdiff = szValue - STRING(0);
 	if( ptrdiff > INT_MAX || ptrdiff < INT_MIN )
 		return ALLOC_STRING( szValue );
 	else
-		return (int)ptrdiff;
+		return static_cast<int>(ptrdiff);
 }
 #endif
 
@@ -72,17 +74,13 @@ inline edict_t *FIND_ENTITY_BY_TARGET(edict_t *entStart, const char *pszName)
 		ENGINE_FPRINTF(pf, "\"%s\" \"%f %f %f\"\n", szKeyName, flX, flY, flZ)
 
 // Keeps clutter down a bit, when using a float as a bit-vector
-#define SetBits(flBitVector, bits)		((flBitVector) = (int)(flBitVector) | (bits))
-#define ClearBits(flBitVector, bits)	((flBitVector) = (int)(flBitVector) & ~(bits))
-#define FBitSet(flBitVector, bit)		((int)(flBitVector) & (bit))
+#define SetBits(flBitVector, bits)		((flBitVector) = static_cast<int>(flBitVector) | (bits))
+#define ClearBits(flBitVector, bits)	((flBitVector) = static_cast<int>(flBitVector) & ~(bits))
+#define FBitSet(flBitVector, bit)		(static_cast<int>(flBitVector) & (bit))
 
 // Makes these more explicit, and easier to find
 #define FILE_GLOBAL static
 #define DLL_GLOBAL
-
-// Until we figure out why "const" gives the compiler problems, we'll just have to use
-// this bogus "empty" define to mark things as constant.
-#define CONSTANT
 
 // More explicit than "int"
 typedef int EOFFSET;
@@ -113,7 +111,8 @@ typedef int BOOL;
 #else
 	inline edict_t *ENT(const entvars_t *pev)	{ return pev->pContainingEntity; }
 #endif
-inline edict_t *ENT(edict_t *pent)		{ return pent; }
+inline edict_t *ENT(edict_t *pent)				{ return pent; }
+inline const edict_t *ENT(const edict_t *pent)	{ return pent; }
 inline edict_t *ENT(EOFFSET eoffset)			{ return (*g_engfuncs.pfnPEntityOfEntOffset)(eoffset); }
 inline EOFFSET OFFSET(EOFFSET eoffset)			{ return eoffset; }
 inline EOFFSET OFFSET(const edict_t *pent)	
@@ -166,15 +165,15 @@ inline BOOL FStringNull(int iString)			{ return iString == iStringNull; }
 #define cchMapNameMost 32
 
 // Dot products for view cone checking
-#define VIEW_FIELD_FULL		(float)-1.0 // +-180 degrees
-#define	VIEW_FIELD_WIDE		(float)-0.7 // +-135 degrees 0.1 // +-85 degrees, used for full FOV checks 
-#define	VIEW_FIELD_NARROW	(float)0.7 // +-45 degrees, more narrow check used to set up ranged attacks
-#define	VIEW_FIELD_ULTRA_NARROW	(float)0.9 // +-25 degrees, more narrow check used to set up ranged attacks
+#define VIEW_FIELD_FULL			-1.0f // +-180 degrees
+#define	VIEW_FIELD_WIDE			-0.7f // +-135 degrees 0.1 // +-85 degrees, used for full FOV checks 
+#define	VIEW_FIELD_NARROW		0.7f // +-45 degrees, more narrow check used to set up ranged attacks
+#define	VIEW_FIELD_ULTRA_NARROW	0.9f // +-25 degrees, more narrow check used to set up ranged attacks
 
 // All monsters need this data
 #define		DONT_BLEED			-1
-#define		BLOOD_COLOR_RED		(BYTE)247
-#define		BLOOD_COLOR_YELLOW	(BYTE)195
+#define		BLOOD_COLOR_RED		BYTE(247)
+#define		BLOOD_COLOR_YELLOW	BYTE(195)
 #define		BLOOD_COLOR_GREEN	BLOOD_COLOR_YELLOW
 
 typedef enum 
@@ -487,12 +486,12 @@ extern DLL_GLOBAL int			g_Language;
 #define TELE_PLAYER_ONLY	1
 #define TELE_SILENT			2
 
-#define SF_TRIG_PUSH_ONCE		1
+#define SF_TRIG_PUSH_ONCE	1
 
 // Sound Utilities
 
 // sentence groups
-#define CBSENTENCENAME_MAX 16
+#define CBSENTENCENAME_MAX		16
 #define CVOXFILESENTENCEMAX		1536		// max number of sentences in game. NOTE: this must match
 							// CVOXFILESENTENCEMAX in engine\sound.h!!!
 
@@ -540,15 +539,15 @@ void EMIT_GROUPID_SUIT(edict_t *entity, int isentenceg);
 void EMIT_GROUPNAME_SUIT(edict_t *entity, const char *groupname);
 
 #define PRECACHE_SOUND_ARRAY( a ) \
-	{ for (int i = 0; i < (int)ARRAYSIZE( a ); i++ ) PRECACHE_SOUND( a[i] ); }
+	{ for (int i = 0; i < ARRAYSIZE( a ); i++ ) PRECACHE_SOUND( a[i] ); }
 
 #define EMIT_SOUND_ARRAY_DYN( chan, array ) \
-	EMIT_SOUND_DYN ( ENT(pev), chan , array [ RANDOM_LONG(0,ARRAYSIZE( array )-1) ], 1.0, ATTN_NORM, 0, RANDOM_LONG(95,105) ); 
+	EMIT_SOUND_DYN ( ENT(pev), chan , array [ RANDOM_LONG(0,ARRAYSIZE( array )-1) ], 1.0f, ATTN_NORM, 0, RANDOM_LONG(95,105) ); 
 
-#define RANDOM_SOUND_ARRAY( array ) (array) [ RANDOM_LONG(0,ARRAYSIZE( (array) )-1) ]
+#define RANDOM_SOUND_ARRAY( array ) (array) [ RANDOM_LONG(0,ARRAYSIZE( array )-1) ]
 
-#define PLAYBACK_EVENT( flags, who, index ) PLAYBACK_EVENT_FULL( flags, who, index, 0, g_vecZero, g_vecZero, 0.0, 0.0, 0, 0, 0, 0 );
-#define PLAYBACK_EVENT_DELAY( flags, who, index, delay ) PLAYBACK_EVENT_FULL( flags, who, index, delay, g_vecZero, g_vecZero, 0.0, 0.0, 0, 0, 0, 0 );
+#define PLAYBACK_EVENT( flags, who, index ) PLAYBACK_EVENT_FULL( flags, who, index, 0, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
+#define PLAYBACK_EVENT_DELAY( flags, who, index, delay ) PLAYBACK_EVENT_FULL( flags, who, index, delay, g_vecZero, g_vecZero, 0.0f, 0.0f, 0, 0, 0, 0 );
 
 #define GROUP_OP_AND	0
 #define GROUP_OP_NAND	1

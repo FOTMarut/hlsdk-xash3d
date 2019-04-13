@@ -292,7 +292,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 				if( gpGlobals->time >= m_flAmmoUseTime )
 				{
 					UseAmmo( 1 );
-					m_flAmmoUseTime = gpGlobals->time + 0.1;
+					m_flAmmoUseTime = gpGlobals->time + 0.1f;
 				}
 			}
 			else
@@ -301,7 +301,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 				if( gpGlobals->time >= m_flAmmoUseTime )
 				{
 					UseAmmo( 1 );
-					m_flAmmoUseTime = gpGlobals->time + 0.166;
+					m_flAmmoUseTime = gpGlobals->time + 0.166f;
 				}
 			}
 
@@ -337,7 +337,7 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 				if( gpGlobals->time >= m_flAmmoUseTime )
 				{
 					UseAmmo( 1 );
-					m_flAmmoUseTime = gpGlobals->time + 0.2;
+					m_flAmmoUseTime = gpGlobals->time + 0.2f;
 				}
 			}
 			else
@@ -346,15 +346,15 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 				if( gpGlobals->time >= m_flAmmoUseTime )
 				{
 					UseAmmo( 1 );
-					m_flAmmoUseTime = gpGlobals->time + 0.1;
+					m_flAmmoUseTime = gpGlobals->time + 0.1f;
 				}
 			}
 
 			pev->dmgtime = gpGlobals->time + GetDischargeInterval();
 			if( m_shakeTime < gpGlobals->time )
 			{
-				UTIL_ScreenShake( tr.vecEndPos, 5.0, 150.0, 0.75, 250.0 );
-				m_shakeTime = gpGlobals->time + 1.5;
+				UTIL_ScreenShake( tr.vecEndPos, 5.0f, 150.0f, 0.75f, 250.0f );
+				m_shakeTime = gpGlobals->time + 1.5f;
 			}
 		}
 #endif
@@ -362,11 +362,11 @@ void CEgon::Fire( const Vector &vecOrigSrc, const Vector &vecDir )
 		break;
 	}
 
-	if( timedist < 0 )
-		timedist = 0;
-	else if( timedist > 1 )
-		timedist = 1;
-	timedist = 1 - timedist;
+	if( timedist < 0.0f )
+		timedist = 0.0f;
+	else if( timedist > 1.0f )
+		timedist = 1.0f;
+	timedist = 1.0f - timedist;
 
 	UpdateEffect( tmpSrc, tr.vecEndPos, timedist );
 }
@@ -380,18 +380,22 @@ void CEgon::UpdateEffect( const Vector &startPoint, const Vector &endPoint, floa
 	}
 
 	m_pBeam->SetStartPos( endPoint );
-	m_pBeam->SetBrightness( (int)( 255 - ( timeBlend * 180 )) );
-	m_pBeam->SetWidth( (int)( 40 - ( timeBlend * 20 ) ) );
+	m_pBeam->SetBrightness( static_cast<int>( 255.0f - ( timeBlend * 180.0f )) );
+	m_pBeam->SetWidth( static_cast<int>( 40.0f - ( timeBlend * 20.0f ) ) );
 
 	if( m_fireMode == FIRE_WIDE )
-		m_pBeam->SetColor( (int)( 30 + ( 25 * timeBlend ) ), (int)( 30 + ( 30 * timeBlend ) ), (int)( 64 + 80 * fabs( sin( gpGlobals->time * 10 ) ) ) );
+		m_pBeam->SetColor(	static_cast<int>( 30.0f + ( 25.0f * timeBlend ) ),
+							static_cast<int>( 30.0f + ( 30.0f * timeBlend ) ),
+							static_cast<int>( 64.0f + 80.0f * fabs( sin( gpGlobals->time * 10.0f ) ) ) );
 	else
-		m_pBeam->SetColor( (int)( 60 + ( 25 * timeBlend ) ), (int)( 120 + ( 30 * timeBlend ) ), (int)( 64 + 80 * fabs( sin( gpGlobals->time *10 ) ) ) );
+		m_pBeam->SetColor(	static_cast<int>( 60.0f + ( 25.0f * timeBlend ) ),
+							static_cast<int>( 120.0f + ( 30.0f * timeBlend ) ),
+							static_cast<int>( 64.0f + 80.0f * fabs( sin( gpGlobals->time * 10.0f ) ) ) );
 
 	UTIL_SetOrigin( m_pSprite->pev, endPoint );
-	m_pSprite->pev->frame += 8 * gpGlobals->frametime;
+	m_pSprite->pev->frame += 8.0f * gpGlobals->frametime;
 	if( m_pSprite->pev->frame > m_pSprite->Frames() )
-		m_pSprite->pev->frame = 0;
+		m_pSprite->pev->frame = 0.0f;
 
 	m_pNoise->SetStartPos( endPoint );
 #endif

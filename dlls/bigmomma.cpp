@@ -131,13 +131,13 @@ IMPLEMENT_SAVERESTORE( CBMortar, CBaseEntity )
 #define	BIG_AE_STEP2			2		// Footstep right
 #define	BIG_AE_STEP3			3		// Footstep back left
 #define	BIG_AE_STEP4			4		// Footstep back right
-#define BIG_AE_SACK			5		// Sack slosh
+#define BIG_AE_SACK				5		// Sack slosh
 #define BIG_AE_DEATHSOUND		6		// Death sound
 
-#define	BIG_AE_MELEE_ATTACKBR		8		// Leg attack
-#define	BIG_AE_MELEE_ATTACKBL		9		// Leg attack
-#define	BIG_AE_MELEE_ATTACK1		10		// Leg attack
-#define BIG_AE_MORTAR_ATTACK1		11		// Launch a mortar
+#define	BIG_AE_MELEE_ATTACKBR	8		// Leg attack
+#define	BIG_AE_MELEE_ATTACKBL	9		// Leg attack
+#define	BIG_AE_MELEE_ATTACK1	10		// Leg attack
+#define BIG_AE_MORTAR_ATTACK1	11		// Launch a mortar
 #define BIG_AE_LAY_CRAB			12		// Lay a headcrab
 #define BIG_AE_JUMP_FORWARD		13		// Jump up and forward
 #define BIG_AE_SCREAM			14		// alert sound
@@ -201,9 +201,9 @@ public:
 		return 0;
 	}
 
-	int GetNodePresequence( void )
+	int GetNodePresequence( void ) const
 	{
-		CInfoBM *pTarget = (CInfoBM *)(CBaseEntity *)m_hTargetEnt;
+		const CInfoBM *pTarget = static_cast<const CInfoBM *>( static_cast<const CBaseEntity *>( m_hTargetEnt ) );
 		if( pTarget )
 		{
 			return pTarget->m_preSequence;
@@ -218,7 +218,7 @@ public:
 		{
 			return pTarget->pev->speed;	// Speed holds node delay
 		}
-		return 0;
+		return 0.0f;
 	}
 
 	float GetNodeRange( void )
@@ -228,7 +228,7 @@ public:
 		{
 			return pTarget->pev->scale;	// Scale holds node delay
 		}
-		return 1e6;
+		return 1e6f;
 	}
 
 	float GetNodeYaw( void )
@@ -440,7 +440,7 @@ void CBigMomma::HandleAnimEvent( MonsterEvent_t *pEvent )
 
 			UTIL_MakeVectorsPrivate( pev->angles, forward, right, NULL );
 
-			Vector center = pev->origin + forward * 128;
+			Vector center = pev->origin + forward * 128.0f;
 			Vector mins = center - Vector( 64, 64, 0 );
 			Vector maxs = center + Vector( 64, 64, 64 );
 
@@ -460,22 +460,22 @@ void CBigMomma::HandleAnimEvent( MonsterEvent_t *pEvent )
 			if( pHurt )
 			{
 				pHurt->TakeDamage( pev, pev, gSkillData.bigmommaDmgSlash, DMG_CRUSH | DMG_SLASH );
-				pHurt->pev->punchangle.x = 15;
+				pHurt->pev->punchangle.x = 15.0f;
 				switch( pEvent->event )
 				{
 					case BIG_AE_MELEE_ATTACKBR:
-						pHurt->pev->velocity = pHurt->pev->velocity + ( forward * 150 ) + Vector( 0, 0, 250 ) - ( right * 200 );
+						pHurt->pev->velocity = pHurt->pev->velocity + ( forward * 150.0f ) + Vector( 0, 0, 250 ) - ( right * 200.0f );
 						break;
 					case BIG_AE_MELEE_ATTACKBL:
-						pHurt->pev->velocity = pHurt->pev->velocity + ( forward * 150 ) + Vector( 0, 0, 250 ) + ( right * 200 );
+						pHurt->pev->velocity = pHurt->pev->velocity + ( forward * 150.0f ) + Vector( 0, 0, 250 ) + ( right * 200.0f );
 						break;
 					case BIG_AE_MELEE_ATTACK1:
-						pHurt->pev->velocity = pHurt->pev->velocity + ( forward * 220 ) + Vector( 0, 0, 200 );
+						pHurt->pev->velocity = pHurt->pev->velocity + ( forward * 220.0f ) + Vector( 0, 0, 200 );
 						break;
 				}
 
 				pHurt->pev->flags &= ~FL_ONGROUND;
-				EMIT_SOUND_DYN( edict(), CHAN_WEAPON, RANDOM_SOUND_ARRAY( pAttackHitSounds ), 1.0, ATTN_NORM, 0, 100 + RANDOM_LONG( -5, 5 ) );
+				EMIT_SOUND_DYN( edict(), CHAN_WEAPON, RANDOM_SOUND_ARRAY( pAttackHitSounds ), 1.0f, ATTN_NORM, 0, 100 + RANDOM_LONG( -5, 5 ) );
 			}
 		}
 		break;
@@ -518,13 +518,13 @@ void CBigMomma::HandleAnimEvent( MonsterEvent_t *pEvent )
 			UTIL_SetOrigin( pev, pev->origin + Vector( 0, 0, 1) );// take him off ground so engine doesn't instantly reset onground 
 			UTIL_MakeVectors( pev->angles );
 
-			pev->velocity = gpGlobals->v_forward * 200 + gpGlobals->v_up * 500;
+			pev->velocity = gpGlobals->v_forward * 200.0f + gpGlobals->v_up * 500.0f;
 			break;
 		case BIG_AE_EARLY_TARGET:
 			{
 				CBaseEntity *pTarget = m_hTargetEnt;
 				if( pTarget && pTarget->pev->message )
-					FireTargets( STRING( pTarget->pev->message ), this, this, USE_TOGGLE, 0 );
+					FireTargets( STRING( pTarget->pev->message ), this, this, USE_TOGGLE, 0.0f );
 				Remember( bits_MEMORY_FIRED_NODE );
 			}
 			break;
@@ -541,11 +541,11 @@ void CBigMomma::TraceAttack( entvars_t *pevAttacker, float flDamage, Vector vecD
 		// didn't hit the sack?
 		if( pev->dmgtime != gpGlobals->time || ( RANDOM_LONG( 0, 10 ) < 1 ) )
 		{
-			UTIL_Ricochet( ptr->vecEndPos, RANDOM_FLOAT( 1, 2) );
+			UTIL_Ricochet( ptr->vecEndPos, RANDOM_FLOAT( 1.0f, 2.0f) );
 			pev->dmgtime = gpGlobals->time;
 		}
 
-		flDamage = 0.1;// don't hurt the monster much, but allow bits_COND_LIGHT_DAMAGE to be generated
+		flDamage = 0.1f;// don't hurt the monster much, but allow bits_COND_LIGHT_DAMAGE to be generated
 	}
 	else if( gpGlobals->time > m_painSoundTime )
 	{
@@ -560,13 +560,13 @@ int CBigMomma::TakeDamage( entvars_t *pevInflictor, entvars_t *pevAttacker, floa
 {
 	// Don't take any acid damage -- BigMomma's mortar is acid
 	if( bitsDamageType & DMG_ACID )
-		flDamage = 0;
+		flDamage = 0.0f;
 
 	if( !HasMemory( bits_MEMORY_PATH_FINISHED ) )
 	{
 		if( pev->health <= flDamage )
 		{
-			pev->health = flDamage + 1;
+			pev->health = flDamage + 1.0f;
 			Remember( bits_MEMORY_ADVANCE_NODE | bits_MEMORY_COMPLETED_NODE );
 			ALERT( at_aiconsole, "BM: Finished node health!!!\n" );
 		}
@@ -584,12 +584,12 @@ void CBigMomma::LayHeadcrab( void )
 	// Is this the second crab in a pair?
 	if( HasMemory( bits_MEMORY_CHILDPAIR ) )
 	{
-		m_crabTime = gpGlobals->time + RANDOM_FLOAT( 5, 10 );
+		m_crabTime = gpGlobals->time + RANDOM_FLOAT( 5.0f, 10.0f );
 		Forget( bits_MEMORY_CHILDPAIR );
 	}
 	else
 	{
-		m_crabTime = gpGlobals->time + RANDOM_FLOAT( 0.5, 2.5 );
+		m_crabTime = gpGlobals->time + RANDOM_FLOAT( 0.5f, 2.5f );
 		Remember( bits_MEMORY_CHILDPAIR );
 	}
 
@@ -597,7 +597,7 @@ void CBigMomma::LayHeadcrab( void )
 	UTIL_TraceLine( pev->origin, pev->origin - Vector( 0, 0, 100 ), ignore_monsters, edict(), &tr );
 	UTIL_DecalTrace( &tr, DECAL_MOMMABIRTH );
 
-	EMIT_SOUND_DYN( edict(), CHAN_WEAPON, RANDOM_SOUND_ARRAY( pBirthSounds ), 1.0, ATTN_NORM, 0, 100 + RANDOM_LONG( -5, 5 ) );
+	EMIT_SOUND_DYN( edict(), CHAN_WEAPON, RANDOM_SOUND_ARRAY( pBirthSounds ), 1.0f, ATTN_NORM, 0, 100 + RANDOM_LONG( -5, 5 ) );
 	m_crabCount++;
 }
 
@@ -614,14 +614,14 @@ void CBigMomma::DeathNotice( entvars_t *pevChild )
 
 void CBigMomma::LaunchMortar( void )
 {
-	m_mortarTime = gpGlobals->time + RANDOM_FLOAT( 2, 15 );
+	m_mortarTime = gpGlobals->time + RANDOM_FLOAT( 2.0f, 15.0f );
 
 	Vector startPos = pev->origin;
-	startPos.z += 180;
+	startPos.z += 180.0f;
 
-	EMIT_SOUND_DYN( edict(), CHAN_WEAPON, RANDOM_SOUND_ARRAY( pSackSounds ), 1.0, ATTN_NORM, 0, 100 + RANDOM_LONG( -5, 5 ) );
+	EMIT_SOUND_DYN( edict(), CHAN_WEAPON, RANDOM_SOUND_ARRAY( pSackSounds ), 1.0f, ATTN_NORM, 0, 100 + RANDOM_LONG( -5, 5 ) );
 	CBMortar *pBomb = CBMortar::Shoot( edict(), startPos, pev->movedir );
-	pBomb->pev->gravity = 1.0;
+	pBomb->pev->gravity = 1.0f;
 	MortarSpray( startPos, Vector( 0, 0, 1 ), gSpitSprite, 24 );
 }
 
@@ -638,9 +638,9 @@ void CBigMomma::Spawn()
 	pev->solid = SOLID_SLIDEBOX;
 	pev->movetype = MOVETYPE_STEP;
 	m_bloodColor = BLOOD_COLOR_GREEN;
-	pev->health = 150 * gSkillData.bigmommaHealthFactor;
+	pev->health = 150.0f * gSkillData.bigmommaHealthFactor;
 	pev->view_ofs = Vector( 0, 0, 128 );// position of the eyes relative to monster's origin.
-	m_flFieldOfView = 0.3;// indicates the width of this monster's forward view cone ( as a dotproduct result )
+	m_flFieldOfView = 0.3f;// indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState = MONSTERSTATE_NONE;
 
 	MonsterInit();
@@ -720,19 +720,19 @@ void CBigMomma::NodeReach( void )
 	if( !HasMemory( bits_MEMORY_FIRED_NODE ) )
 	{
 		if( pTarget->pev->message )
-			FireTargets( STRING( pTarget->pev->message ), this, this, USE_TOGGLE, 0 );
+			FireTargets( STRING( pTarget->pev->message ), this, this, USE_TOGGLE, 0.0f );
 	}
 	Forget( bits_MEMORY_FIRED_NODE );
 
 	pev->netname = pTarget->pev->target;
-	if( pTarget->pev->health == 0 )
+	if( pTarget->pev->health == 0.0f )
 		Remember( bits_MEMORY_ADVANCE_NODE );	// Move on if no health at this node
 }
 
 // Slash
 BOOL CBigMomma::CheckMeleeAttack1( float flDot, float flDist )
 {
-	if( flDot >= 0.7 )
+	if( flDot >= 0.7f )
 	{
 		if( flDist <= BIG_ATTACKDIST )
 			return TRUE;
@@ -756,7 +756,7 @@ BOOL CBigMomma::CheckRangeAttack1( float flDot, float flDist )
 		if( pEnemy )
 		{
 			Vector startPos = pev->origin;
-			startPos.z += 180;
+			startPos.z += 180.0f;
 			pev->movedir = VecCheckSplatToss( pev, startPos, pEnemy->BodyTarget( pev->origin ), RANDOM_FLOAT( 150, 500 ) );
 			if( pev->movedir != g_vecZero )
 				return TRUE;
@@ -1034,12 +1034,12 @@ Vector VecCheckSplatToss( entvars_t *pev, const Vector &vecSpot1, Vector vecSpot
 	float flGravity = g_psv_gravity->value;
 
 	// calculate the midpoint and apex of the 'triangle'
-	vecMidPoint = vecSpot1 + ( vecSpot2 - vecSpot1 ) * 0.5;
+	vecMidPoint = vecSpot1 + ( vecSpot2 - vecSpot1 ) * 0.5f;
 	UTIL_TraceLine( vecMidPoint, vecMidPoint + Vector( 0, 0, maxHeight ), ignore_monsters, ENT( pev ), &tr );
 	vecApex = tr.vecEndPos;
 
 	UTIL_TraceLine( vecSpot1, vecApex, dont_ignore_monsters, ENT( pev ), &tr );
-	if( tr.flFraction != 1.0 )
+	if( tr.flFraction != 1.0f )
 	{
 		// fail!
 		return g_vecZero;
@@ -1048,17 +1048,17 @@ Vector VecCheckSplatToss( entvars_t *pev, const Vector &vecSpot1, Vector vecSpot
 	// Don't worry about actually hitting the target, this won't hurt us!
 
 	// How high should the grenade travel (subtract 15 so the grenade doesn't hit the ceiling)?
-	float height = vecApex.z - vecSpot1.z - 15;
+	float height = vecApex.z - vecSpot1.z - 15.0f;
 	// How fast does the grenade need to travel to reach that height given gravity?
-	float speed = sqrt( 2 * flGravity * height );
+	float speed = sqrt( 2.0f * flGravity * height );
 	
 	// How much time does it take to get there?
 	float time = speed / flGravity;
 	vecGrenadeVel = vecSpot2 - vecSpot1;
-	vecGrenadeVel.z = 0;
+	vecGrenadeVel.z = 0.0f;
 	
 	// Travel half the distance to the target in that time (apex is at the midpoint)
-	vecGrenadeVel = vecGrenadeVel * ( 0.5 / time );
+	vecGrenadeVel = vecGrenadeVel * ( 0.5f / time );
 	// Speed to offset gravity at the desired height
 	vecGrenadeVel.z = speed;
 
@@ -1095,25 +1095,25 @@ void CBMortar::Spawn( void )
 	
 	pev->solid = SOLID_BBOX;
 	pev->rendermode = kRenderTransAlpha;
-	pev->renderamt = 255;
+	pev->renderamt = 255.0f;
 
 	SET_MODEL( ENT( pev ), "sprites/mommaspit.spr" );
-	pev->frame = 0;
-	pev->scale = 0.5;
+	pev->frame = 0.0f;
+	pev->scale = 0.5f;
 
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 
-	m_maxFrame = (float) MODEL_FRAMES( pev->modelindex ) - 1;
-	pev->dmgtime = gpGlobals->time + 0.4;
+	m_maxFrame = float( MODEL_FRAMES( pev->modelindex ) - 1 );
+	pev->dmgtime = gpGlobals->time + 0.4f;
 }
 
 void CBMortar::Animate( void )
 {
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 
 	if( gpGlobals->time > pev->dmgtime )
 	{
-		pev->dmgtime = gpGlobals->time + 0.2;
+		pev->dmgtime = gpGlobals->time + 0.2f;
 		MortarSpray( pev->origin, -pev->velocity.Normalize(), gSpitSprite, 3 );
 	}
 	if( pev->frame++ )
@@ -1133,9 +1133,9 @@ CBMortar *CBMortar::Shoot( edict_t *pOwner, Vector vecStart, Vector vecVelocity 
 	UTIL_SetOrigin( pSpit->pev, vecStart );
 	pSpit->pev->velocity = vecVelocity;
 	pSpit->pev->owner = pOwner;
-	pSpit->pev->scale = 2.5;
+	pSpit->pev->scale = 2.5f;
 	pSpit->SetThink( &CBMortar::Animate );
-	pSpit->pev->nextthink = gpGlobals->time + 0.1;
+	pSpit->pev->nextthink = gpGlobals->time + 0.1f;
 
 	return pSpit;
 }
@@ -1146,17 +1146,17 @@ void CBMortar::Touch( CBaseEntity *pOther )
 	int iPitch;
 
 	// splat sound
-	iPitch = RANDOM_FLOAT( 90, 110 );
+	iPitch = RANDOM_FLOAT( 90.0f, 110.0f );
 
-	EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "bullchicken/bc_acid1.wav", 1, ATTN_NORM, 0, iPitch );
+	EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "bullchicken/bc_acid1.wav", 1.0f, ATTN_NORM, 0, iPitch );
 
 	switch( RANDOM_LONG( 0, 1 ) )
 	{
 	case 0:
-		EMIT_SOUND_DYN( ENT( pev ), CHAN_WEAPON, "bullchicken/bc_spithit1.wav", 1, ATTN_NORM, 0, iPitch );
+		EMIT_SOUND_DYN( ENT( pev ), CHAN_WEAPON, "bullchicken/bc_spithit1.wav", 1.0f, ATTN_NORM, 0, iPitch );
 		break;
 	case 1:
-		EMIT_SOUND_DYN( ENT( pev ), CHAN_WEAPON, "bullchicken/bc_spithit2.wav", 1, ATTN_NORM, 0, iPitch );
+		EMIT_SOUND_DYN( ENT( pev ), CHAN_WEAPON, "bullchicken/bc_spithit2.wav", 1.0f, ATTN_NORM, 0, iPitch );
 		break;
 	}
 
@@ -1164,7 +1164,7 @@ void CBMortar::Touch( CBaseEntity *pOther )
 	{
 
 		// make a splat on the wall
-		UTIL_TraceLine( pev->origin, pev->origin + pev->velocity * 10, dont_ignore_monsters, ENT( pev ), &tr );
+		UTIL_TraceLine( pev->origin, pev->origin + pev->velocity * 10.0f, dont_ignore_monsters, ENT( pev ), &tr );
 		UTIL_DecalTrace( &tr, DECAL_MOMMASPLAT );
 	}
 	else

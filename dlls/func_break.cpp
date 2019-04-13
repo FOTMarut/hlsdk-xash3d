@@ -76,14 +76,14 @@ void CBreakable::KeyValue( KeyValueData* pkvd )
 	}
 	else if( FStrEq( pkvd->szKeyName, "material" ) )
 	{
-		int i = atoi( pkvd->szValue );
+		Materials i = Materials( atoi( pkvd->szValue ) );
 
 		// 0:glass, 1:metal, 2:flesh, 3:wood
 
 		if( ( i < 0 ) || ( i >= matLastMaterial ) )
 			m_Material = matWood;
 		else
-			m_Material = (Materials)i;
+			m_Material = i;
 
 		pkvd->fHandled = TRUE;
 	}
@@ -104,7 +104,7 @@ void CBreakable::KeyValue( KeyValueData* pkvd )
 	else if( FStrEq( pkvd->szKeyName, "spawnobject" ) )
 	{
 		int object = atoi( pkvd->szValue );
-		if( object > 0 && object < (int)ARRAYSIZE( pSpawnObjects ) )
+		if( object > 0 && object < ARRAYSIZE( pSpawnObjects ) )
 			m_iszSpawnObject = MAKE_STRING( pSpawnObjects[object] );
 		pkvd->fHandled = TRUE;
 	}
@@ -838,7 +838,7 @@ void CPushable::Spawn( void )
 	UTIL_SetOrigin( pev, pev->origin );
 
 	// Multiply by area of the box's cross-section (assume 1000 units^3 standard volume)
-	pev->skin = (int)( ( pev->skin * ( pev->maxs.x - pev->mins.x ) * ( pev->maxs.y - pev->mins.y ) ) * 0.0005 );
+	pev->skin = static_cast<int>( ( pev->skin * ( pev->maxs.x - pev->mins.x ) * ( pev->maxs.y - pev->mins.y ) ) * 0.0005 );
 	m_soundTime = 0;
 }
 

@@ -394,7 +394,7 @@ CPathTrack *CPathTrack::Nearest( Vector origin )
 CPathTrack *CPathTrack::Instance( edict_t *pent )
 {
 	if( FClassnameIs( pent, "path_track" ) )
-		return (CPathTrack *)GET_PRIVATE( pent );
+		return GET_PRIVATE<CPathTrack>( pent );
 	return NULL;
 }
 

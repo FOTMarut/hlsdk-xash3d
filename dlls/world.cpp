@@ -41,7 +41,7 @@ extern CSoundEnt *pSoundEnt;
 extern CBaseEntity				*g_pLastSpawn;
 DLL_GLOBAL edict_t				*g_pBodyQueueHead;
 CGlobalState					gGlobalState;
-extern DLL_GLOBAL int				gDisplayTitle;
+extern DLL_GLOBAL int			gDisplayTitle;
 
 extern void W_Precache( void );
 
@@ -85,12 +85,12 @@ DLL_DECALLIST gDecals[] = {
 	{ "{spit1", 0 },		// DECAL_SPIT1
 	{ "{spit2", 0 },		// DECAL_SPIT2
 	{ "{bproof1", 0 },		// DECAL_BPROOF1
-	{ "{gargstomp", 0 },		// DECAL_GARGSTOMP1,	// Gargantua stomp crack
-	{ "{smscorch1", 0 },		// DECAL_SMALLSCORCH1,	// Small scorch mark
-	{ "{smscorch2", 0 },		// DECAL_SMALLSCORCH2,	// Small scorch mark
-	{ "{smscorch3", 0 },		// DECAL_SMALLSCORCH3,	// Small scorch mark
-	{ "{mommablob", 0 },		// DECAL_MOMMABIRTH		// BM Birth spray
-	{ "{mommablob", 0 },		// DECAL_MOMMASPLAT		// BM Mortar spray?? need decal
+	{ "{gargstomp", 0 },	// DECAL_GARGSTOMP1,	// Gargantua stomp crack
+	{ "{smscorch1", 0 },	// DECAL_SMALLSCORCH1,	// Small scorch mark
+	{ "{smscorch2", 0 },	// DECAL_SMALLSCORCH2,	// Small scorch mark
+	{ "{smscorch3", 0 },	// DECAL_SMALLSCORCH3,	// Small scorch mark
+	{ "{mommablob", 0 },	// DECAL_MOMMABIRTH		// BM Birth spray
+	{ "{mommablob", 0 },	// DECAL_MOMMASPLAT		// BM Mortar spray?? need decal
 };
 
 /*
@@ -151,15 +151,15 @@ void CDecal::TriggerDecal( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 		WRITE_COORD( pev->origin.x );
 		WRITE_COORD( pev->origin.y );
 		WRITE_COORD( pev->origin.z );
-		WRITE_SHORT( (int)pev->skin );
-		entityIndex = (short)ENTINDEX( trace.pHit );
+		WRITE_SHORT( pev->skin );
+		entityIndex = static_cast<short>( ENTINDEX( trace.pHit ) );
 		WRITE_SHORT( entityIndex );
 		if( entityIndex )
-			WRITE_SHORT( (int)VARS( trace.pHit )->modelindex );
+			WRITE_SHORT( VARS( trace.pHit )->modelindex );
 	MESSAGE_END();
 
 	SetThink( &CBaseEntity::SUB_Remove );
-	pev->nextthink = gpGlobals->time + 0.1;
+	pev->nextthink = gpGlobals->time + 0.1f;
 }
 
 void CDecal::StaticDecal( void )
@@ -169,13 +169,13 @@ void CDecal::StaticDecal( void )
 
 	UTIL_TraceLine( pev->origin - Vector( 5, 5, 5 ), pev->origin + Vector( 5, 5, 5 ),  ignore_monsters, ENT( pev ), &trace );
 
-	entityIndex = (short)ENTINDEX( trace.pHit );
+	entityIndex = static_cast<short>( ENTINDEX( trace.pHit ) );
 	if( entityIndex )
-		modelIndex = (int)VARS( trace.pHit )->modelindex;
+		modelIndex = VARS( trace.pHit )->modelindex;
 	else
 		modelIndex = 0;
 
-	g_engfuncs.pfnStaticDecal( pev->origin, (int)pev->skin, entityIndex, modelIndex );
+	g_engfuncs.pfnStaticDecal( pev->origin, pev->skin, entityIndex, modelIndex );
 
 	SUB_Remove();
 }
@@ -225,7 +225,7 @@ static void InitBodyQue( void )
 //
 // GLOBALS ASSUMED SET:  g_eoBodyQueueHead
 //
-void CopyToBodyQue( entvars_t *pev ) 
+void CopyToBodyQue( const entvars_t *pev ) 
 {
 	if( pev->effects & EF_NODRAW )
 		return;
@@ -309,7 +309,7 @@ void CGlobalState::EntityAdd( string_t globalname, string_t mapName, GLOBALESTAT
 {
 	ASSERT( !Find( globalname ) );
 
-	globalentity_t *pNewEntity = (globalentity_t *)calloc( sizeof( globalentity_t ), 1 );
+	globalentity_t *pNewEntity = static_cast<globalentity_t *>( calloc( sizeof( globalentity_t ), 1 ) );
 	ASSERT( pNewEntity != NULL );
 	pNewEntity->pNext = m_pList;
 	m_pList = pNewEntity;
@@ -515,7 +515,7 @@ void CWorld::Precache( void )
 	PRECACHE_SOUND( "common/bodydrop3.wav" );// dead bodies hitting the ground (animation events)
 	PRECACHE_SOUND( "common/bodydrop4.wav" );
 	
-	g_Language = (int)CVAR_GET_FLOAT( "sv_language" );
+	g_Language = static_cast<int>( CVAR_GET_FLOAT( "sv_language" ) );
 	if( g_Language == LANGUAGE_GERMAN )
 	{
 		PRECACHE_MODEL( "models/germangibs.mdl" );
@@ -582,7 +582,7 @@ void CWorld::Precache( void )
 	// 63 testing
 	LIGHT_STYLE( 63, "a" );
 
-	for( int i = 0; i < (int)ARRAYSIZE( gDecals ); i++ )
+	for( int i = 0; i < ARRAYSIZE( gDecals ); i++ )
 		gDecals[i].index = DECAL_INDEX( gDecals[i].name );
 
 	// init the WorldGraph.
@@ -632,9 +632,9 @@ void CWorld::Precache( void )
 	}
 
 	if( pev->spawnflags & SF_WORLD_DARK )
-		CVAR_SET_FLOAT( "v_dark", 1.0 );
+		CVAR_SET_FLOAT( "v_dark", 1.0f );
 	else
-		CVAR_SET_FLOAT( "v_dark", 0.0 );
+		CVAR_SET_FLOAT( "v_dark", 0.0f );
 
 	pev->spawnflags &= ~SF_WORLD_DARK;		// g-cont. don't apply fade after save\restore
 
@@ -677,7 +677,7 @@ void CWorld::KeyValue( KeyValueData *pkvd )
 	else if( FStrEq(pkvd->szKeyName, "WaveHeight" ) )
 	{
 		// Sent over net now.
-		pev->scale = atof( pkvd->szValue ) * ( 1.0 / 8.0 );
+		pev->scale = atof( pkvd->szValue ) * ( 1.0f / 8.0f );
 		pkvd->fHandled = TRUE;
 	}
 	else if( FStrEq( pkvd->szKeyName, "MaxRange" ) )
@@ -774,7 +774,7 @@ int DispatchCreateEntity( edict_t *pent, const char *szName )
 //
 int DispatchPhysicsEntity( edict_t *pEdict )
 {
-	CBaseEntity *pEntity = (CBaseEntity *)GET_PRIVATE( pEdict );
+	CBaseEntity *pEntity = GET_PRIVATE<CBaseEntity>( pEdict );
 
 	if( !pEntity )
 	{

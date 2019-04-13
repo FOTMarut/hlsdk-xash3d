@@ -450,7 +450,7 @@ void COsprey::Flight()
 		{
 			float pitch = DotProduct( m_velocity - pPlayer->pev->velocity, ( pPlayer->pev->origin - pev->origin ).Normalize() );
 
-			pitch = (int)( 100 + pitch / 75.0 );
+			pitch = static_cast<int>( 100 + pitch / 75.0 );
 
 			if( pitch > 250 ) 
 				pitch = 250;

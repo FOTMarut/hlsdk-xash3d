@@ -47,7 +47,7 @@ public:
 	
 	string_t m_globalstate;
 	int m_triggermode;
-	int m_initialstate;
+	GLOBALESTATE m_initialstate;
 };
 
 TYPEDESCRIPTION CEnvGlobal::m_SaveData[] =
@@ -70,7 +70,7 @@ void CEnvGlobal::KeyValue( KeyValueData *pkvd )
 	else if( FStrEq( pkvd->szKeyName, "triggermode" ) )
 		m_triggermode = atoi( pkvd->szValue );
 	else if( FStrEq( pkvd->szKeyName, "initialstate" ) )
-		m_initialstate = atoi( pkvd->szValue );
+		m_initialstate = GLOBALESTATE( atoi( pkvd->szValue ) );
 	else
 		CPointEntity::KeyValue( pkvd );
 }
@@ -85,7 +85,7 @@ void CEnvGlobal::Spawn( void )
 	if( FBitSet( pev->spawnflags, SF_GLOBAL_SET ) )
 	{
 		if( !gGlobalState.EntityInTable( m_globalstate ) )
-			gGlobalState.EntityAdd( m_globalstate, gpGlobals->mapname, (GLOBALESTATE)m_initialstate );
+			gGlobalState.EntityAdd( m_globalstate, gpGlobals->mapname, m_initialstate );
 	}
 }
 
@@ -290,14 +290,14 @@ void CBaseButton::Precache( void )
 	// get door button sounds, for doors which require buttons to open
 	if( m_bLockedSound )
 	{
-		pszSound = ButtonSound( (int)m_bLockedSound );
+		pszSound = ButtonSound( m_bLockedSound );
 		PRECACHE_SOUND( pszSound );
 		m_ls.sLockedSound = MAKE_STRING( pszSound );
 	}
 
 	if( m_bUnlockedSound )
 	{
-		pszSound = ButtonSound( (int)m_bUnlockedSound );
+		pszSound = ButtonSound( m_bUnlockedSound );
 		PRECACHE_SOUND( pszSound );
 		m_ls.sUnlockedSound = MAKE_STRING( pszSound );
 	}
@@ -611,7 +611,7 @@ void DoSpark( entvars_t *pev, const Vector &location )
 	UTIL_Sparks( tmp );
 
 	float flVolume = RANDOM_FLOAT( 0.25 , 0.75 ) * 0.4;//random volume range
-	switch( (int)( RANDOM_FLOAT( 0, 1 ) * 6 ) )
+	switch( static_cast<int>( RANDOM_FLOAT( 0.0f, 1.0f ) * 6.0f ) )
 	{
 		case 0:
 			EMIT_SOUND( ENT( pev ), CHAN_VOICE, "buttons/spark1.wav", flVolume, ATTN_NORM );
@@ -953,7 +953,7 @@ public:
 	void PlaySound( void );
 	void UpdateTarget( float value );
 
-	static CMomentaryRotButton *Instance( edict_t *pent ) { return (CMomentaryRotButton *)GET_PRIVATE( pent ); };
+	static CMomentaryRotButton *Instance( edict_t *pent ) { return GET_PRIVATE<CMomentaryRotButton>( pent ); };
 	virtual int Save( CSave &save );
 	virtual int Restore( CRestore &restore );
 	static TYPEDESCRIPTION m_SaveData[];
@@ -1303,7 +1303,7 @@ void CButtonTarget::Spawn( void )
 
 void CButtonTarget::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value )
 {
-	if( !ShouldToggle( useType, (int)pev->frame ) )
+	if( !ShouldToggle( useType, static_cast<int>( pev->frame ) ) )
 		return;
 	pev->frame = 1-pev->frame;
 	if( pev->frame )

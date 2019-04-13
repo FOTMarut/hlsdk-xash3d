@@ -117,8 +117,8 @@ typedef struct
 #else
 #define	_GRAPH_VERSION	(16) // !!!increment this whenever graph/node/link classes change, to obsolesce older disk files.
 #endif
-#define GRAPH_VERSION (int)_GRAPH_VERSION
-#define GRAPH_VERSION_RETAIL (int)_GRAPH_VERSION_RETAIL
+#define GRAPH_VERSION int(_GRAPH_VERSION)
+#define GRAPH_VERSION_RETAIL int(_GRAPH_VERSION_RETAIL)
 
 class CGraph
 {

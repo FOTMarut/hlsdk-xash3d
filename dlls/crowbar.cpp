@@ -325,7 +325,7 @@ int CCrowbar::Swing( int fFirst )
 			m_trHit = tr;
 		}
 
-		m_pPlayer->m_iWeaponVolume = (int)( flVol * CROWBAR_WALLHIT_VOLUME );
+		m_pPlayer->m_iWeaponVolume = static_cast<int>( flVol * CROWBAR_WALLHIT_VOLUME );
 
 		SetThink( &CCrowbar::Smack );
 		pev->nextthink = UTIL_WeaponTimeBase() + 0.2;

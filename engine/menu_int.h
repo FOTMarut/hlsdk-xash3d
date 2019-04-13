@@ -80,7 +80,7 @@ typedef struct ui_enginefuncs_s
 	void	(*pfnDelCommand)( const char *cmd_name );
 	int       (*pfnCmdArgc)( void );	
 	char*	(*pfnCmdArgv)( int argc );
-	char*	(*pfnCmd_Args)( void );
+	const char*	(*pfnCmd_Args)( void );
 
 	// debug messages (in-menu shows only notify)	
 	void	(*Con_Printf)( char *fmt, ... );

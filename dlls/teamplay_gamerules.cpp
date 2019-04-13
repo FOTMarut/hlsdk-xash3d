@@ -91,9 +91,9 @@ void CHalfLifeTeamplay::Think( void )
 		return;
 	}
 
-	float flTimeLimit = CVAR_GET_FLOAT( "mp_timelimit" ) * 60;
+	float flTimeLimit = CVAR_GET_FLOAT( "mp_timelimit" ) * 60.0f;
 	
-	time_remaining = (int)( flTimeLimit ? ( flTimeLimit - gpGlobals->time ) : 0 );
+	time_remaining = flTimeLimit ? static_cast<int>( flTimeLimit - gpGlobals->time ) : 0;
 
 	if( flTimeLimit != 0 && gpGlobals->time >= flTimeLimit )
 	{
@@ -116,7 +116,7 @@ void CHalfLifeTeamplay::Think( void )
 				return;
 			}
 
-			remain = (int)( flFragLimit - team_scores[i] );
+			remain = static_cast<int>( flFragLimit ) - team_scores[i];
 			if( remain < bestfrags )
 			{
 				bestfrags = remain;
@@ -300,7 +300,7 @@ void CHalfLifeTeamplay::ChangePlayerTeam( CBasePlayer *pPlayer, const char *pTea
 
 	MESSAGE_BEGIN( MSG_ALL, gmsgScoreInfo );
 		WRITE_BYTE( clientIndex );
-		WRITE_SHORT( (int)pPlayer->pev->frags );
+		WRITE_SHORT( static_cast<int>( pPlayer->pev->frags ) );
 		WRITE_SHORT( pPlayer->m_iDeaths );
 		WRITE_SHORT( 0 );
 		WRITE_SHORT( g_pGameRules->GetTeamIndex( pPlayer->m_szTeamName ) + 1 );
@@ -371,7 +371,7 @@ void CHalfLifeTeamplay::DeathNotice( CBasePlayer *pVictim, entvars_t *pKiller, e
 
 	if( pVictim && pKiller && pKiller->flags & FL_CLIENT )
 	{
-		CBasePlayer *pk = (CBasePlayer*) CBaseEntity::Instance( pKiller );
+		CBasePlayer *pk = static_cast<CBasePlayer*>( CBaseEntity::Instance( pKiller ) );
 
 		if( pk )
 		{
@@ -607,7 +607,7 @@ void CHalfLifeTeamplay::RecountTeams( bool bResendInfo )
 
 			if( tm >= 0 )
 			{
-				team_scores[tm] += (int)plr->pev->frags;
+				team_scores[tm] += static_cast<int>( plr->pev->frags );
 			}
 
 			if( bResendInfo ) //Someone's info changed, let's send the team info again.

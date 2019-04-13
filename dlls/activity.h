@@ -98,7 +98,7 @@ typedef enum {
 
 typedef struct
 {
-	int type;
+	Activity type;
 	const char *name;
 } activity_map_t;
 

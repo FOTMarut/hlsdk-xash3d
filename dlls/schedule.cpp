@@ -414,7 +414,7 @@ void CBaseMonster::RunTask( Task_t *pTask )
 				distance = ( m_vecMoveGoal - pev->origin ).Length2D();
 
 				// Re-evaluate when you think your finished, or the target has moved too far
-				if( ( distance < pTask->flData ) || ( m_vecMoveGoal - m_hTargetEnt->pev->origin ).Length() > pTask->flData * 0.5 )
+				if( ( distance < pTask->flData ) || ( m_vecMoveGoal - m_hTargetEnt->pev->origin ).Length() > pTask->flData * 0.5f )
 				{
 					m_vecMoveGoal = m_hTargetEnt->pev->origin;
 					distance = ( m_vecMoveGoal - pev->origin ).Length2D();
@@ -520,7 +520,7 @@ void CBaseMonster::RunTask( Task_t *pTask )
 			if( m_pCine->m_iDelay <= 0 && gpGlobals->time >= m_pCine->m_startTime )
 			{
 				TaskComplete();
-				m_pCine->StartSequence( (CBaseMonster *)this, m_pCine->m_iszPlay, TRUE );
+				m_pCine->StartSequence( static_cast<CBaseMonster *>( this ), m_pCine->m_iszPlay, TRUE );
 				if( m_fSequenceFinished )
 					ClearSchedule();
 				pev->framerate = 1.0;
@@ -590,13 +590,13 @@ void CBaseMonster::StartTask( Task_t *pTask )
 		}
 	case TASK_REMEMBER:
 		{
-			Remember( (int)pTask->flData );
+			Remember( static_cast<int>( pTask->flData ) );
 			TaskComplete();
 			break;
 		}
 	case TASK_FORGET:
 		{
-			Forget( (int)pTask->flData );
+			Forget( static_cast<int>( pTask->flData ) );
 			TaskComplete();
 			break;
 		}
@@ -647,21 +647,21 @@ void CBaseMonster::StartTask( Task_t *pTask )
 	case TASK_PLAY_SEQUENCE_FACE_TARGET:
 	case TASK_PLAY_SEQUENCE:
 		{
-			m_IdealActivity = (Activity)(int)pTask->flData;
+			m_IdealActivity = static_cast<Activity>( static_cast<int>( pTask->flData ) );
 			break;
 		}
 	case TASK_PLAY_ACTIVE_IDLE:
 		{
 			// monsters verify that they have a sequence for the node's activity BEFORE
 			// moving towards the node, so it's ok to just set the activity without checking here.
-			m_IdealActivity = (Activity)WorldGraph.m_pNodes[m_iHintNode].m_sHintActivity;
+			m_IdealActivity = static_cast<Activity>( WorldGraph.m_pNodes[m_iHintNode].m_sHintActivity );
 			break;
 		}
 	case TASK_SET_SCHEDULE:
 		{
 			Schedule_t *pNewSchedule;
 
-			pNewSchedule = GetScheduleOfType( (int)pTask->flData );
+			pNewSchedule = GetScheduleOfType( static_cast<int>( pTask->flData ) );
 
 			if( pNewSchedule )
 			{
@@ -963,7 +963,7 @@ void CBaseMonster::StartTask( Task_t *pTask )
 		}
 	case TASK_SET_ACTIVITY:
 		{
-			m_IdealActivity = (Activity)(int)pTask->flData;
+			m_IdealActivity = static_cast<Activity>( static_cast<int>( pTask->flData ) );
 			TaskComplete();
 			break;
 		}
@@ -1247,7 +1247,7 @@ void CBaseMonster::StartTask( Task_t *pTask )
 		{
 			if( m_pCine->m_iszIdle )
 			{
-				m_pCine->StartSequence( (CBaseMonster *)this, m_pCine->m_iszIdle, FALSE );
+				m_pCine->StartSequence( static_cast<CBaseMonster *>( this ), m_pCine->m_iszIdle, FALSE );
 				if( FStrEq( STRING( m_pCine->m_iszIdle ), STRING( m_pCine->m_iszPlay ) ) )
 				{
 					pev->framerate = 0;
@@ -1294,12 +1294,12 @@ void CBaseMonster::StartTask( Task_t *pTask )
 		}
 	case TASK_SUGGEST_STATE:
 		{
-			m_IdealMonsterState = (MONSTERSTATE)(int)pTask->flData;
+			m_IdealMonsterState = static_cast<MONSTERSTATE>( static_cast<int>( pTask->flData ) );
 			TaskComplete();
 			break;
 		}
 	case TASK_SET_FAIL_SCHEDULE:
-		m_failSchedule = (int)pTask->flData;
+		m_failSchedule = static_cast<int>( pTask->flData );
 		TaskComplete();
 		break;
 	case TASK_CLEAR_FAIL_SCHEDULE:
@@ -1308,7 +1308,7 @@ void CBaseMonster::StartTask( Task_t *pTask )
 		break;
 	default:
 		{
-			ALERT( at_aiconsole, "No StartTask entry for %d\n", (SHARED_TASKS)pTask->iTask );
+			ALERT( at_aiconsole, "No StartTask entry for %d\n", static_cast<SHARED_TASKS>( pTask->iTask ) );
 			break;
 		}
 	}

@@ -135,7 +135,7 @@ public:
 	void	Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE useType, float value );
 	void	KeyValue( KeyValueData *pkvd );
 
-	inline	int		Points( void ) { return (int)pev->frags; }
+	inline	int		Points( void ) { return static_cast<int>( pev->frags ); }
 	inline	BOOL	AllowNegativeScore( void ) { return pev->spawnflags & SF_SCORE_NEGATIVE; }
 	inline	BOOL	AwardToTeam( void ) { return pev->spawnflags & SF_SCORE_TEAM; }
 
@@ -643,8 +643,8 @@ public:
 	inline void CountUp( void ) { pev->frags++; }
 	inline void CountDown( void ) { pev->frags--; }
 	inline void ResetCount( void ) { pev->frags = pev->dmg; }
-	inline int CountValue( void ) { return (int)pev->frags; }
-	inline int LimitValue( void ) { return (int)pev->health; }
+	inline int CountValue( void ) { return static_cast<int>( pev->frags ); }
+	inline int LimitValue( void ) { return static_cast<int>( pev->health ); }
 
 	inline BOOL HitLimit( void ) { return CountValue() == LimitValue(); }
 
@@ -678,7 +678,7 @@ void CGameCounter::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TYPE 
 		CountDown();
 		break;
 	case USE_SET:
-		SetCountValue( (int)value );
+		SetCountValue( static_cast<int>( value ) );
 		break;
 	}
 
@@ -793,7 +793,7 @@ void CGamePlayerEquip::EquipPlayer( CBaseEntity *pEntity )
 
 	if( pEntity->IsPlayer() )
 	{
-		pPlayer = (CBasePlayer *)pEntity;
+		pPlayer = static_cast<CBasePlayer *>( pEntity );
 	}
 
 	if( !pPlayer )
@@ -863,7 +863,7 @@ void CGamePlayerTeam::Use( CBaseEntity *pActivator, CBaseEntity *pCaller, USE_TY
 		const char *pszTargetTeam = TargetTeamName( STRING(pev->target) );
 		if ( pszTargetTeam )
 		{
-			CBasePlayer *pPlayer = (CBasePlayer *)pActivator;
+			CBasePlayer *pPlayer = static_cast<CBasePlayer *>( pActivator );
 			g_pGameRules->ChangePlayerTeam( pPlayer, pszTargetTeam, ShouldKillPlayer(), ShouldGibPlayer() );
 		}
 	}

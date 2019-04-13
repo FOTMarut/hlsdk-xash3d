@@ -361,7 +361,7 @@ void CSqueakGrenade::SuperBounceTouch( CBaseEntity *pOther )
 				// m_flDie += 2.0; // add more life
 
 				// make bite sound
-				EMIT_SOUND_DYN( ENT( pev ), CHAN_WEAPON, "squeek/sqk_deploy1.wav", 1.0, ATTN_NORM, 0, (int)flpitch );
+				EMIT_SOUND_DYN( ENT( pev ), CHAN_WEAPON, "squeek/sqk_deploy1.wav", 1.0, ATTN_NORM, 0, static_cast<int>( flpitch ) );
 				m_flNextAttack = gpGlobals->time + 0.5;
 			}
 		}
@@ -390,11 +390,11 @@ void CSqueakGrenade::SuperBounceTouch( CBaseEntity *pOther )
 		float flRndSound = RANDOM_FLOAT( 0, 1 );
 
 		if( flRndSound <= 0.33 )
-			EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "squeek/sqk_hunt1.wav", 1, ATTN_NORM, 0, (int)flpitch );
+			EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "squeek/sqk_hunt1.wav", 1, ATTN_NORM, 0, static_cast<int>( flpitch ) );
 		else if( flRndSound <= 0.66 )
-			EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "squeek/sqk_hunt2.wav", 1, ATTN_NORM, 0, (int)flpitch );
+			EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "squeek/sqk_hunt2.wav", 1, ATTN_NORM, 0, static_cast<int>( flpitch ) );
 		else
-			EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "squeek/sqk_hunt3.wav", 1, ATTN_NORM, 0, (int)flpitch );
+			EMIT_SOUND_DYN( ENT( pev ), CHAN_VOICE, "squeek/sqk_hunt3.wav", 1, ATTN_NORM, 0, static_cast<int>( flpitch ) );
 		CSoundEnt::InsertSound( bits_SOUND_COMBAT, pev->origin, 256, 0.25 );
 	}
 	else

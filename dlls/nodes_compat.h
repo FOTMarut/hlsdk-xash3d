@@ -63,7 +63,7 @@ public:
 
 		other->m_di = NULL;
 
-		memcpy( (void *) &other->m_RangeStart, (void *) m_RangeStart,
+		memcpy( &other->m_RangeStart, m_RangeStart,
 				offsetof(class CGraph, m_pHashLinks) - offsetof(class CGraph, m_RangeStart) );
 
 #if 0	          // replacement routine in case a change in CGraph breaks the above memcpy

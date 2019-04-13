@@ -119,7 +119,7 @@ void CGraph::InitGraph( void )
 int CGraph::AllocNodes( void )
 {
 	//  malloc all of the nodes
-	WorldGraph.m_pNodes = (CNode *)calloc( sizeof(CNode), MAX_NODES );
+	WorldGraph.m_pNodes = static_cast<CNode *>( calloc( sizeof(CNode), MAX_NODES ) );
 
 	// could not malloc space for all the nodes!
 	if( !WorldGraph.m_pNodes )
@@ -887,7 +887,7 @@ int CGraph::FindNearestNode( const Vector &vecOrigin, int afNodeTypes )
 
 	// Check with the cache
 	//
-	ULONG iHash = ( CACHE_SIZE - 1 ) & Hash( (const void *)vecOrigin, sizeof(vecOrigin) );
+	ULONG iHash = ( CACHE_SIZE - 1 ) & Hash( vecOrigin, sizeof(vecOrigin) );
 	if( m_Cache[iHash].v == vecOrigin )
 	{
 		//ALERT( at_aiconsole, "Cache Hit.\n" );
@@ -1552,13 +1552,13 @@ void CNodeEnt::KeyValue( KeyValueData *pkvd )
 {
 	if( FStrEq( pkvd->szKeyName, "hinttype" ) )
 	{
-		m_sHintType = (short)atoi( pkvd->szValue );
+		m_sHintType = static_cast<short>( atoi( pkvd->szValue ) );
 		pkvd->fHandled = TRUE;
 	}
 
 	if( FStrEq( pkvd->szKeyName, "activity" ) )
 	{
-		m_sHintActivity = (short)atoi( pkvd->szValue );
+		m_sHintActivity = static_cast<short>( atoi( pkvd->szValue ) );
 		pkvd->fHandled = TRUE;
 	}
 	else
@@ -1694,7 +1694,7 @@ void CTestHull::BuildNodeGraph( void )
 	pev->nextthink = gpGlobals->time;
 
 	//malloc a swollen temporary connection pool that we trim down after we know exactly how many connections there are.
-	pTempPool = (CLink *)calloc( sizeof(CLink), ( WorldGraph.m_cNodes * MAX_NODE_INITIAL_LINKS ) );
+	pTempPool = static_cast<CLink *>( calloc( sizeof(CLink), ( WorldGraph.m_cNodes * MAX_NODE_INITIAL_LINKS ) ) );
 	if( !pTempPool )
 	{
 		ALERT( at_aiconsole, "**Could not malloc TempPool!\n" );
@@ -1738,7 +1738,10 @@ void CTestHull::BuildNodeGraph( void )
 		memset( WorldGraph.m_pNodes[i].m_pNextBestNode, 0, sizeof(WorldGraph.m_pNodes[i].m_pNextBestNode) );
 
 		fprintf( file, "Node#         %4d\n", i );
-		fprintf( file, "Location      %4d,%4d,%4d\n",(int)WorldGraph.m_pNodes[i].m_vecOrigin.x, (int)WorldGraph.m_pNodes[i].m_vecOrigin.y, (int)WorldGraph.m_pNodes[i].m_vecOrigin.z );
+		fprintf( file, "Location      %4d,%4d,%4d\n",
+			static_cast<int>( WorldGraph.m_pNodes[i].m_vecOrigin.x ),
+			static_cast<int>( WorldGraph.m_pNodes[i].m_vecOrigin.y ),
+			static_cast<int>( WorldGraph.m_pNodes[i].m_vecOrigin.z ) );
 		fprintf( file, "HintType:     %4d\n", WorldGraph.m_pNodes[i].m_sHintType );
 		fprintf( file, "HintActivity: %4d\n", WorldGraph.m_pNodes[i].m_sHintActivity );
 		fprintf( file, "HintYaw:      %4f\n", WorldGraph.m_pNodes[i].m_flHintYaw );
@@ -1988,7 +1991,7 @@ void CTestHull::BuildNodeGraph( void )
 	cPoolLinks -= WorldGraph.RejectInlineLinks( pTempPool, file );
 
 	// now malloc a pool just large enough to hold the links that are actually used
-	WorldGraph.m_pLinkPool = (CLink *)calloc( sizeof(CLink), cPoolLinks );
+	WorldGraph.m_pLinkPool = static_cast<CLink *>( calloc( sizeof(CLink), cPoolLinks ) );
 
 	if( !WorldGraph.m_pLinkPool )
 	{
@@ -2396,7 +2399,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 	length -= sizeof(int);
 	if( length < 0 )
 		goto ShortFile;
-	iVersion = *(int *) pMemFile;
+	iVersion = *reinterpret_cast<int *>( pMemFile );
 	pMemFile += sizeof(int);
 
 	if( iVersion == GRAPH_VERSION || iVersion == GRAPH_VERSION_RETAIL )
@@ -2433,7 +2436,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 		// Malloc for the nodes
 		//
-		m_pNodes = (CNode *)calloc( sizeof(CNode), m_cNodes );
+		m_pNodes = static_cast<CNode *>( calloc( sizeof(CNode), m_cNodes ) );
 
 		if( !m_pNodes )
 		{
@@ -2451,7 +2454,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 		// Malloc for the link pool
 		//
-		m_pLinkPool = (CLink *)calloc( sizeof(CLink), m_cLinks );
+		m_pLinkPool = static_cast<CLink *>( calloc( sizeof(CLink), m_cLinks ) );
 
 		if( !m_pLinkPool )
 		{
@@ -2483,7 +2486,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 		// Malloc for the sorting info.
 		//
-		m_di = (DIST_INFO *)calloc( sizeof(DIST_INFO), m_cNodes );
+		m_di = static_cast<DIST_INFO *>( calloc( sizeof(DIST_INFO), m_cNodes ) );
 		if( !m_di )
 		{
 			ALERT( at_aiconsole, "***ERROR**\nCouldn't malloc %d entries sorting nodes!\n", m_cNodes );
@@ -2501,7 +2504,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 		// Malloc for the routing info.
 		//
 		m_fRoutingComplete = FALSE;
-		m_pRouteInfo = (signed char *)calloc( sizeof(signed char), m_nRouteInfo );
+		m_pRouteInfo = static_cast<signed char *>( calloc( sizeof(signed char), m_nRouteInfo ) );
 		if( !m_pRouteInfo )
 		{
 			ALERT( at_aiconsole, "***ERROR**\nCouldn't malloc %d route bytes!\n", m_nRouteInfo );
@@ -2524,7 +2527,7 @@ int CGraph::FLoadGraph( const char *szMapName )
 
 		// malloc for the hash links
 		//
-		m_pHashLinks = (short *)calloc( sizeof(short), m_nHashLinks );
+		m_pHashLinks = static_cast<short *>( calloc( sizeof(short), m_nHashLinks ) );
 		if( !m_pHashLinks )
 		{
 			ALERT( at_aiconsole, "***ERROR**\nCouldn't malloc %d hash link bytes!\n", m_nHashLinks );
@@ -2947,7 +2950,7 @@ void CGraph::BuildLinkLookups( void )
 	m_nHashLinks = 3 * m_cLinks / 2 + 3;
 
 	HashChoosePrimes( m_nHashLinks );
-	m_pHashLinks = (short *)calloc( sizeof(short), m_nHashLinks );
+	m_pHashLinks = static_cast<short *>( calloc( sizeof(short), m_nHashLinks ) );
 	if( !m_pHashLinks )
 	{
 		ALERT( at_aiconsole, "Couldn't allocated Link Lookup Table.\n" );
@@ -2985,7 +2988,7 @@ void CGraph::BuildRegionTables( void )
 
 	// Go ahead and setup for range searching the nodes for FindNearestNodes
 	//
-	m_di = (DIST_INFO *)calloc( sizeof(DIST_INFO), m_cNodes );
+	m_di = static_cast<DIST_INFO *>( calloc( sizeof(DIST_INFO), m_cNodes ) );
 	if( !m_di )
 	{
 		ALERT( at_aiconsole, "Couldn't allocated node ordering array.\n" );
@@ -3390,7 +3393,7 @@ void CGraph::ComputeStaticRoutingTables( void )
 						}
 						else
 						{
-							signed char *Tmp = (signed char *)calloc( sizeof(signed char), ( m_nRouteInfo + nRoute ) );
+							signed char *Tmp = static_cast<signed char *>( calloc( sizeof(signed char), ( m_nRouteInfo + nRoute ) ) );
 							memcpy( Tmp, m_pRouteInfo, m_nRouteInfo );
 							free( m_pRouteInfo );
 							m_pRouteInfo = Tmp;
@@ -3403,7 +3406,7 @@ void CGraph::ComputeStaticRoutingTables( void )
 					else
 					{
 						m_nRouteInfo = nRoute;
-						m_pRouteInfo = (signed char *)calloc( sizeof(signed char), nRoute );
+						m_pRouteInfo = static_cast<signed char *>( calloc( sizeof(signed char), nRoute ) );
 						memcpy( m_pRouteInfo, pRoute, nRoute );
 						m_pNodes[iFrom].m_pNextBestNode[iHull][iCap] = 0;
 						nTotalCompressedSize += CompressedSize;

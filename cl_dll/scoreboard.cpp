@@ -418,7 +418,7 @@ int CHudScoreboard::DrawPlayers( int xpos_rel, float list_slot, int nameoffset, 
 			else
 			{
 				// Highlight the killers name - overlay the background in red,  then draw the score text over it
-				FillRGBA( xpos - 5, ypos, FAR_RIGHT, ROW_GAP, 255, 0, 0, ( (float)15 * (float)( m_fLastKillTime - gHUD.m_flTime ) ) );
+				FillRGBA( xpos - 5, ypos, FAR_RIGHT, ROW_GAP, 255, 0, 0, ( 15.0f * ( float( m_fLastKillTime ) - gHUD.m_flTime ) ) );
 			}
 		}
 		else if( pl_info->thisplayer ) // if it is their name, draw it a different color

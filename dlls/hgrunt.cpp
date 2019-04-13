@@ -54,18 +54,18 @@ extern DLL_GLOBAL int		g_iSkillLevel;
 #define HGRUNT_LIMP_HEALTH				20
 #define HGRUNT_DMG_HEADSHOT				( DMG_BULLET | DMG_CLUB )	// damage types that can kill a grunt with a single headshot.
 #define HGRUNT_NUM_HEADS				2 // how many grunt heads are there? 
-#define HGRUNT_MINIMUM_HEADSHOT_DAMAGE			15 // must do at least this much damage in one shot to head to score a headshot kill
-#define	HGRUNT_SENTENCE_VOLUME				(float)0.35 // volume of grunt sentences
+#define HGRUNT_MINIMUM_HEADSHOT_DAMAGE	15 // must do at least this much damage in one shot to head to score a headshot kill
+#define	HGRUNT_SENTENCE_VOLUME			0.35f // volume of grunt sentences
 
 #define HGRUNT_9MMAR				( 1 << 0)
 #define HGRUNT_HANDGRENADE			( 1 << 1)
-#define HGRUNT_GRENADELAUNCHER			( 1 << 2)
+#define HGRUNT_GRENADELAUNCHER		( 1 << 2)
 #define HGRUNT_SHOTGUN				( 1 << 3)
 
 #define HEAD_GROUP					1
 #define HEAD_GRUNT					0
-#define HEAD_COMMANDER					1
-#define HEAD_SHOTGUN					2
+#define HEAD_COMMANDER				1
+#define HEAD_SHOTGUN				2
 #define HEAD_M203					3
 #define GUN_GROUP					2
 #define GUN_MP5						0
@@ -81,9 +81,9 @@ extern DLL_GLOBAL int		g_iSkillLevel;
 #define		HGRUNT_AE_BURST2		( 5 ) 
 #define		HGRUNT_AE_BURST3		( 6 ) 
 #define		HGRUNT_AE_GREN_TOSS		( 7 )
-#define		HGRUNT_AE_GREN_LAUNCH		( 8 )
+#define		HGRUNT_AE_GREN_LAUNCH	( 8 )
 #define		HGRUNT_AE_GREN_DROP		( 9 )
-#define		HGRUNT_AE_CAUGHT_ENEMY		( 10 ) // grunt established sight with an enemy (player only) that had previously eluded the squad.
+#define		HGRUNT_AE_CAUGHT_ENEMY	( 10 ) // grunt established sight with an enemy (player only) that had previously eluded the squad.
 #define		HGRUNT_AE_DROP_GUN		( 11 ) // grunt (probably dead) is dropping his mp5.
 
 //=========================================================

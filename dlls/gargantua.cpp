@@ -114,7 +114,7 @@ void CStomp::Spawn( void )
 	pev->model = MAKE_STRING( GARG_STOMP_SPRITE_NAME );
 	pev->rendermode = kRenderTransTexture;
 	pev->renderamt = 0;
-	EMIT_SOUND_DYN( edict(), CHAN_BODY, GARG_STOMP_BUZZ_SOUND, 1, ATTN_NORM, 0, PITCH_NORM * 0.55 );
+	EMIT_SOUND_DYN( edict(), CHAN_BODY, GARG_STOMP_BUZZ_SOUND, 1.0f, ATTN_NORM, 0, static_cast<int>( PITCH_NORM * 0.55f ) );
 }
 
 #define	STOMP_INTERVAL		0.025

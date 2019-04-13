@@ -208,7 +208,7 @@ void CHalfLifeMultiplay::Think( void )
 	if( g_fGameOver )   // someone else quit the game already
 	{
 		// bounds check
-		int time = (int)CVAR_GET_FLOAT( "mp_chattime" );
+		int time = static_cast<int>( CVAR_GET_FLOAT( "mp_chattime" ) );
 		if( time < 1 )
 			CVAR_SET_STRING( "mp_chattime", "1" );
 		else if( time > MAX_INTERMISSION_TIME )
@@ -230,7 +230,7 @@ void CHalfLifeMultiplay::Think( void )
 	float flTimeLimit = timelimit.value * 60;
 	float flFragLimit = fraglimit.value;
 
-	time_remaining = (int)( flTimeLimit ? ( flTimeLimit - gpGlobals->time ) : 0);
+	time_remaining = static_cast<int>( flTimeLimit ? ( flTimeLimit - gpGlobals->time ) : 0);
 
 	if( flTimeLimit != 0 && gpGlobals->time >= flTimeLimit )
 	{
@@ -256,7 +256,7 @@ void CHalfLifeMultiplay::Think( void )
 
 			if( pPlayer )
 			{
-				remain = (int)( flFragLimit - pPlayer->pev->frags );
+				remain = static_cast<int>( flFragLimit - pPlayer->pev->frags );
 				if( remain < bestfrags )
 				{
 					bestfrags = remain;
@@ -461,13 +461,13 @@ void CHalfLifeMultiplay::InitHUD( CBasePlayer *pl )
 	for( int i = 1; i <= gpGlobals->maxClients; i++ )
 	{
 		// FIXME:  Probably don't need to cast this just to read m_iDeaths
-		CBasePlayer *plr = (CBasePlayer *)UTIL_PlayerByIndex( i );
+		CBasePlayer *plr = static_cast<CBasePlayer *>( UTIL_PlayerByIndex( i ) );
 
 		if( plr )
 		{
 			MESSAGE_BEGIN( MSG_ONE, gmsgScoreInfo, NULL, pl->edict() );
 				WRITE_BYTE( i );	// client number
-				WRITE_SHORT( (int)plr->pev->frags );
+				WRITE_SHORT( static_cast<int>( plr->pev->frags ) );
 				WRITE_SHORT( plr->m_iDeaths );
 				WRITE_SHORT( 0 );
 				WRITE_SHORT( GetTeamIndex( plr->m_szTeamName ) + 1 );
@@ -488,7 +488,7 @@ void CHalfLifeMultiplay::ClientDisconnected( edict_t *pClient )
 {
 	if( pClient )
 	{
-		CBasePlayer *pPlayer = (CBasePlayer *)CBaseEntity::Instance( pClient );
+		CBasePlayer *pPlayer = static_cast<CBasePlayer *>( CBaseEntity::Instance( pClient ) );
 
 		if( pPlayer )
 		{
@@ -521,7 +521,7 @@ void CHalfLifeMultiplay::ClientDisconnected( edict_t *pClient )
 //=========================================================
 float CHalfLifeMultiplay::FlPlayerFallDamage( CBasePlayer *pPlayer )
 {
-	int iFallDamage = (int)falldamage.value;
+	int iFallDamage = static_cast<int>( falldamage.value );
 
 	switch( iFallDamage )
 	{
@@ -628,7 +628,7 @@ void CHalfLifeMultiplay::PlayerKilled( CBasePlayer *pVictim, entvars_t *pKiller,
 	CBasePlayer *peKiller = NULL;
 	CBaseEntity *ktmp = CBaseEntity::Instance( pKiller );
 	if( ktmp && (ktmp->Classify() == CLASS_PLAYER ) )
-		peKiller = (CBasePlayer*)ktmp;
+		peKiller = static_cast<CBasePlayer*>( ktmp );
 
 	if( pVictim->pev == pKiller )
 	{
@@ -652,7 +652,7 @@ void CHalfLifeMultiplay::PlayerKilled( CBasePlayer *pVictim, entvars_t *pKiller,
 	// killed scores
 	MESSAGE_BEGIN( MSG_ALL, gmsgScoreInfo );
 		WRITE_BYTE( ENTINDEX(pVictim->edict()) );
-		WRITE_SHORT( (int)pVictim->pev->frags );
+		WRITE_SHORT( static_cast<int>( pVictim->pev->frags ) );
 		WRITE_SHORT( pVictim->m_iDeaths );
 		WRITE_SHORT( 0 );
 		WRITE_SHORT( GetTeamIndex( pVictim->m_szTeamName ) + 1 );
@@ -662,11 +662,11 @@ void CHalfLifeMultiplay::PlayerKilled( CBasePlayer *pVictim, entvars_t *pKiller,
 	CBaseEntity *ep = CBaseEntity::Instance( pKiller );
 	if( ep && ep->Classify() == CLASS_PLAYER )
 	{
-		CBasePlayer *PK = (CBasePlayer*)ep;
+		CBasePlayer *PK = static_cast<CBasePlayer*>( ep );
 
 		MESSAGE_BEGIN( MSG_ALL, gmsgScoreInfo );
 			WRITE_BYTE( ENTINDEX( PK->edict() ) );
-			WRITE_SHORT( (int)PK->pev->frags );
+			WRITE_SHORT( static_cast<int>( PK->pev->frags ) );
 			WRITE_SHORT( PK->m_iDeaths );
 			WRITE_SHORT( 0 );
 			WRITE_SHORT( GetTeamIndex( PK->m_szTeamName ) + 1 );
@@ -701,7 +701,7 @@ void CHalfLifeMultiplay::DeathNotice( CBasePlayer *pVictim, entvars_t *pKiller, 
 			if( pevInflictor == pKiller )
 			{
 				// If the inflictor is the killer,  then it must be their current weapon doing the damage
-				CBasePlayer *pPlayer = (CBasePlayer*)CBaseEntity::Instance( pKiller );
+				CBasePlayer *pPlayer = static_cast<CBasePlayer*>( CBaseEntity::Instance( pKiller ) );
 
 				if( pPlayer->m_pActiveItem )
 				{
@@ -1147,13 +1147,13 @@ void CHalfLifeMultiplay::GoToIntermission( void )
 	MESSAGE_END();
 
 	// bounds check
-	int time = (int)CVAR_GET_FLOAT( "mp_chattime" );
+	int time = static_cast<int>( CVAR_GET_FLOAT( "mp_chattime" ) );
 	if( time < 1 )
 		CVAR_SET_STRING( "mp_chattime", "1" );
 	else if( time > MAX_INTERMISSION_TIME )
 		CVAR_SET_STRING( "mp_chattime", UTIL_dtos1( MAX_INTERMISSION_TIME ) );
 
-	m_flIntermissionEndTime = gpGlobals->time + ( (int)mp_chattime.value );
+	m_flIntermissionEndTime = gpGlobals->time + ( static_cast<int>( mp_chattime.value ) );
 	g_flIntermissionStartTime = gpGlobals->time;
 
 	g_fGameOver = TRUE;
@@ -1318,8 +1318,8 @@ int ReloadMapCycleFile( const char *filename, mapcycle_t *cycle )
 {
 	char szMap[32];
 	int length;
-	const char *pFileList;
-	const char *aFileList = pFileList = (const char *)LOAD_FILE_FOR_ME( filename, &length );
+	char *aFileList = reinterpret_cast<char *>( LOAD_FILE_FOR_ME( filename, &length ) );
+	const char *pFileList = aFileList;
 	int hasbuffer;
 	mapcycle_item_s *item, *newlist = NULL, *next;
 
@@ -1352,8 +1352,6 @@ int ReloadMapCycleFile( const char *filename, mapcycle_t *cycle )
 			if( IS_MAP_VALID( szMap ) )
 			{
 				// Create entry
-				char *s;
-
 				item = new mapcycle_item_s;
 
 				strcpy( item->mapname, szMap );
@@ -1365,7 +1363,7 @@ int ReloadMapCycleFile( const char *filename, mapcycle_t *cycle )
 
 				if( hasbuffer )
 				{
-					s = g_engfuncs.pfnInfoKeyValue( szBuffer, "minplayers" );
+					char *s = g_engfuncs.pfnInfoKeyValue( szBuffer, "minplayers" );
 					if( s && s[0] )
 					{
 						item->minplayers = atoi( s );
@@ -1397,7 +1395,7 @@ int ReloadMapCycleFile( const char *filename, mapcycle_t *cycle )
 			}
 		}
 
-		FREE_FILE( (void*)aFileList );
+		FREE_FILE( aFileList );
 	}
 
 	// Fixup circular list pointer
@@ -1651,8 +1649,8 @@ void CHalfLifeMultiplay::SendMOTDToClient( edict_t *client )
 {
 	// read from the MOTD.txt file
 	int length, char_count = 0;
-	char *pFileList;
-	char *aFileList = pFileList = (char*)LOAD_FILE_FOR_ME( CVAR_GET_STRING( "motdfile" ), &length );
+	char *pFileList, *aFileList;
+	pFileList = aFileList = reinterpret_cast<char *>( LOAD_FILE_FOR_ME( CVAR_GET_STRING( "motdfile" ), &length ) );
 
 	// send the server name
 	MESSAGE_BEGIN( MSG_ONE, gmsgServerName, NULL, client );
@@ -1688,5 +1686,5 @@ void CHalfLifeMultiplay::SendMOTDToClient( edict_t *client )
 		MESSAGE_END();
 	}
 
-	FREE_FILE( (void*)aFileList );
+	FREE_FILE( aFileList );
 }

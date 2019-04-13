@@ -137,7 +137,7 @@ SpawnBlood
 */
 void SpawnBlood( Vector vecSpot, int bloodColor, float flDamage )
 {
-	UTIL_BloodDrips( vecSpot, g_vecAttackDir, bloodColor, (int)flDamage );
+	UTIL_BloodDrips( vecSpot, g_vecAttackDir, bloodColor, static_cast<int>( flDamage ) );
 }
 
 int DamageDecal( CBaseEntity *pEntity, int bitsDamageType )
@@ -265,7 +265,7 @@ void UTIL_PrecacheOtherWeapon( const char *szClassname )
 	{
 		ItemInfo II = {0};
 		pEntity->Precache();
-		if( ( (CBasePlayerItem*)pEntity )->GetItemInfo( &II ) )
+		if( static_cast<CBasePlayerItem*>( pEntity )->GetItemInfo( &II ) )
 		{
 			CBasePlayerItem::ItemInfoArray[II.iId] = II;
 
@@ -563,7 +563,7 @@ void CBasePlayerItem::DefaultTouch( CBaseEntity *pOther )
 	if( !pOther->IsPlayer() )
 		return;
 
-	CBasePlayer *pPlayer = (CBasePlayer *)pOther;
+	CBasePlayer *pPlayer = static_cast<CBasePlayer *>( pOther );
 
 	// can I have this?
 	if( !g_pGameRules->CanHavePlayerItem( pPlayer, this ) )
@@ -741,12 +741,12 @@ int CBasePlayerWeapon::AddDuplicate( CBasePlayerItem *pOriginal )
 {
 	if( m_iDefaultAmmo )
 	{
-		return ExtractAmmo( (CBasePlayerWeapon *)pOriginal );
+		return ExtractAmmo( static_cast<CBasePlayerWeapon *>( pOriginal ) );
 	}
 	else
 	{
 		// a dead player dropped this.
-		return ExtractClipAmmo( (CBasePlayerWeapon *)pOriginal );
+		return ExtractClipAmmo( static_cast<CBasePlayerWeapon *>( pOriginal ) );
 	}
 }
 
@@ -838,7 +838,7 @@ void CBasePlayerWeapon::SendWeaponAnim( int iAnim, int skiplocal, int body )
 	MESSAGE_END();
 }
 
-BOOL CBasePlayerWeapon::AddPrimaryAmmo( int iCount, char *szName, int iMaxClip, int iMaxCarry )
+BOOL CBasePlayerWeapon::AddPrimaryAmmo( int iCount, const char *szName, int iMaxClip, int iMaxCarry )
 {
 	int iIdAmmo;
 
@@ -875,7 +875,7 @@ BOOL CBasePlayerWeapon::AddPrimaryAmmo( int iCount, char *szName, int iMaxClip, 
 	return iIdAmmo > 0 ? TRUE : FALSE;
 }
 
-BOOL CBasePlayerWeapon::AddSecondaryAmmo( int iCount, char *szName, int iMax )
+BOOL CBasePlayerWeapon::AddSecondaryAmmo( int iCount, const char *szName, int iMax )
 {
 	int iIdAmmo;
 
@@ -1099,13 +1099,13 @@ int CBasePlayerWeapon::ExtractAmmo( CBasePlayerWeapon *pWeapon )
 	{
 		// blindly call with m_iDefaultAmmo. It's either going to be a value or zero. If it is zero,
 		// we only get the ammo in the weapon's clip, which is what we want. 
-		iReturn = pWeapon->AddPrimaryAmmo( m_iDefaultAmmo, (char *)pszAmmo1(), iMaxClip(), iMaxAmmo1() );
+		iReturn = pWeapon->AddPrimaryAmmo( m_iDefaultAmmo, pszAmmo1(), iMaxClip(), iMaxAmmo1() );
 		m_iDefaultAmmo = 0;
 	}
 
 	if( pszAmmo2() != NULL )
 	{
-		iReturn = pWeapon->AddSecondaryAmmo( 0, (char *)pszAmmo2(), iMaxAmmo2() );
+		iReturn = pWeapon->AddSecondaryAmmo( 0, pszAmmo2(), iMaxAmmo2() );
 	}
 
 	return iReturn;
@@ -1127,7 +1127,7 @@ int CBasePlayerWeapon::ExtractClipAmmo( CBasePlayerWeapon *pWeapon )
 		iAmmo = m_iClip;
 	}
 
-	return pWeapon->m_pPlayer->GiveAmmo( iAmmo, (char *)pszAmmo1(), iMaxAmmo1() ); // , &m_iPrimaryAmmoType
+	return pWeapon->m_pPlayer->GiveAmmo( iAmmo, pszAmmo1(), iMaxAmmo1() ); // , &m_iPrimaryAmmoType
 }
 	
 //=========================================================
@@ -1300,7 +1300,7 @@ void CWeaponBox::Touch( CBaseEntity *pOther )
 		return;
 	}
 
-	CBasePlayer *pPlayer = (CBasePlayer *)pOther;
+	CBasePlayer *pPlayer = static_cast<CBasePlayer *>( pOther );
 	int i;
 
 	// dole out ammo
@@ -1326,7 +1326,7 @@ void CWeaponBox::Touch( CBaseEntity *pOther )
 					}
 				}
 				if (!foundWeapon) {
-					CBasePlayerWeapon* weapon = (CBasePlayerWeapon*)Create(weaponName, pev->origin, pev->angles);
+					CBasePlayerWeapon* weapon = static_cast<CBasePlayerWeapon*>( Create(weaponName, pev->origin, pev->angles) );
 					if (weapon) {
 						weapon->pev->spawnflags |= SF_NORESPAWN;
 						weapon->m_iDefaultAmmo = 0;

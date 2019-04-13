@@ -162,9 +162,9 @@ void CEnvLight::KeyValue( KeyValueData* pkvd )
 		}
 
 		// simulate qrad direct, ambient,and gamma adjustments, as well as engine scaling
-		r = (int)( pow( r / 114.0, 0.6 ) * 264.0 );
-		g = (int)( pow( g / 114.0, 0.6 ) * 264.0 );
-		b = (int)( pow( b / 114.0, 0.6 ) * 264.0 );
+		r = static_cast<int>( pow( r / 114.0, 0.6 ) * 264.0 );
+		g = static_cast<int>( pow( g / 114.0, 0.6 ) * 264.0 );
+		b = static_cast<int>( pow( b / 114.0, 0.6 ) * 264.0 );
 
 		pkvd->fHandled = TRUE;
 		sprintf( szColor, "%d", r );

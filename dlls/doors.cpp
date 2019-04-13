@@ -419,14 +419,14 @@ void CBaseDoor::Precache( void )
 	// get door button sounds, for doors which are directly 'touched' to open
 	if( m_bLockedSound )
 	{
-		pszSound = ButtonSound( (int)m_bLockedSound );
+		pszSound = ButtonSound( m_bLockedSound );
 		PRECACHE_SOUND( pszSound );
 		m_ls.sLockedSound = MAKE_STRING( pszSound );
 	}
 
 	if( m_bUnlockedSound )
 	{
-		pszSound = ButtonSound( (int)m_bUnlockedSound );
+		pszSound = ButtonSound( m_bUnlockedSound );
 		PRECACHE_SOUND( pszSound );
 		m_ls.sUnlockedSound = MAKE_STRING( pszSound );
 	}
@@ -742,7 +742,7 @@ void CBaseDoor::Blocked( CBaseEntity *pOther )
 	{
 		// Detonate satchels
 		if( !strcmp( "monster_satchel", STRING( pOther->pev->classname ) ) )
-			( (CSatchel*)pOther )->Use( this, this, USE_ON, 0 );
+			( static_cast<CSatchel*>( pOther ) )->Use( this, this, USE_ON, 0 );
 	}
 
 	// if a door has a negative wait, it would never come back if blocked,

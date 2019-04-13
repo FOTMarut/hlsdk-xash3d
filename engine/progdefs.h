@@ -13,21 +13,21 @@
 *
 ****/
 
-#ifndef CONST_H
-#include "const.h"
-#else
-
 #pragma once
 #ifndef PROGDEFS_H
 #define PROGDEFS_H
+
+#include "const.h"
+
+typedef struct saverestore_s SAVERESTOREDATA;
 
 typedef struct
 {	
 	float		time;
 	float		frametime;
 	float		force_retouch;
-	string_t		mapname;
-	string_t		startspot;
+	string_t	mapname;
+	string_t	startspot;
 	float		deathmatch;
 	float		coop;
 	float		teamplay;
@@ -45,22 +45,22 @@ typedef struct
 	edict_t		*trace_ent;
 	float		trace_inopen;
 	float		trace_inwater;
-	int		trace_hitgroup;
-	int		trace_flags;
-	int		changelevel;	// transition in progress when true (was msg_entity)
-	int		cdAudioTrack;
-	int		maxClients;
-	int		maxEntities;
+	int			trace_hitgroup;
+	int			trace_flags;
+	int			changelevel;	// transition in progress when true (was msg_entity)
+	int			cdAudioTrack;
+	int			maxClients;
+	int			maxEntities;
 	const char	*pStringBase;
 
-	void		*pSaveData;	// (SAVERESTOREDATA *) pointer
+	SAVERESTOREDATA *pSaveData;
 	vec3_t		vecLandmarkOffset;
 } globalvars_t;
 
 typedef struct entvars_s
 {
-	string_t		classname;
-	string_t		globalname;
+	string_t	classname;
+	string_t	globalname;
 	
 	vec3_t		origin;
 	vec3_t		oldorigin;
@@ -73,7 +73,7 @@ typedef struct entvars_s
 	vec3_t		angles;		// Model angles
 	vec3_t		avelocity;	// angle velocity (degrees per second)
 	vec3_t		punchangle;	// auto-decaying view angle adjustment
-	vec3_t		v_angle;		// Viewing angle (player only)
+	vec3_t		v_angle;	// Viewing angle (player only)
 
 	// For parametric entities
 	vec3_t		endpos;
@@ -81,17 +81,17 @@ typedef struct entvars_s
 	float		impacttime;
 	float		starttime;
 
-	int		fixangle;		// 0:nothing, 1:force view angles, 2:add avelocity
+	int			fixangle;		// 0:nothing, 1:force view angles, 2:add avelocity
 	float		idealpitch;
 	float		pitch_speed;
 	float		ideal_yaw;
 	float		yaw_speed;
 
-	int		modelindex;
+	int			modelindex;
 
-	string_t		model;
-	int		viewmodel;	// player's viewmodel
-	int		weaponmodel;	// what other players see
+	string_t	model;
+	int			viewmodel;	// player's viewmodel
+	int			weaponmodel;	// what other players see
 
 	vec3_t		absmin;		// BB max translated to world coord
 	vec3_t		absmax;		// BB max translated to world coord
@@ -102,19 +102,19 @@ typedef struct entvars_s
 	float		ltime;
 	float		nextthink;
 
-	int		movetype;
-	int		solid;
+	int			movetype;
+	int			solid;
 
-	int		skin;
-	int		body;		// sub-model selection for studiomodels
+	int			skin;
+	int			body;		// sub-model selection for studiomodels
 	int 		effects;
 	float		gravity;		// % of "normal" gravity
 	float		friction;		// inverse elasticity of MOVETYPE_BOUNCE
 
-	int		light_level;
+	int			light_level;
 
-	int		sequence;		// animation sequence
-	int		gaitsequence;	// movement animation sequence for player (0 for none)
+	int			sequence;		// animation sequence
+	int			gaitsequence;	// movement animation sequence for player (0 for none)
 	float		frame;		// % playback position in animation sequences (0..255)
 	float		animtime;		// world time when frame was set
 	float		framerate;	// animation playback rate (-8x to 8x)
@@ -122,21 +122,21 @@ typedef struct entvars_s
 	byte		blending[2];	// blending amount between sub-sequences (0..255)
 
 	float		scale;		// sprites and models rendering scale (0..255)
-	int		rendermode;
+	int			rendermode;
 	float		renderamt;
 	vec3_t		rendercolor;
-	int		renderfx;
+	int			renderfx;
 
 	float		health;
 	float		frags;
-	int		weapons;		// bit mask for available weapons
+	int			weapons;		// bit mask for available weapons
 	float		takedamage;
 
-	int		deadflag;
+	int			deadflag;
 	vec3_t		view_ofs;		// eye position
 
-	int		button;
-	int		impulse;
+	int			button;
+	int			impulse;
 
 	edict_t		*chain;		// Entity pointer when linked into a linked list
 	edict_t		*dmg_inflictor;
@@ -145,33 +145,33 @@ typedef struct entvars_s
 	edict_t		*owner;
 	edict_t		*groundentity;
 
-	int		spawnflags;
-	int		flags;
+	int			spawnflags;
+	int			flags;
 	
-	int		colormap;		// lowbyte topcolor, highbyte bottomcolor
-	int		team;
+	int			colormap;		// lowbyte topcolor, highbyte bottomcolor
+	int			team;
 
 	float		max_health;
 	float		teleport_time;
 	float		armortype;
 	float		armorvalue;
-	int		waterlevel;
-	int		watertype;
+	int			waterlevel;
+	int			watertype;
 
-	string_t		target;
-	string_t		targetname;
-	string_t		netname;
-	string_t		message;
+	string_t	target;
+	string_t	targetname;
+	string_t	netname;
+	string_t	message;
 
 	float		dmg_take;
 	float		dmg_save;
 	float		dmg;
 	float		dmgtime;
 
-	string_t		noise;
-	string_t		noise1;
-	string_t		noise2;
-	string_t		noise3;
+	string_t	noise;
+	string_t	noise1;
+	string_t	noise2;
+	string_t	noise3;
 
 	float		speed;
 	float		air_finished;
@@ -180,32 +180,32 @@ typedef struct entvars_s
 
 	edict_t		*pContainingEntity;
 
-	int		playerclass;
+	int			playerclass;
 	float		maxspeed;
 
 	float		fov;
-	int		weaponanim;
+	int			weaponanim;
 
-	int		pushmsec;
+	int			pushmsec;
 
-	int		bInDuck;
-	int		flTimeStepSound;
-	int		flSwimTime;
-	int		flDuckTime;
-	int		iStepLeft;
+	int			bInDuck;
+	int			flTimeStepSound;
+	int			flSwimTime;
+	int			flDuckTime;
+	int			iStepLeft;
 	float		flFallVelocity;
 
-	int		gamestate;
+	int			gamestate;
 
-	int		oldbuttons;
+	int			oldbuttons;
 
-	int		groupinfo;
+	int			groupinfo;
 
 	// For mods
-	int		iuser1;
-	int		iuser2;
-	int		iuser3;
-	int		iuser4;
+	int			iuser1;
+	int			iuser2;
+	int			iuser3;
+	int			iuser4;
 	float		fuser1;
 	float		fuser2;
 	float		fuser3;
@@ -223,5 +223,3 @@ typedef struct entvars_s
 #include "edict.h"
 
 #endif//PROGDEFS_H
-
-#endif // CONST_H

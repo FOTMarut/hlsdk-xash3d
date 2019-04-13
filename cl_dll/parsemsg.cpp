@@ -28,7 +28,7 @@ void BEGIN_READ( void *buf, int size )
 	giRead = 0;
 	giBadRead = 0;
 	giSize = size;
-	gpBuf = (byte*)buf;
+	gpBuf = static_cast<byte*>( buf );
 }
 
 int READ_CHAR( void )
@@ -41,7 +41,7 @@ int READ_CHAR( void )
 		return -1;
 	}
 
-	c = (signed char)gpBuf[giRead];
+	c = static_cast<signed char>( gpBuf[giRead] );
 	giRead++;
 
 	return c;
@@ -57,7 +57,7 @@ int READ_BYTE( void )
 		return -1;
 	}
 		
-	c = (unsigned char)gpBuf[giRead];
+	c = static_cast<unsigned char>( gpBuf[giRead] );
 	giRead++;
 	
 	return c;
@@ -73,7 +73,7 @@ int READ_SHORT( void )
 		return -1;
 	}
 
-	c = (short)( gpBuf[giRead] + ( gpBuf[giRead + 1] << 8 ) );
+	c = static_cast<short>( gpBuf[giRead] + ( gpBuf[giRead + 1] << 8 ) );
 
 	giRead += 2;
 
@@ -140,7 +140,7 @@ char* READ_STRING( void )
 			break;
 		string[l] = c;
 		l++;
-	} while( l < (int) sizeof(string) - 1 );
+	} while( l < int( sizeof(string) ) - 1 );
 
 	string[l] = 0;
 
@@ -149,15 +149,15 @@ char* READ_STRING( void )
 
 float READ_COORD( void )
 {
-	return (float)( READ_SHORT() * ( 1.0 / 8 ) );
+	return float( READ_SHORT() ) * ( 1.0 / 8.0f );
 }
 
 float READ_ANGLE( void )
 {
-	return (float)( READ_CHAR() * ( 360.0 / 256 ) );
+	return float( READ_CHAR() ) * ( 360.0 / 256.0f );
 }
 
 float READ_HIRESANGLE( void )
 {
-	return (float)( READ_SHORT() * ( 360.0 / 65536 ) );
+	return float( READ_SHORT() ) * ( 360.0 / 65536.0f );
 }

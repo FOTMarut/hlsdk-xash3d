@@ -32,24 +32,12 @@ typedef unsigned char byte;
 #include "eiface.h"
 
 #include "studio.h"
-
-#ifndef ACTIVITY_H
 #include "activity.h"
-#endif
-
 #include "activitymap.h"
-
-#ifndef ANIMATION_H
 #include "animation.h"
-#endif
-
-#ifndef SCRIPTEVENT_H
 #include "scriptevent.h"
-#endif
-
-#ifndef ENGINECALLBACK_H
 #include "enginecallback.h"
-#endif
+#include "vector.h"
 
 extern globalvars_t				*gpGlobals;
 
@@ -59,15 +47,11 @@ extern globalvars_t				*gpGlobals;
 
 int ExtractBbox( void *pmodel, int sequence, Vector &mins, Vector &maxs )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return 0;
 
-	mstudioseqdesc_t *pseqdesc;
-
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex );
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex );
 
 	mins = pseqdesc[sequence].bbmin;
 	maxs = pseqdesc[sequence].bbmax;
@@ -77,15 +61,11 @@ int ExtractBbox( void *pmodel, int sequence, Vector &mins, Vector &maxs )
 
 int LookupActivity( void *pmodel, entvars_t *pev, int activity )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return 0;
 
-	mstudioseqdesc_t *pseqdesc;
-
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex );
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex );
 
 	int weighttotal = 0;
 	int seq = ACTIVITY_NOT_AVAILABLE;
@@ -104,15 +84,11 @@ int LookupActivity( void *pmodel, entvars_t *pev, int activity )
 
 int LookupActivityHeaviest( void *pmodel, entvars_t *pev, int activity )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return 0;
 
-	mstudioseqdesc_t *pseqdesc;
-
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex );
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex );
 
 	int weight = 0;
 	int seq = ACTIVITY_NOT_AVAILABLE;
@@ -133,9 +109,7 @@ int LookupActivityHeaviest( void *pmodel, entvars_t *pev, int activity )
 
 void GetEyePosition( void *pmodel, Vector &vecEyePosition )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 
 	if( !pstudiohdr )
 	{
@@ -148,15 +122,11 @@ void GetEyePosition( void *pmodel, Vector &vecEyePosition )
 
 int LookupSequence( void *pmodel, const char *label )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return 0;
 
-	mstudioseqdesc_t *pseqdesc;
-
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex );
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex );
 
 	for( int i = 0; i < pstudiohdr->numseq; i++ )
 	{
@@ -179,17 +149,12 @@ void SequencePrecache( void *pmodel, const char *pSequenceName )
 	int index = LookupSequence( pmodel, pSequenceName );
 	if( index >= 0 )
 	{
-		studiohdr_t *pstudiohdr;
-
-		pstudiohdr = (studiohdr_t *)pmodel;
+		studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 		if( !pstudiohdr || index >= pstudiohdr->numseq )
 			return;
 
-		mstudioseqdesc_t *pseqdesc;
-		mstudioevent_t *pevent;
-
-		pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex ) + index;
-		pevent = (mstudioevent_t *)( (byte *)pstudiohdr + pseqdesc->eventindex );
+		mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex ) + index;
+		mstudioevent_t *pevent     = reinterpret_cast<mstudioevent_t *>(   reinterpret_cast<byte *>( pstudiohdr ) + pseqdesc->eventindex );
 
 		for( int i = 0; i < pseqdesc->numevents; i++ )
 		{
@@ -214,76 +179,64 @@ void SequencePrecache( void *pmodel, const char *pSequenceName )
 
 void GetSequenceInfo( void *pmodel, entvars_t *pev, float *pflFrameRate, float *pflGroundSpeed )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return;
 
-	mstudioseqdesc_t *pseqdesc;
-
 	if( pev->sequence >= pstudiohdr->numseq )
 	{
-		*pflFrameRate = 0.0;
-		*pflGroundSpeed = 0.0;
+		*pflFrameRate = 0.0f;
+		*pflGroundSpeed = 0.0f;
 		return;
 	}
 
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex ) + (int)pev->sequence;
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex ) + pev->sequence;
 
 	if( pseqdesc->numframes > 1 )
 	{
-		*pflFrameRate = 256 * pseqdesc->fps / ( pseqdesc->numframes - 1 );
-		*pflGroundSpeed = sqrt( pseqdesc->linearmovement[0] * pseqdesc->linearmovement[0] + pseqdesc->linearmovement[1] * pseqdesc->linearmovement[1] + pseqdesc->linearmovement[2] * pseqdesc->linearmovement[2] );
+		*pflFrameRate = 256.0f * pseqdesc->fps / ( pseqdesc->numframes - 1 );
+		*pflGroundSpeed = pseqdesc->linearmovement.Length();
 		*pflGroundSpeed = *pflGroundSpeed * pseqdesc->fps / ( pseqdesc->numframes - 1 );
 	}
 	else
 	{
-		*pflFrameRate = 256.0;
-		*pflGroundSpeed = 0.0;
+		*pflFrameRate = 256.0f;
+		*pflGroundSpeed = 0.0f;
 	}
 }
 
 int GetSequenceFlags( void *pmodel, entvars_t *pev )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr || pev->sequence >= pstudiohdr->numseq )
 		return 0;
 
-	mstudioseqdesc_t *pseqdesc;
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex ) + (int)pev->sequence;
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex ) + pev->sequence;
 
 	return pseqdesc->flags;
 }
 
 int GetAnimationEvent( void *pmodel, entvars_t *pev, MonsterEvent_t *pMonsterEvent, float flStart, float flEnd, int index )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr || pev->sequence >= pstudiohdr->numseq || !pMonsterEvent )
 		return 0;
 
-	mstudioseqdesc_t *pseqdesc;
-	mstudioevent_t *pevent;
-
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex ) + (int)pev->sequence;
-	pevent = (mstudioevent_t *)( (byte *)pstudiohdr + pseqdesc->eventindex );
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex ) + pev->sequence;
+	mstudioevent_t *pevent     = reinterpret_cast<mstudioevent_t *>(   reinterpret_cast<byte *>( pstudiohdr ) + pseqdesc->eventindex );
 
 	if( pseqdesc->numevents == 0 || index > pseqdesc->numevents )
 		return 0;
 
 	if( pseqdesc->numframes > 1 )
 	{
-		flStart *= ( pseqdesc->numframes - 1 ) / 256.0;
-		flEnd *= (pseqdesc->numframes - 1) / 256.0;
+		flStart *= ( pseqdesc->numframes - 1 ) / 256.0f;
+		flEnd *= (pseqdesc->numframes - 1) / 256.0f;
 	}
 	else
 	{
-		flStart = 0;
-		flEnd = 1.0;
+		flStart = 0.0f;
+		flEnd = 1.0f;
 	}
 
 	for( ; index < pseqdesc->numevents; index++ )
@@ -305,14 +258,12 @@ int GetAnimationEvent( void *pmodel, entvars_t *pev, MonsterEvent_t *pMonsterEve
 
 float SetController( void *pmodel, entvars_t *pev, int iController, float flValue )
 {
-	studiohdr_t *pstudiohdr;
 	int i;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return flValue;
 
-	mstudiobonecontroller_t	*pbonecontroller = (mstudiobonecontroller_t *)( (byte *)pstudiohdr + pstudiohdr->bonecontrollerindex );
+	mstudiobonecontroller_t	*pbonecontroller = reinterpret_cast<mstudiobonecontroller_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->bonecontrollerindex );
 
 	// find first controller that matches the index
 	for( i = 0; i < pstudiohdr->numbonecontrollers; i++, pbonecontroller++ )
@@ -331,23 +282,23 @@ float SetController( void *pmodel, entvars_t *pev, int iController, float flValu
 			flValue = -flValue;
 
 		// does the controller not wrap?
-		if( pbonecontroller->start + 359.0 >= pbonecontroller->end )
+		if( pbonecontroller->start + 359.0f >= pbonecontroller->end )
 		{
-			if( flValue > ( ( pbonecontroller->start + pbonecontroller->end ) / 2.0 ) + 180 )
-				flValue = flValue - 360;
-			if( flValue < ( ( pbonecontroller->start + pbonecontroller->end) / 2.0 ) - 180 )
-				flValue = flValue + 360;
+			if( flValue > ( ( pbonecontroller->start + pbonecontroller->end ) / 2.0f ) + 180.0f )
+				flValue = flValue - 360.0f;
+			if( flValue < ( ( pbonecontroller->start + pbonecontroller->end) / 2.0f ) - 180.0f )
+				flValue = flValue + 360.0f;
 		}
 		else
 		{
-			if( flValue > 360 )
-				flValue = flValue - (int)( flValue / 360.0 ) * 360.0;
-			else if( flValue < 0 )
-				flValue = flValue + (int)( ( flValue / -360.0 ) + 1 ) * 360.0;
+			if( flValue > 360.0f )
+				flValue = flValue - static_cast<int>( flValue / 360.0f ) * 360.0f;
+			else if( flValue < 0.0f )
+				flValue = flValue + ( static_cast<int>( flValue / -360.0f ) + 1 ) * 360.0f;
 		}
 	}
 
-	int setting = (int)( 255 * ( flValue - pbonecontroller->start ) / ( pbonecontroller->end - pbonecontroller->start ) );
+	int setting = static_cast<int>( 255.0f * ( flValue - pbonecontroller->start ) / ( pbonecontroller->end - pbonecontroller->start ) );
 
 	if( setting < 0 )
 		setting = 0;
@@ -355,20 +306,16 @@ float SetController( void *pmodel, entvars_t *pev, int iController, float flValu
 		setting = 255;
 	pev->controller[iController] = setting;
 
-	return setting * ( 1.0 / 255.0 ) * (pbonecontroller->end - pbonecontroller->start ) + pbonecontroller->start;
+	return setting * ( 1.0f / 255.0f ) * (pbonecontroller->end - pbonecontroller->start ) + pbonecontroller->start;
 }
 
 float SetBlending( void *pmodel, entvars_t *pev, int iBlender, float flValue )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return flValue;
 
-	mstudioseqdesc_t *pseqdesc;
-
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex ) + (int)pev->sequence;
+	mstudioseqdesc_t *pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex ) + pev->sequence;
 
 	if( pseqdesc->blendtype[iBlender] == 0 )
 		return flValue;
@@ -380,16 +327,16 @@ float SetBlending( void *pmodel, entvars_t *pev, int iBlender, float flValue )
 			flValue = -flValue;
 
 		// does the controller not wrap?
-		if( pseqdesc->blendstart[iBlender] + 359.0 >= pseqdesc->blendend[iBlender] )
+		if( pseqdesc->blendstart[iBlender] + 359.0f >= pseqdesc->blendend[iBlender] )
 		{
-			if( flValue > ( ( pseqdesc->blendstart[iBlender] + pseqdesc->blendend[iBlender] ) / 2.0 ) + 180 )
-				flValue = flValue - 360;
-			if( flValue < ( ( pseqdesc->blendstart[iBlender] + pseqdesc->blendend[iBlender] ) / 2.0 ) - 180 )
-				flValue = flValue + 360;
+			if( flValue > ( ( pseqdesc->blendstart[iBlender] + pseqdesc->blendend[iBlender] ) / 2.0f ) + 180.0f )
+				flValue = flValue - 360.0f;
+			if( flValue < ( ( pseqdesc->blendstart[iBlender] + pseqdesc->blendend[iBlender] ) / 2.0f ) - 180.0f )
+				flValue = flValue + 360.0f;
 		}
 	}
 
-	int setting = (int)( 255 * ( flValue - pseqdesc->blendstart[iBlender] ) / ( pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender] ) );
+	int setting = static_cast<int>( 255.0f * ( flValue - pseqdesc->blendstart[iBlender] ) / ( pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender] ) );
 
 	if( setting < 0 )
 		setting = 0;
@@ -398,19 +345,17 @@ float SetBlending( void *pmodel, entvars_t *pev, int iBlender, float flValue )
 
 	pev->blending[iBlender] = setting;
 
-	return setting * ( 1.0 / 255.0 ) * ( pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender] ) + pseqdesc->blendstart[iBlender];
+	return setting * ( 1.0f / 255.0f ) * ( pseqdesc->blendend[iBlender] - pseqdesc->blendstart[iBlender] ) + pseqdesc->blendstart[iBlender];
 }
 
 int FindTransition( void *pmodel, int iEndingAnim, int iGoalAnim, int *piDir )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return iGoalAnim;
 
 	mstudioseqdesc_t *pseqdesc;
-	pseqdesc = (mstudioseqdesc_t *)( (byte *)pstudiohdr + pstudiohdr->seqindex );
+	pseqdesc = reinterpret_cast<mstudioseqdesc_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->seqindex );
 
 	// bail if we're going to or from a node 0
 	if( pseqdesc[iEndingAnim].entrynode == 0 || pseqdesc[iGoalAnim].entrynode == 0 )
@@ -437,7 +382,7 @@ int FindTransition( void *pmodel, int iEndingAnim, int iGoalAnim, int *piDir )
 		return iGoalAnim;
 	}
 
-	byte *pTransition = ( (byte *)pstudiohdr + pstudiohdr->transitionindex );
+	byte *pTransition = ( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->transitionindex );
 
 	int iInternNode = pTransition[( iEndNode - 1 ) * pstudiohdr->numtransitions + ( pseqdesc[iGoalAnim].entrynode - 1 )];
 
@@ -470,16 +415,14 @@ int FindTransition( void *pmodel, int iEndingAnim, int iGoalAnim, int *piDir )
 
 void SetBodygroup( void *pmodel, entvars_t *pev, int iGroup, int iValue )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return;
 
 	if( iGroup > pstudiohdr->numbodyparts )
 		return;
 
-	mstudiobodyparts_t *pbodypart = (mstudiobodyparts_t *)( (byte *)pstudiohdr + pstudiohdr->bodypartindex ) + iGroup;
+	mstudiobodyparts_t *pbodypart = reinterpret_cast<mstudiobodyparts_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->bodypartindex ) + iGroup;
 
 	if( iValue >= pbodypart->nummodels )
 		return;
@@ -491,16 +434,14 @@ void SetBodygroup( void *pmodel, entvars_t *pev, int iGroup, int iValue )
 
 int GetBodygroup( void *pmodel, entvars_t *pev, int iGroup )
 {
-	studiohdr_t *pstudiohdr;
-
-	pstudiohdr = (studiohdr_t *)pmodel;
+	studiohdr_t *pstudiohdr = static_cast<studiohdr_t *>( pmodel );
 	if( !pstudiohdr )
 		return 0;
 
 	if( iGroup > pstudiohdr->numbodyparts )
 		return 0;
 
-	mstudiobodyparts_t *pbodypart = (mstudiobodyparts_t *)( (byte *)pstudiohdr + pstudiohdr->bodypartindex ) + iGroup;
+	mstudiobodyparts_t *pbodypart = reinterpret_cast<mstudiobodyparts_t *>( reinterpret_cast<byte *>( pstudiohdr ) + pstudiohdr->bodypartindex ) + iGroup;
 
 	if( pbodypart->nummodels <= 1 )
 		return 0;

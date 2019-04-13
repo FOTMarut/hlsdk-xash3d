@@ -34,6 +34,7 @@ typedef vec_t vec4_t[4];	// x,y,z,w
 
 typedef const vec_t vec3_t_in[3];
 typedef vec_t vec3_t_out[3];
+typedef vec_t matrix3x4[3][4];
 
 #ifndef M_PI
 #define M_PI		3.14159265358979323846	// matches value in gcc v2 math.h
@@ -66,15 +67,15 @@ void VectorInverse (vec_t v[3]);
 void VectorScale (const vec_t in[3], vec_t scale, vec_t out[3]);
 
 void R_ConcatRotations (float in1[3][3], float in2[3][3], float out[3][3]);
-void R_ConcatTransforms (float in1[3][4], float in2[3][4], float out[3][4]);
+void R_ConcatTransforms (matrix3x4 in1, matrix3x4 in2, matrix3x4 out);
 
 void AngleVectors (const vec_t angles[3], vec_t forward[3], vec_t right[3], vec_t up[3]);
 void AngleVectorsTranspose (const vec_t angles[3], vec_t forward[3], vec_t right[3], vec_t up[3]);
 #define AngleIVectors	AngleVectorsTranspose
 
-void AngleMatrix (const vec_t angles[3], float matrix[3][4] );
-void AngleIMatrix (const vec_t angles[3], float matrix[3][4] );
-void VectorTransform (const vec_t in1[3], float in2[3][4], vec_t out[3]);
+void AngleMatrix (const vec_t angles[3], matrix3x4 matrix );
+void AngleIMatrix (const vec_t angles[3], matrix3x4 matrix );
+void VectorTransform (const vec_t in1[3], matrix3x4 in2, vec_t out[3]);
 
 //void NormalizeAngles( vec_t angles[3] );
 //void InterpolateAngles( vec_t start[3], vec_t end[3], vec_t output[3], float frac );

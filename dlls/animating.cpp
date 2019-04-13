@@ -43,27 +43,27 @@ IMPLEMENT_SAVERESTORE( CBaseAnimating, CBaseDelay )
 //=========================================================
 float CBaseAnimating::StudioFrameAdvance( float flInterval )
 {
-	if( flInterval == 0.0 )
+	if( flInterval == 0.0f )
 	{
 		flInterval = gpGlobals->time - pev->animtime;
-		if( flInterval <= 0.001 )
+		if( flInterval <= 0.001f )
 		{
 			pev->animtime = gpGlobals->time;
-			return 0.0;
+			return 0.0f;
 		}
 	}
 	if( !pev->animtime )
-		flInterval = 0.0;
+		flInterval = 0.0f;
 
 	pev->frame += flInterval * m_flFrameRate * pev->framerate;
 	pev->animtime = gpGlobals->time;
 
-	if( pev->frame < 0.0 || pev->frame >= 256.0 )
+	if( pev->frame < 0.0f || pev->frame >= 256.0f )
 	{
 		if( m_fSequenceLoops )
-			pev->frame -= (int)( pev->frame / 256.0 ) * 256.0;
+			pev->frame -= static_cast<int>( pev->frame / 256.0f ) * 256.0f;
 		else
-			pev->frame = ( pev->frame < 0.0 ) ? 0 : 255;
+			pev->frame = ( pev->frame < 0.0f ) ? 0.0f : 255.0f;
 		m_fSequenceFinished = TRUE;	// just in case it wasn't caught in GetEvents
 	}
 
@@ -112,7 +112,7 @@ void CBaseAnimating::ResetSequenceInfo()
 	GetSequenceInfo( pmodel, pev, &m_flFrameRate, &m_flGroundSpeed );
 	m_fSequenceLoops = ( ( GetSequenceFlags() & STUDIO_LOOPING ) != 0 );
 	pev->animtime = gpGlobals->time;
-	pev->framerate = 1.0;
+	pev->framerate = 1.0f;
 	m_fSequenceFinished = FALSE;
 	m_flLastEventCheck = gpGlobals->time;
 }
@@ -142,7 +142,7 @@ void CBaseAnimating::DispatchAnimEvents( float flInterval )
 	}
 
 	// FIXME: I have to do this or some events get missed, and this is probably causing the problem below
-	flInterval = 0.1;
+	flInterval = 0.1f;
 
 	// FIX: this still sometimes hits events twice
 	float flStart = pev->frame + ( m_flLastEventCheck - pev->animtime ) * m_flFrameRate * pev->framerate;
@@ -150,7 +150,7 @@ void CBaseAnimating::DispatchAnimEvents( float flInterval )
 	m_flLastEventCheck = pev->animtime + flInterval;
 
 	m_fSequenceFinished = FALSE;
-	if( flEnd >= 256 || flEnd <= 0.0 )
+	if( flEnd >= 256.0f || flEnd <= 0.0f )
 		m_fSequenceFinished = TRUE;
 
 	int index = 0;
@@ -176,10 +176,10 @@ void CBaseAnimating::InitBoneControllers( void )
 {
 	void *pmodel = GET_MODEL_PTR( ENT( pev ) );
 
-	SetController( pmodel, pev, 0, 0.0 );
-	SetController( pmodel, pev, 1, 0.0 );
-	SetController( pmodel, pev, 2, 0.0 );
-	SetController( pmodel, pev, 3, 0.0 );
+	SetController( pmodel, pev, 0, 0.0f );
+	SetController( pmodel, pev, 1, 0.0f );
+	SetController( pmodel, pev, 2, 0.0f );
+	SetController( pmodel, pev, 3, 0.0f );
 }
 
 //=========================================================
@@ -258,7 +258,7 @@ void CBaseAnimating::SetSequenceBox( void )
 	{
 		// expand box for rotation
 		// find min / max for rotations
-		float yaw = pev->angles.y * ( M_PI / 180.0 );
+		float yaw = pev->angles.y * ( M_PI / 180.0f );
 
 		Vector xvector, yvector;
 		xvector.x = cos( yaw );

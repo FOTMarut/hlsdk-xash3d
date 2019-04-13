@@ -10,6 +10,7 @@
 #include "cl_entity.h"
 #include "triangleapi.h"
 #include "overview.h"
+#include "mathlib.h"
 
 // these are included for the math functions
 #include "com_model.h"
@@ -109,7 +110,7 @@ int CHudOverview::Draw( float flTime )
 
 			// calculate rotational matrix
 			vec3_t a, b, angles;
-			float rmatrix[3][4];	// transformation matrix
+			matrix3x4 rmatrix;	// transformation matrix
 			VectorCopy( pl->angles, angles );
 			angles[0] = 0.0f;
 			angles[1] += 90.f;

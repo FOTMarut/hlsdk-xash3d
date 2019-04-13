@@ -559,7 +559,7 @@ void DLLEXPORT HUD_StudioEvent( const mstudioevent_t *event, const cl_entity_t *
 		break;
 	// Client side sound
 	case 5004:		
-		gEngfuncs.pfnPlaySoundByNameAtLocation( (char *)event->options, 1.0, entity->attachment[0] );
+		gEngfuncs.pfnPlaySoundByNameAtLocation( event->options, 1.0, entity->attachment[0] );
 		break;
 	default:
 		break;
@@ -713,8 +713,8 @@ void DLLEXPORT HUD_TempEntUpdate (
 				s = sin( pTemp->entity.baseline.origin[2] + fastFreq );
 				c = cos( pTemp->entity.baseline.origin[2] + fastFreq );*/
 
-				pTemp->entity.origin[0] += pTemp->entity.baseline.origin[0] * frametime + 8 * sin( client_time * 20 + (size_t)pTemp );
-				pTemp->entity.origin[1] += pTemp->entity.baseline.origin[1] * frametime + 4 * sin( client_time * 30 + (size_t)pTemp );
+				pTemp->entity.origin[0] += pTemp->entity.baseline.origin[0] * frametime + 8 * sin( client_time * 20.0 + reinterpret_cast<size_t>( pTemp ) );
+				pTemp->entity.origin[1] += pTemp->entity.baseline.origin[1] * frametime + 4 * sin( client_time * 30.0 + reinterpret_cast<size_t>( pTemp ) );
 				pTemp->entity.origin[2] += pTemp->entity.baseline.origin[2] * frametime;
 			}
 			else 
@@ -728,7 +728,7 @@ void DLLEXPORT HUD_TempEntUpdate (
 				pTemp->entity.curstate.frame += frametime * pTemp->entity.curstate.framerate;
 				if( pTemp->entity.curstate.frame >= pTemp->frameMax )
 				{
-					pTemp->entity.curstate.frame = pTemp->entity.curstate.frame - (int)( pTemp->entity.curstate.frame );
+					pTemp->entity.curstate.frame = pTemp->entity.curstate.frame - static_cast<int>( pTemp->entity.curstate.frame );
 
 					if( !( pTemp->flags & FTENT_SPRANIMATELOOP ) )
 					{
@@ -744,7 +744,7 @@ void DLLEXPORT HUD_TempEntUpdate (
 				pTemp->entity.curstate.frame += frametime * 10;
 				if( pTemp->entity.curstate.frame >= pTemp->frameMax )
 				{
-					pTemp->entity.curstate.frame = pTemp->entity.curstate.frame - (int)( pTemp->entity.curstate.frame );
+					pTemp->entity.curstate.frame = pTemp->entity.curstate.frame - static_cast<int>( pTemp->entity.curstate.frame );
 				}
 			}
 // Experiment
@@ -765,7 +765,7 @@ void DLLEXPORT HUD_TempEntUpdate (
 			if( pTemp->flags & ( FTENT_COLLIDEALL | FTENT_COLLIDEWORLD ) )
 			{
 				vec3_t	traceNormal( 0.0f, 0.0f, 0.0f );
-				float	traceFraction = 1;
+				float	traceFraction = 1.0f;
 
 				if( pTemp->flags & FTENT_COLLIDEALL )
 				{

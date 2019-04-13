@@ -58,7 +58,7 @@ typedef struct server_physics_api_s
 	triangleapi_t *pTriAPI;	// draw coliisions etc. Only for local system
 
 	// draw debug messages (must be called from DrawOrthoTriangles). Only for local system
-	int		( *pfnDrawConsoleString )( int x, int y, char *string );
+	int		( *pfnDrawConsoleString )( int x, int y, const char *string );
 	void		( *pfnDrawSetTextColor )( float r, float g, float b );
 	void		( *pfnDrawConsoleStringLen )( const char *string, int *length, int *height );
 	void		( *Con_NPrintf )( int pos, char *fmt, ... );

@@ -284,7 +284,7 @@ void CHudSayText::EnsureTextFitsInOneLineAndWrapIfHaveTo( int line )
 				while( j == MAX_LINES );
 
 				// copy remaining string into next buffer,  making sure it starts with a space character
-				if( (char)*last_break == (char)' ' )
+				if( *last_break == ' ' )
 				{
 					int linelen = strlen( g_szLineBuffer[j] );
 					int remaininglen = strlen( last_break );

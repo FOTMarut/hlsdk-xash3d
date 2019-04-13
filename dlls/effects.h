@@ -241,7 +241,7 @@ public:
 
 	inline int GetWidth( void )
 	{
-		return (int)pev->scale;
+		return static_cast<int>( pev->scale );
 	}
 
 	inline int GetNoise( void )
@@ -258,17 +258,17 @@ public:
 
 	inline int GetBrightness( void )
 	{
-		return (int)pev->renderamt;
+		return static_cast<int>( pev->renderamt );
 	}
 
 	inline int GetFrame( void )
 	{
-		return (int)pev->frame;
+		return static_cast<int>( pev->frame );
 	}
 
 	inline int GetScrollRate( void )
 	{
-		return (int)pev->animtime;
+		return static_cast<int>( pev->animtime );
 	}
 
 	// Call after you change start/end positions

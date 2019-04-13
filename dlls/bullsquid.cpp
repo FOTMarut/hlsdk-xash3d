@@ -95,7 +95,7 @@ void CSquidSpit::Spawn( void )
 
 	UTIL_SetSize( pev, Vector( 0, 0, 0 ), Vector( 0, 0, 0 ) );
 
-	m_maxFrame = (float)MODEL_FRAMES( pev->modelindex ) - 1;
+	m_maxFrame = float( MODEL_FRAMES( pev->modelindex ) - 1 );
 }
 
 void CSquidSpit::Animate( void )
@@ -429,7 +429,7 @@ int CBullsquid::Classify( void )
 //=========================================================
 // IdleSound 
 //=========================================================
-#define SQUID_ATTN_IDLE	(float)1.5
+#define SQUID_ATTN_IDLE	1.5f
 void CBullsquid::IdleSound( void )
 {
 	switch( RANDOM_LONG( 0, 4 ) )

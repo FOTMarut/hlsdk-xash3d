@@ -150,7 +150,7 @@ void CRpgRocket::Spawn( void )
 //=========================================================
 void CRpgRocket::RocketTouch( CBaseEntity *pOther )
 {
-	if( CRpg* pLauncher = (CRpg*)( (CBaseEntity*)( m_hLauncher ) ) )
+	if( CRpg* pLauncher = static_cast<CRpg*>( static_cast<CBaseEntity*>( m_hLauncher ) ) )
 	{
 		// my launcher is still around, tell it I'm dead.
 		pLauncher->m_cActiveRockets--;
@@ -265,7 +265,7 @@ void CRpgRocket::FollowThink( void )
 		pev->velocity = pev->velocity * 0.2 + vecTarget * flSpeed * 0.798;
 		if( pev->waterlevel == 0 && pev->velocity.Length() < 1500 )
 		{
-			if( CRpg *pLauncher = (CRpg*)( (CBaseEntity*)( m_hLauncher ) ) )
+			if( CRpg *pLauncher = static_cast<CRpg*>( static_cast<CBaseEntity*>( m_hLauncher ) ) )
 			{
 				// my launcher is still around, tell it I'm dead.
 				pLauncher->m_cActiveRockets--;

@@ -258,7 +258,7 @@ void CCyclerSprite::Spawn( void )
 	PRECACHE_MODEL( STRING( pev->model ) );
 	SET_MODEL( ENT( pev ), STRING( pev->model ) );
 
-	m_maxFrame = (float)MODEL_FRAMES( pev->modelindex ) - 1;
+	m_maxFrame = float( MODEL_FRAMES( pev->modelindex ) - 1 );
 }
 
 void CCyclerSprite::Think( void )

@@ -18,7 +18,7 @@ AngleMatrix
 
 ====================
 */
-void AngleMatrix( const Vector &angles, vec_t matrix[3][4] )
+void AngleMatrix( const Vector &angles, matrix3x4 matrix )
 {
 	vec_t angle;
 	vec_t sr, sp, sy, cr, cp, cy;
@@ -85,7 +85,7 @@ VectorTransform
 
 ====================
 */
-void VectorTransform( const Vector &in1, vec_t in2[3][4], Vector &out )
+void VectorTransform( const Vector &in1, matrix3x4 in2, Vector &out )
 {
 	const vec4_t in1_4d = { in1.x, in1.y, in1.z, 1.0f};
 	out.x = DotProduct4d(in1_4d, in2[0]);
@@ -99,7 +99,7 @@ ConcatTransforms
 
 ================
 */
-void ConcatTransforms( const vec_t in1[3][4], const vec_t in2[3][4], vec_t out[3][4] )
+void ConcatTransforms( const matrix3x4 in1, const matrix3x4 in2, matrix3x4 out )
 {
 	out[0][0] = in1[0][0] * in2[0][0] + in1[0][1] * in2[1][0] + in1[0][2] * in2[2][0];
 	out[0][1] = in1[0][0] * in2[0][1] + in1[0][1] * in2[1][1] + in1[0][2] * in2[2][1];
@@ -215,7 +215,7 @@ QuaternionMatrix
 
 ====================
 */
-void QuaternionMatrix( vec4_t quaternion, vec_t matrix[3][4] )
+void QuaternionMatrix( vec4_t quaternion, matrix3x4 matrix )
 {
 	matrix[0][0] = 1.0f - 2.0f * quaternion[1] * quaternion[1] - 2.0f * quaternion[2] * quaternion[2];
 	matrix[1][0] =        2.0f * quaternion[0] * quaternion[1] + 2.0f * quaternion[3] * quaternion[2];
@@ -236,7 +236,7 @@ MatrixCopy
 
 ====================
 */
-void MatrixCopy( vec_t in[3][4], vec_t out[3][4] )
+void MatrixCopy( matrix3x4 in, matrix3x4 out )
 {
 	memcpy( out, in, sizeof( vec_t ) * 3 * 4 );
 }

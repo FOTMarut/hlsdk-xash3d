@@ -142,7 +142,7 @@ void CShotgun::PrimaryAttack()
 #else
 	flags = 0;
 #endif
-	m_pPlayer->pev->effects = (int)( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
+	m_pPlayer->pev->effects = static_cast<int>( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
 
 	// player "shoot" animation
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );
@@ -212,7 +212,7 @@ void CShotgun::SecondaryAttack( void )
 #else
 	flags = 0;
 #endif
-	m_pPlayer->pev->effects = (int)( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
+	m_pPlayer->pev->effects = static_cast<int>( m_pPlayer->pev->effects ) | EF_MUZZLEFLASH;
 
 	// player "shoot" animation
 	m_pPlayer->SetAnimation( PLAYER_ATTACK1 );

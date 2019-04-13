@@ -54,9 +54,9 @@ void DBG_AssertFunction(BOOL fExpr, const char* szExpr, const char* szFile, int 
 
 #define CVAR_GET_FLOAT	(*gEngfuncs.pfnGetCvarFloat)
 #define CVAR_GET_STRING	(*gEngfuncs.pfnGetCvarString)
-//inline float CVAR_GET_FLOAT( const char *x ) {	return gEngfuncs.pfnGetCvarFloat( (char*)x ); }
-//inline char* CVAR_GET_STRING( const char *x ) {	return gEngfuncs.pfnGetCvarString( (char*)x ); }
-inline cvar_t *CVAR_CREATE( const char *cv, const char *val, const int flags ) {	return gEngfuncs.pfnRegisterVariable( (char*)cv, (char*)val, flags ); }
+//inline float CVAR_GET_FLOAT( const char *x ) {	return gEngfuncs.pfnGetCvarFloat( x ); }
+//inline char* CVAR_GET_STRING( const char *x ) {	return gEngfuncs.pfnGetCvarString( x ); }
+inline cvar_t *CVAR_CREATE( const char *cv, const char *val, const int flags ) {	return gEngfuncs.pfnRegisterVariable( cv, val, flags ); }
 
 #define SPR_Load ( *gEngfuncs.pfnSPR_Load )
 #define SPR_Set ( *gEngfuncs.pfnSPR_Set )
@@ -83,8 +83,8 @@ inline cvar_t *CVAR_CREATE( const char *cv, const char *val, const int flags ) {
 #define ScreenWidth ( gHUD.m_scrinfo.iWidth )
 
 // Use this to set any co-ords in 640x480 space
-#define XRES(x)		( (int)( float(x) * ( (float)ScreenWidth / 640.0f ) + 0.5f ) )
-#define YRES(y)		( (int)( float(y) * ( (float)ScreenHeight / 480.0f ) + 0.5f ) )
+#define XRES(x)		static_cast<int>( float(x) * ( float(ScreenWidth)  / 640.0f ) + 0.5f )
+#define YRES(y)		static_cast<int>( float(y) * ( float(ScreenHeight) / 480.0f ) + 0.5f )
 
 // use this to project world coordinates to screen coordinates
 #define XPROJECT(x)	( ( 1.0f + (x) ) * ScreenWidth * 0.5f )
@@ -122,19 +122,19 @@ inline int TextMessageDrawChar( int x, int y, int number, int r, int g, int b )
 inline int DrawConsoleString( int x, int y, const char *string )
 {
 	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudString( x, y, 9999, (char*)string,
+		return gHUD.DrawHudString( x, y, 9999, string,
 			static_cast<int>(255 * g_hud_text_color[0]),
 			static_cast<int>(255 * g_hud_text_color[1]),
 			static_cast<int>(255 * g_hud_text_color[2]) );
-	return gEngfuncs.pfnDrawConsoleString( x, y, (char*) string );
+	return gEngfuncs.pfnDrawConsoleString( x, y, string );
 }
 
 inline void GetConsoleStringSize( const char *string, int *width, int *height )
 {
 	if( hud_textmode->value == 1 )
-		*height = 13, *width = gHUD.DrawHudStringLen( (char*)string );
+		*height = 13, *width = gHUD.DrawHudStringLen( string );
 	else
-		gEngfuncs.pfnDrawConsoleStringLen( (char*)string, width, height );
+		gEngfuncs.pfnDrawConsoleStringLen( string, width, height );
 }
 
 int DrawUtfString( int xpos, int ypos, int iMaxX, const char *szIt, int r, int g, int b );
@@ -143,7 +143,7 @@ inline int ConsoleStringLen( const char *string )
 {
 	int _width = 0, _height = 0;
 	if( hud_textmode->value == 1 )
-		return gHUD.DrawHudStringLen( (char*)string );
+		return gHUD.DrawHudStringLen( string );
 	GetConsoleStringSize( string, &_width, &_height );
 	return _width;
 }
